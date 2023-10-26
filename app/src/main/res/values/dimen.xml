@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="header_size" format="float" type="dimen">32sp</item>
+    <item name="large_text" format="float" type="dimen">24sp</item>
+    <item name="medium_text" format="float" type="dimen">18sp</item>
+</resources>
