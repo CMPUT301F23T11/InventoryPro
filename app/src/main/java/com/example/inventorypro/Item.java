@@ -1,12 +1,14 @@
 package com.example.inventorypro;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class Item {
     private String name;
-    private Float value;
-    private Date date;
+    private BigDecimal value;
+    private LocalDate date;
     private String make;
+    private String model;
 
     // This is String type so it can be any length, and sometimes serial numbers
     // contain characters.
@@ -14,9 +16,8 @@ public class Item {
     private String description;
     private String comment;
 
-    // TODO - images
-    // TODO - tags
-    // TODO - database management
+    // TODO: images
+    // TODO: tags
 
     /**
      * Constructor
@@ -29,15 +30,18 @@ public class Item {
      * @param comment a comment for the item
      */
     public Item(String name,
-                Float value,
-                Date date,
+                String value,
+                LocalDate date,
                 String make,
+                String model,
                 String serialNumber,
                 String description,
                 String comment) {
         this.name = name;
-        this.value = value;
+        this.value = new BigDecimal(value);
+        this.date = date;
         this.make = make;
+        this.model = model;
         this.serialNumber = serialNumber;
         this.description = description;
         this.comment = comment;
@@ -50,17 +54,17 @@ public class Item {
         this.name = name;
     }
 
-    public Float getValue() {
+    public BigDecimal getValue() {
         return value;
     }
-    public void setValue(Float value) {
-        this.value = value;
+    public void setValue(String value) {
+        this.value = new BigDecimal(value);
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -69,6 +73,13 @@ public class Item {
     }
     public void setMake(String make) {
         this.make = make;
+    }
+
+    public String getModel() {
+        return model;
+    }
+    public void setModel(String model) {
+        this.model = model;
     }
 
     public String getSerialNumber() {
