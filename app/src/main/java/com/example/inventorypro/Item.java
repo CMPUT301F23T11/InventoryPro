@@ -15,9 +15,9 @@ public class Item {
     private String description;
     private String comment;
 
-    // TODO - images
-    // TODO - tags
-    // TODO - database management
+    // TODO: images
+    // TODO: tags
+    // TODO: database management
 
     /**
      * Constructor

@@ -6,11 +6,11 @@ import java.util.ArrayList;
 public class ItemList {
     private ArrayList<Item> itemList = new ArrayList<Item>();
 
-    // TODO - Sorting
-    // TODO - Filtering
-    // TODO - Find by barcode
-    // TODO - Find by tag
-    // TODO - Apply tags to items
+    // TODO: Sorting
+    // TODO: Filtering
+    // TODO: Find by barcode
+    // TODO: Find by tag
+    // TODO: Apply tags to items
 
     /**
      * Adds an item to the list of items and calls the database manager.
@@ -18,7 +18,7 @@ public class ItemList {
      */
     public void add(Item item) {
         itemList.add(item);
-        // TODO - Call database
+        // TODO: Call database
     }
 
     /**
@@ -27,7 +27,7 @@ public class ItemList {
      */
     public void remove(Item item) {
         itemList.remove(item);
-        // TODO - Call database
+        // TODO: Call database
     }
 
     /**
