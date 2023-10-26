@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">InventoryPro</string>
+    <string name="app_name_readable">InventoryPro</string>
 </resources>
