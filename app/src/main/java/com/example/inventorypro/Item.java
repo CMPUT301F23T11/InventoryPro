@@ -1,10 +1,11 @@
 package com.example.inventorypro;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class Item {
     private String name;
-    private Float value;
+    private BigDecimal value;
     private Date date;
     private String make;
 
@@ -29,14 +30,14 @@ public class Item {
      * @param comment a comment for the item
      */
     public Item(String name,
-                Float value,
+                String value,
                 Date date,
                 String make,
                 String serialNumber,
                 String description,
                 String comment) {
         this.name = name;
-        this.value = value;
+        this.value = new BigDecimal(value);
         this.make = make;
         this.serialNumber = serialNumber;
         this.description = description;
@@ -50,11 +51,11 @@ public class Item {
         this.name = name;
     }
 
-    public Float getValue() {
+    public BigDecimal getValue() {
         return value;
     }
-    public void setValue(Float value) {
-        this.value = value;
+    public void setValue(String value) {
+        this.value = new BigDecimal(value);
     }
 
     public Date getDate() {
