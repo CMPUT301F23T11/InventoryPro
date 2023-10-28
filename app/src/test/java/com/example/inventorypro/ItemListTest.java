@@ -20,6 +20,6 @@ public class ItemListTest {
     @Test
     public void testTotal() {
             ItemList mockList = mockItemList();
-            assertEquals(0, mockList.getTotalValue()==28.83);
+            assertEquals(true, mockList.getTotalValue()==28.83);
     }
 }

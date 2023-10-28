@@ -31,10 +31,17 @@ public class ItemList {
         this.database = database;
     }
 
-    public void onSynchronize(Item item){
+    /**
+     * Called when the database wants to synchronize with the real-time update (from the database).
+     * @param items The most up-to-date items.
+     */
+    public void onSynchronize(ArrayList<Item> items){
+        // NOTE: this is called almost immediately after any add/remove (could be a performance problem later).
         itemList.clear();
-        itemList.add(item);
-        Log.d("D",item.toString());
+        itemList.addAll(items);
+
+        // TODO: re-sort the items however you wanted.
+
         itemArrayAdapter.notifyDataSetChanged();
     }
 
@@ -43,12 +50,14 @@ public class ItemList {
      * @param item The item to add.
      */
     public void add(Item item) {
-        /*itemList.add(item);
+        itemList.add(item);
         if (itemArrayAdapter != null) {
             itemArrayAdapter.notifyDataSetChanged();
-        }*/
-        // TODO: Call database
-        database.addItem(item);
+        }
+
+        if (database != null){
+            database.addItem(item);
+        }
     }
 
     /**
@@ -60,7 +69,10 @@ public class ItemList {
         if (itemArrayAdapter != null) {
             itemArrayAdapter.notifyDataSetChanged();
         }
-        // TODO: Call database
+
+        if (database != null){
+            database.removeItem(item);
+        }
     }
 
     /**

@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoField;
 
+import kotlin.random.Random;
+
 public class MainActivity extends AppCompatActivity {
     private ItemList itemList;
     private ListView listView;
@@ -42,13 +44,19 @@ public class MainActivity extends AppCompatActivity {
         itemList.add(item2);
         itemList.add(item3);
 
+        // removes item from test list
+        itemList.remove(item3);
+
         TextView total = findViewById(R.id.totalText);
         total.setText(String.format("$%.2f", itemList.getTotalValue()));
 
+        // replaces item1 with a random item (testing behavior).
         ((ImageButton)findViewById(R.id.addButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                database.addItem(item1);
+                itemList.remove(item1);
+                item1.setName("Item"+Random.Default.nextInt());
+                itemList.add(item1);
             }
         });
     }

@@ -25,7 +25,9 @@ public class Item {
     // TODO: tags
 
     public Item(){
-
+        // Firestore:
+        // Each custom class must have a public constructor that takes no arguments.
+        // In addition, the class must include a public getter for each property.
     }
 
     /**
@@ -48,7 +50,6 @@ public class Item {
                 String comment) {
         this.name = name;
         this.value = value;
-        // this.date = date;
         setLocalDate(date);
         this.make = make;
         this.model = model;
@@ -80,12 +81,19 @@ public class Item {
 
     @Exclude
     public LocalDate getLocalDate() {
+        if(this.date == null){
+            return null;
+        }
         return Instant.ofEpochMilli(date)
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
     }
     @Exclude
     public void setLocalDate(LocalDate date) {
+        if(date == null) {
+            this.date = null;
+            return;
+        }
         this.date = date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
@@ -122,5 +130,14 @@ public class Item {
     }
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    /**
+     * Gets the unique identifier that identifies this item.
+     * @return The unique identifier that identifies this item (currently the name)
+     */
+    @Exclude
+    public String getUID(){
+        return name;
     }
 }
