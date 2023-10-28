@@ -1,8 +1,10 @@
 package com.example.inventorypro;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 public class ItemList {
     private ArrayList<Item> itemList = new ArrayList<Item>();
     private ArrayAdapter<Item> itemArrayAdapter;
+    private DatabaseManager database;
 
     // TODO: Sorting
     // TODO: Filtering
@@ -18,12 +21,21 @@ public class ItemList {
     // TODO: Apply tags to items
     // TODO: Call database management
 
-    public ItemList(Context context, ListView itemListView) {
+    public ItemList(Context context, ListView itemListView, DatabaseManager database) {
         // setup list view
         if (context != null && itemListView != null) {
             itemArrayAdapter = new ItemArrayAdapter(context, this, itemList);
             itemListView.setAdapter(itemArrayAdapter);
         }
+
+        this.database = database;
+    }
+
+    public void onSynchronize(Item item){
+        itemList.clear();
+        itemList.add(item);
+        Log.d("D",item.toString());
+        itemArrayAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -31,11 +43,12 @@ public class ItemList {
      * @param item The item to add.
      */
     public void add(Item item) {
-        itemList.add(item);
+        /*itemList.add(item);
         if (itemArrayAdapter != null) {
             itemArrayAdapter.notifyDataSetChanged();
-        }
+        }*/
         // TODO: Call database
+        database.addItem(item);
     }
 
     /**
@@ -63,13 +76,10 @@ public class ItemList {
      * Gets the total value of all items in the list.
      * @return the total value of all items in the list.
      */
-    public BigDecimal getTotalValue() {
-        BigDecimal total = new BigDecimal("0");
+    public double getTotalValue() {
+        double total = 0d;
         for (Item item : itemList) {
-            // if value is not null then add to total
-            if (item.getValue() != null) {
-                total = total.add(item.getValue());
-            }
+            total+=item.getValue();
         }
         return total;
     }

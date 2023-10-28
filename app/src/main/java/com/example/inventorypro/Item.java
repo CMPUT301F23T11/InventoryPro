@@ -1,12 +1,17 @@
 package com.example.inventorypro;
 
+import com.google.firebase.firestore.Exclude;
+
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoField;
 
 public class Item {
     private String name;
-    private BigDecimal value;
-    private LocalDate date;
+    private Double value;
+    private Long date; // Allows date to be serialized and deserialized by Firestore (also easier to query database).
     private String make;
     private String model;
 
@@ -19,6 +24,10 @@ public class Item {
     // TODO: images
     // TODO: tags
 
+    public Item(){
+
+    }
+
     /**
      * Constructor
      * @param name the name of the item
@@ -30,7 +39,7 @@ public class Item {
      * @param comment a comment for the item
      */
     public Item(String name,
-                String value,
+                Double value,
                 LocalDate date,
                 String make,
                 String model,
@@ -38,8 +47,9 @@ public class Item {
                 String description,
                 String comment) {
         this.name = name;
-        this.value = new BigDecimal(value);
-        this.date = date;
+        this.value = value;
+        // this.date = date;
+        setLocalDate(date);
         this.make = make;
         this.model = model;
         this.serialNumber = serialNumber;
@@ -54,18 +64,29 @@ public class Item {
         this.name = name;
     }
 
-    public BigDecimal getValue() {
+    public double getValue() {
         return value;
     }
-    public void setValue(String value) {
-        this.value = new BigDecimal(value);
+    public void setValue(double value) {
+        this.value = value;
     }
 
-    public LocalDate getDate() {
+    public Long getDate() {
         return date;
     }
-    public void setDate(LocalDate date) {
+    public void setDate(Long date) {
         this.date = date;
+    }
+
+    @Exclude
+    public LocalDate getLocalDate() {
+        return Instant.ofEpochMilli(date)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
+    @Exclude
+    public void setLocalDate(LocalDate date) {
+        this.date = date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
     public String getMake() {

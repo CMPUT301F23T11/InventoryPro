@@ -8,10 +8,10 @@ import java.math.BigDecimal;
 
 public class ItemListTest {
     private ItemList mockItemList() {
-        ItemList itemList = new ItemList(null, null);
-        Item item1 = new Item("Item1", "12.36", null, null, null, null, null, null);
-        Item item2 = new Item("Item2", "8.5", null, null, null, null, null, null);
-        Item item3 = new Item("Item3", "7.97", null, null, null, null, null, null);
+        ItemList itemList = new ItemList(null, null,null);
+        Item item1 = new Item("Item1", 12.36, null, null, null, null, null, null);
+        Item item2 = new Item("Item2", 8.5, null, null, null, null, null, null);
+        Item item3 = new Item("Item3", 7.97, null, null, null, null, null, null);
         itemList.add(item1);
         itemList.add(item2);
         itemList.add(item3);
@@ -20,6 +20,6 @@ public class ItemListTest {
     @Test
     public void testTotal() {
             ItemList mockList = mockItemList();
-            assertEquals(0, mockList.getTotalValue().compareTo(new BigDecimal("28.83")));
+            assertEquals(0, mockList.getTotalValue()==28.83);
     }
 }
