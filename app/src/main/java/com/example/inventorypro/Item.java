@@ -15,6 +15,7 @@ public class Item {
     private String serialNumber;
     private String description;
     private String comment;
+    private boolean selected;
 
     // TODO: images
     // TODO: tags
@@ -101,5 +102,13 @@ public class Item {
     }
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

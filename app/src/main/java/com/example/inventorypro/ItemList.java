@@ -49,6 +49,9 @@ public class ItemList {
         }
         // TODO: Call database
     }
+    public ArrayList<Item> getItemList() {
+        return itemList;
+    }
 
     /**
      * Gets an item at a position.
