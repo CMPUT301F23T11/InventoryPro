@@ -11,6 +11,7 @@ import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class AddItem extends AppCompatActivity {
-    private Item newItem;
     private EditText name;
     private EditText date;
     private EditText make;
@@ -36,7 +36,6 @@ public class AddItem extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
-
         name = findViewById(R.id.itemNameText);
         value = findViewById(R.id.itemValue);
         date = findViewById(R.id.itemDateText);
@@ -52,19 +51,7 @@ public class AddItem extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(validateInput()){
-                    /*LocalDate itemDate = LocalDate.of(parseInt(date.getText().toString().substring(0,4)),parseInt(date.getText().toString().substring(5,7)),parseInt(date.getText().toString().substring(8,10)));
-                    newItem = new Item(name.getText().toString(),
-                    Double.parseDouble(value.getText().toString()),
-                    itemDate,
-                    make.getText().toString(),
-                    model.getText().toString(),
-                    serialNumber.getText().toString(),
-                    description.getText().toString(),
-                    comments.getText().toString());*/
                     sendString();
-
-
-
                 }
             }
         });
@@ -74,15 +61,11 @@ public class AddItem extends AppCompatActivity {
                 cancel();
             }
         });
-
-
-
-
-
     }
 
     private void sendString(){
         Intent sendItemIntent = new Intent(this, MainActivity.class);
+
         ArrayList<String> itemSending = new ArrayList();
         itemSending.add(name.getText().toString());
         itemSending.add(value.getText().toString());
@@ -93,20 +76,16 @@ public class AddItem extends AppCompatActivity {
         itemSending.add(description.getText().toString());
         itemSending.add(comments.getText().toString());
 
-
-
+        Toast.makeText(getBaseContext(),"Sending Data",Toast.LENGTH_LONG).show();
 
         sendItemIntent.putStringArrayListExtra("new Item",  itemSending);
-        startActivity(sendItemIntent);
-
-        //sendItemIntent.putExtra("new Item", name.getText().toString());
         startActivity(sendItemIntent);
     }
     private void cancel(){
         Intent cancelIntent = new Intent(this, MainActivity.class);
         startActivity(cancelIntent);
     }
-    private void sendItem(){
+    private void sendItem(Item newItem){
         Intent sendItemIntent = new Intent(this, MainActivity.class);
         sendItemIntent.putExtra("new Item",  newItem);
         startActivity(sendItemIntent);
