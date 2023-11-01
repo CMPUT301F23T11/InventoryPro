@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private ItemList itemList;
     private ListView listView;
     private ItemArrayAdapter itemArrayAdapter;
-    private Button deleteButton;
+    private ImageButton deleteButton;
     private DatabaseManager database;
 
 
@@ -45,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
         itemList = new ItemList(this, listView, database);
         database.connect("testUserID", itemList);
 
+        itemArrayAdapter = new ItemArrayAdapter(this, itemList, itemList.getItemList());
+        listView.setAdapter(itemArrayAdapter);
+
         // add items to test list
         Item item1 = new Item("Item1", 12.36, LocalDate.of(2023, 9, 12), "make1", "model1", "SN-12345", "Description description", "Comment comment");
         Item item2 = new Item("Item2", 8.5, LocalDate.of(2023, 9, 17), "make2", "model2", "SN-23456", "This is a description", "This is a comment");
@@ -53,8 +56,7 @@ public class MainActivity extends AppCompatActivity {
         itemList.add(item2);
         itemList.add(item3);
         
-        itemArrayAdapter = new ItemArrayAdapter(this, itemList, itemList.getItemList());
-        listView.setAdapter(itemArrayAdapter);
+
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +89,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         itemList.getItemList().removeAll(itemsToRemove);
+        // Remove selected items from the database
+        for (Item item : itemsToRemove) {
+            database.removeItem(item);
+        }
         itemArrayAdapter.notifyDataSetChanged();
 
         TextView total = findViewById(R.id.totalText);
