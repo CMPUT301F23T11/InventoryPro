@@ -80,7 +80,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+    /**
+     * Deletes all the selected items from the listview as well as the database and updates the total value accordingly.
+     */
     private void deleteSelectedItems() {
         ArrayList<Item> itemsToRemove = new ArrayList<>();
         for (Item item : itemList.getItemList()) {

@@ -74,6 +74,11 @@ public class ItemList {
             database.removeItem(item);
         }
     }
+    /**
+     * Gets the item list of an ItemList object
+     * @return
+     * Returns the item list for a specific ItemList object
+     */
     public ArrayList<Item> getItemList() {
         return itemList;
     }
