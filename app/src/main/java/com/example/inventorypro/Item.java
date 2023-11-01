@@ -1,12 +1,17 @@
 package com.example.inventorypro;
 
+import com.google.firebase.firestore.Exclude;
+
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoField;
 
 public class Item {
     private String name;
-    private BigDecimal value;
-    private LocalDate date;
+    private Double value;
+    private Long date; // Allows date to be serialized and deserialized by Firestore (also easier to query database).
     private String make;
     private String model;
 
@@ -20,6 +25,12 @@ public class Item {
     // TODO: images
     // TODO: tags
 
+    public Item(){
+        // Firestore:
+        // Each custom class must have a public constructor that takes no arguments.
+        // In addition, the class must include a public getter for each property.
+    }
+
     /**
      * Constructor
      * @param name the name of the item
@@ -31,7 +42,7 @@ public class Item {
      * @param comment a comment for the item
      */
     public Item(String name,
-                String value,
+                Double value,
                 LocalDate date,
                 String make,
                 String model,
@@ -39,8 +50,8 @@ public class Item {
                 String description,
                 String comment) {
         this.name = name;
-        this.value = new BigDecimal(value);
-        this.date = date;
+        this.value = value;
+        setLocalDate(date);
         this.make = make;
         this.model = model;
         this.serialNumber = serialNumber;
@@ -55,18 +66,36 @@ public class Item {
         this.name = name;
     }
 
-    public BigDecimal getValue() {
+    public double getValue() {
         return value;
     }
-    public void setValue(String value) {
-        this.value = new BigDecimal(value);
+    public void setValue(double value) {
+        this.value = value;
     }
 
-    public LocalDate getDate() {
+    public Long getDate() {
         return date;
     }
-    public void setDate(LocalDate date) {
+    public void setDate(Long date) {
         this.date = date;
+    }
+
+    @Exclude
+    public LocalDate getLocalDate() {
+        if(this.date == null){
+            return null;
+        }
+        return Instant.ofEpochMilli(date)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
+    @Exclude
+    public void setLocalDate(LocalDate date) {
+        if(date == null) {
+            this.date = null;
+            return;
+        }
+        this.date = date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
     public String getMake() {
@@ -103,12 +132,20 @@ public class Item {
     public void setComment(String comment) {
         this.comment = comment;
     }
-
     public boolean isSelected() {
         return selected;
     }
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    /**
+     * Gets the unique identifier that identifies this item.
+     * @return The unique identifier that identifies this item (currently the name)
+     */
+    @Exclude
+    public String getUID(){
+        return name;
     }
 }
