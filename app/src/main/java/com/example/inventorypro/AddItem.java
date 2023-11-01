@@ -4,20 +4,17 @@ import static java.lang.Integer.parseInt;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
 
+/**
+ * Activity to Help create Items
+ */
 public class AddItem extends AppCompatActivity {
     private EditText name;
     private EditText date;
@@ -36,6 +33,7 @@ public class AddItem extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
+        //gets values from the EditText
         name = findViewById(R.id.itemNameText);
         value = findViewById(R.id.itemValue);
         date = findViewById(R.id.itemDateText);
@@ -47,14 +45,16 @@ public class AddItem extends AppCompatActivity {
         confirmButton = findViewById(R.id.confirm_button);
         cancelButton = findViewById(R.id.cancel_button);
 
+        //calls sendItem if all inputs are valid
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(validateInput()){
-                    sendString();
+                    sendItem();
                 }
             }
         });
+        // calls cancel, if user wants to return to main activity
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,33 +63,47 @@ public class AddItem extends AppCompatActivity {
         });
     }
 
-    private void sendString(){
+    /**
+     * creates a new item from the user inputs
+     * sends the item back to the main activity
+     */
+    private void sendItem(){
+        //intent to return to main activity
         Intent sendItemIntent = new Intent(this, MainActivity.class);
 
-        ArrayList<String> itemSending = new ArrayList();
-        itemSending.add(name.getText().toString());
-        itemSending.add(value.getText().toString());
-        itemSending.add(date.getText().toString());
-        itemSending.add(make.getText().toString());
-        itemSending.add(model.getText().toString());
-        itemSending.add(serialNumber.getText().toString());
-        itemSending.add(description.getText().toString());
-        itemSending.add(comments.getText().toString());
+        //create date in LocalDate format from the user input
+        LocalDate itemDate = LocalDate.of(parseInt(date.getText().toString().substring(0,4)),parseInt(date.getText().toString().substring(5,7)),parseInt(date.getText().toString().substring(8,10)));
 
-        Toast.makeText(getBaseContext(),"Sending Data",Toast.LENGTH_LONG).show();
+        //create new input
+        Item newItem = new Item(name.getText().toString(),
+                Double.parseDouble(value.getText().toString()),
+                itemDate,
+                make.getText().toString(),
+                model.getText().toString(),
+                serialNumber.getText().toString(),
+                description.getText().toString(),
+                comments.getText().toString());
 
-        sendItemIntent.putStringArrayListExtra("new Item",  itemSending);
+
+        //sends the item back to main activity
+        sendItemIntent.putExtra("new Item", newItem);
         startActivity(sendItemIntent);
     }
+
+    /**
+     * Returns to main activity
+     */
     private void cancel(){
         Intent cancelIntent = new Intent(this, MainActivity.class);
         startActivity(cancelIntent);
     }
-    private void sendItem(Item newItem){
-        Intent sendItemIntent = new Intent(this, MainActivity.class);
-        sendItemIntent.putExtra("new Item",  newItem);
-        startActivity(sendItemIntent);
-    }
+
+    /**
+     * validate all the user inputs
+     * @return
+     * true if all inputs pass validation
+     * false otherwise
+     */
     private boolean validateInput(){
         if(name.length() == 0){
             name.setError("This field is required!");

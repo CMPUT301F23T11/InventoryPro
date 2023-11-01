@@ -55,28 +55,22 @@ public class MainActivity extends AppCompatActivity {
             itemList.add(potentialItem);
         }
     }
+
+    /**
+     * Receives New Item if created from the AddItem Fragment
+     * @return
+     * New Item if created else returns null
+     */
     private Item parseItemFromAddItemActivity(){
 
         Intent receiverIntent = getIntent();
-
-        ArrayList<String> receivedItem = receiverIntent.getStringArrayListExtra("new Item");
+        Item receivedItem = receiverIntent.getParcelableExtra("new Item");
         if(receivedItem==null) {
             return null;
         }
 
-        LocalDate itemDate = LocalDate.of(parseInt(receivedItem.get(2).toString().substring(0,4)),parseInt(receivedItem.get(2).toString().substring(5,7)),parseInt(receivedItem.get(2).toString().substring(8,10)));
-        Item newItem = new Item(receivedItem.get(0),            //name
-                Double.parseDouble(receivedItem.get(1)),        //value
-                itemDate,                                       //date
-                receivedItem.get(3).toString(),                 //make
-                receivedItem.get(4).toString(),                 //model
-                receivedItem.get(5).toString(),                 //serial number
-                receivedItem.get(6).toString(),                 //description
-                receivedItem.get(7).toString());                //comments
 
-        Toast.makeText(getBaseContext(),""+receivedItem.size(),Toast.LENGTH_LONG).show();
-
-        return newItem;
+        return receivedItem;
 
 
     }
