@@ -3,6 +3,7 @@ package com.example.inventorypro;
 import static java.lang.Integer.parseInt;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -54,6 +55,15 @@ public class MainActivity extends AppCompatActivity {
         if (potentialItem != null){
             itemList.add(potentialItem);
         }
+
+        // show sort filter dialog fragment
+        ((ImageButton)findViewById(R.id.sortFilterButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment sortFilterDialogFragment = new SortFilterDialogFragment();
+                sortFilterDialogFragment.show(getSupportFragmentManager(), "sortFilterDialogFragment");
+            }
+        });
     }
 
     /**
