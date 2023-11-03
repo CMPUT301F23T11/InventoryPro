@@ -6,17 +6,31 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Consumer;
 
 public class ItemList {
+
+    // Singleton pattern for item list. Don't need a reference to main activity anymore.
+    private static ItemList instance = null;
+    public static ItemList getInstance(){
+        return instance;
+    }
+    public static void setInstance(ItemList itemList){
+        instance = itemList;
+    }
+
     Context context;
     ListView itemListView;
     private ArrayList<Item> itemList = new ArrayList<Item>();
     private ArrayAdapter<Item> itemArrayAdapter;
     private DatabaseManager database;
+
+    private SortSettings sortSettings;
 
     // TODO: Sorting
     // TODO: Filtering
@@ -25,7 +39,7 @@ public class ItemList {
     // TODO: Apply tags to items
     // TODO: Call database management
 
-    public ItemList(Context context, ListView itemListView, DatabaseManager database) {
+    public ItemList(Context context, ListView itemListView, DatabaseManager database, @NonNull SortSettings sortSettings) {
         // save context and itemListView for later use
         this.context = context;
         this.itemListView = itemListView;
@@ -37,6 +51,8 @@ public class ItemList {
         }
 
         this.database = database;
+
+        this.sortSettings = sortSettings;
     }
 
     /**
@@ -48,8 +64,12 @@ public class ItemList {
         itemList.clear();
         itemList.addAll(items);
 
-        // TODO: re-sort the items however you wanted.
+        refresh();
+    }
 
+    // Resorts and filters items then notifies the UI to update.
+    public void refresh(){
+        sort();
         itemArrayAdapter.notifyDataSetChanged();
     }
 
@@ -84,24 +104,58 @@ public class ItemList {
     }
 
     /**
-     * Sorts and filters the list.
-     * @param applyFunction An input lambda expression with ArrayList<Item> as an argument. The input
-     *                      lambda function will call the apply function for both the Sort and Filter
-     *                      fragments which will modify the list.
+     * Sorts the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.
      */
-    public void sortAndFilter(Consumer<ArrayList<Item>> applyFunction) {
-        // create a copy of the original list
-        ArrayList<Item> itemListCopy = new ArrayList<Item>(itemList);
+    private void sort(){
+        // Sorts according to sorting settings.
 
-        // run sorting and filtering
-        if (applyFunction != null) {
-            applyFunction.accept(itemListCopy);
+        SortFragment.SortType sortType = sortSettings.getSortType();
+        SortFragment.SortOrder sortOrder = sortSettings.getSortOrder();
+
+        switch (sortType) {
+            case NONE:
+                // sort ascending or descending
+                if (sortOrder == SortFragment.SortOrder.ASCENDING) {
+                    Collections.sort(itemList, (item1, item2) -> item1.getName().compareTo(item2.getName()));
+                } else {
+                    Collections.sort(itemList, (item2, item1) -> item1.getName().compareTo(item2.getName()));
+                }
+                break;
+            case DATE:
+                // sort ascending or descending
+                if (sortOrder == SortFragment.SortOrder.ASCENDING) {
+                    Collections.sort(itemList, (item1, item2) -> item1.getLocalDate().toString().compareTo(item2.getLocalDate().toString()));
+                } else {
+                    Collections.sort(itemList, (item2, item1) -> item1.getLocalDate().toString().compareTo(item2.getLocalDate().toString()));
+                }
+                break;
+            case MAKE:
+                // sort ascending or descending
+                if (sortOrder == SortFragment.SortOrder.ASCENDING) {
+                    Collections.sort(itemList, (item1, item2) -> item1.getMake().compareTo(item2.getMake()));
+                } else {
+                    Collections.sort(itemList, (item2, item1) -> item1.getMake().compareTo(item2.getMake()));
+                }
+                break;
+            case VALUE:
+                // sort ascending or descending
+                if (sortOrder == SortFragment.SortOrder.ASCENDING) {
+                    Collections.sort(itemList, (item1, item2) -> (int) (item1.getValue() - item2.getValue()));
+                } else {
+                    Collections.sort(itemList, (item2, item1) -> (int) (item1.getValue() - item2.getValue()));
+                }
+                break;
+            case DESCRIPTION:
+                // sort ascending or descending
+                if (sortOrder == SortFragment.SortOrder.ASCENDING) {
+                    Collections.sort(itemList, (item1, item2) -> item1.getDescription().compareTo(item2.getDescription()));
+                } else {
+                    Collections.sort(itemList, (item2, item1) -> item1.getDescription().compareTo(item2.getDescription()));
+                }
+                break;
+            case TAG:
+                break;
         }
-
-        // Create new array adapter from the list copy
-        ArrayAdapter<Item> newItemArrayAdapter = new ItemArrayAdapter(context, this, itemListCopy);
-        // Set the list view to the new adapter
-        itemListView.setAdapter(newItemArrayAdapter);
     }
 
     /**
@@ -111,6 +165,11 @@ public class ItemList {
      */
     public Item get(int position) {
         return itemList.get(position);
+    }
+
+    public SortSettings getSortSettings(){return sortSettings;}
+    public void setSortSettings(SortSettings sortSettings) {
+        this.sortSettings = sortSettings;
     }
 
     /**

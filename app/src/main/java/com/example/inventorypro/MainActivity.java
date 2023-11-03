@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private ItemList itemList;
     private ArrayList<Item> dataList = new ArrayList<>();
 
     private ListView listView;
@@ -36,9 +35,14 @@ public class MainActivity extends AppCompatActivity {
         // creates test database
         database = new DatabaseManager();
 
+        // test sorting settings (these could be conceivably saved per user)
+        SortSettings sortSettings = new SortSettings();
+
         // create database connected test list
-        itemList = new ItemList(this, listView, database);
+        ItemList itemList = new ItemList(this, listView, database, sortSettings);
         database.connect("gan", itemList);
+        ItemList.setInstance(itemList);
+
 
         TextView total = findViewById(R.id.totalText);
         total.setText(String.format("$%.2f", itemList.getTotalValue()));
@@ -81,16 +85,6 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
-
         return receivedItem;
-
-
-    }
-
-    /**
-     * Get a reference to itemList
-     */
-    public ItemList getItemList() {
-        return itemList;
     }
 }

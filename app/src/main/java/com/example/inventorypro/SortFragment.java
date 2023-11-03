@@ -18,16 +18,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class SortFragment extends Fragment {
-    private ItemList itemList;
+
+    private SortSettings sortSettings;
+    public SortSettings getSortSettings(){
+        return sortSettings;
+    }
 
     // Store settings for ascending or descending
-    private enum SortOrder {
+    public enum SortOrder {
         ASCENDING,
         DESCENDING
     }
-    private SortOrder sortOrder = SortOrder.ASCENDING;
     // Store settings for sort type
-    private enum SortType {
+    public enum SortType {
         NONE,
         DATE,
         MAKE,
@@ -35,7 +38,6 @@ public class SortFragment extends Fragment {
         DESCRIPTION,
         TAG
     }
-    private SortType sortType = SortType.NONE;
 
     @Nullable
     @Override
@@ -45,11 +47,7 @@ public class SortFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
-        // Get itemList from main activity
-        MainActivity mainActivity = (MainActivity) getActivity();
-        if (mainActivity != null) {
-            itemList = mainActivity.getItemList();
-        }
+        sortSettings = ItemList.getInstance().getSortSettings();
 
         // Add functionality to radioGroup (sort type checkboxes)
         RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.sortType);
@@ -57,22 +55,22 @@ public class SortFragment extends Fragment {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedID) {
                 if (checkedID == R.id.sortNone) {
-                    sortType = SortType.NONE;
+                    sortSettings.setSortType(SortType.NONE);
                 } else if (checkedID == R.id.sortDate) {
-                    sortType = SortType.DATE;
+                    sortSettings.setSortType(SortType.DATE);
                 } else if (checkedID == R.id.sortMake) {
-                    sortType = SortType.MAKE;
+                    sortSettings.setSortType(SortType.MAKE);
                 } else if (checkedID == R.id.sortValue) {
-                    sortType = SortType.VALUE;
+                    sortSettings.setSortType(SortType.VALUE);
                 } else if (checkedID == R.id.sortDescription) {
-                    sortType = SortType.DESCRIPTION;
+                    sortSettings.setSortType(SortType.DESCRIPTION);
                 } else if (checkedID == R.id.sortTag) {
-                    sortType = SortType.TAG;
+                    sortSettings.setSortType(SortType.TAG);
                 }
             }
         });
         // Set value of radioGroup to current setting
-        switch (sortType) {
+        switch (sortSettings.getSortType()) {
             case NONE:
                 radioGroup.check(R.id.sortNone);
                 break;
@@ -104,7 +102,7 @@ public class SortFragment extends Fragment {
                 ascButton.setTextColor(Color.WHITE);
                 desButton.setBackgroundResource(R.drawable.button_outline);
                 desButton.setTextColor(primaryColor);
-                sortOrder = SortOrder.ASCENDING;
+                sortSettings.setSortOrder(SortOrder.ASCENDING);
             }
         });
         desButton.setOnClickListener(new View.OnClickListener() {
@@ -114,11 +112,11 @@ public class SortFragment extends Fragment {
                 desButton.setTextColor(Color.WHITE);
                 ascButton.setBackgroundResource(R.drawable.button_outline);
                 ascButton.setTextColor(primaryColor);
-                sortOrder = SortOrder.DESCENDING;
+                sortSettings.setSortOrder(SortOrder.DESCENDING);
             }
         });
         // set button based on settings
-        switch (sortOrder) {
+        switch (sortSettings.getSortOrder()) {
             case ASCENDING:
                 ascButton.callOnClick();
                 break;
@@ -129,64 +127,9 @@ public class SortFragment extends Fragment {
     }
 
     /**
-     * Applies all the sorting settings to the items list view
-     * @param itemListCopy a list of items that can be modified by this function. This list will
-     *                     then be displayed (done in a different function).
-     */
-    public void apply(ArrayList<Item> itemListCopy) {
-        // sort based on the sort type saved
-        switch (sortType) {
-            case NONE:
-                // sort ascending or descending
-                if (sortOrder == SortOrder.ASCENDING) {
-                    Collections.sort(itemListCopy, (item1, item2) -> item1.getName().compareTo(item2.getName()));
-                } else {
-                    Collections.sort(itemListCopy, (item2, item1) -> item1.getName().compareTo(item2.getName()));
-                }
-                break;
-            case DATE:
-                // sort ascending or descending
-                if (sortOrder == SortOrder.ASCENDING) {
-                    Collections.sort(itemListCopy, (item1, item2) -> item1.getLocalDate().toString().compareTo(item2.getLocalDate().toString()));
-                } else {
-                    Collections.sort(itemListCopy, (item2, item1) -> item1.getLocalDate().toString().compareTo(item2.getLocalDate().toString()));
-                }
-                break;
-            case MAKE:
-                // sort ascending or descending
-                if (sortOrder == SortOrder.ASCENDING) {
-                    Collections.sort(itemListCopy, (item1, item2) -> item1.getMake().compareTo(item2.getMake()));
-                } else {
-                    Collections.sort(itemListCopy, (item2, item1) -> item1.getMake().compareTo(item2.getMake()));
-                }
-                break;
-            case VALUE:
-                // sort ascending or descending
-                if (sortOrder == SortOrder.ASCENDING) {
-                    Collections.sort(itemListCopy, (item1, item2) -> (int)(item1.getValue() - item2.getValue()));
-                } else {
-                    Collections.sort(itemListCopy, (item2, item1) -> (int)(item1.getValue() - item2.getValue()));
-                }
-                break;
-            case DESCRIPTION:
-                // sort ascending or descending
-                if (sortOrder == SortOrder.ASCENDING) {
-                    Collections.sort(itemListCopy, (item1, item2) -> item1.getDescription().compareTo(item2.getDescription()));
-                } else {
-                    Collections.sort(itemListCopy, (item2, item1) -> item1.getDescription().compareTo(item2.getDescription()));
-                }
-                break;
-            case TAG:
-                break;
-        }
-    }
-
-    /**
      * Resets all the sorting settings to default
      */
     public void clear() {
-        // TODO: Reset the settings
-        // This method is already called from the SortFilterDialogFragment when clear is clicked
-        // This should reset all settings to default
+        sortSettings = new SortSettings();
     }
 }
