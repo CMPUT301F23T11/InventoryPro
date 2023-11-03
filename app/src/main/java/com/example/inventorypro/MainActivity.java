@@ -1,12 +1,14 @@
 package com.example.inventorypro;
 
 import static java.lang.Integer.parseInt;
+import static java.security.AccessController.getContext;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -36,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         // create database connected test list
         itemList = new ItemList(this, listView, database);
-        database.connect("testUserID", itemList);
+        database.connect("gan", itemList);
 
         TextView total = findViewById(R.id.totalText);
         total.setText(String.format("$%.2f", itemList.getTotalValue()));

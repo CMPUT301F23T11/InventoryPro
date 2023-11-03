@@ -2,50 +2,62 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
         android:orientation="horizontal"
+        android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/itemImage"
-            android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_launcher_background" />
+            android:layout_gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/itemImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/baseline_image"
+                app:layout_constraintDimensionRatio="H,1:1" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_weight=".9"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/itemNameText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Item Name"
-                android:textSize="@dimen/large_text_size"/>
+                android:lines="1"
+                android:textSize="@dimen/large_text_size" />
 
             <TextView
                 android:id="@+id/serialNumberText"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SN-056345"
-                android:textSize="@dimen/medium_text_size"/>
+                android:textSize="@dimen/medium_text_size" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/itemMakeText"
@@ -53,6 +65,11 @@
                 android:layout_height="wrap_content"
                 android:text="Make-123"
                 android:textSize="@dimen/medium_text_size" />
+
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="4dp" />
 
             <TextView
                 android:id="@+id/itemModelText"
@@ -66,21 +83,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/itemCostText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="$5000"
-                android:textSize="@dimen/medium_text_size" />
+                android:textSize="@dimen/large_text_size" />
 
             <TextView
                 android:id="@+id/itemDateText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="2023/10/26"
-                android:textSize="@dimen/medium_text_size" />
+                android:textSize="@dimen/small_text_size" />
         </LinearLayout>
 
     </LinearLayout>
