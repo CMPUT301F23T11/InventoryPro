@@ -84,4 +84,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    /**
+     * Get a reference to itemList
+     */
+    public ItemList getItemList() {
+        return itemList;
+    }
 }
