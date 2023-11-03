@@ -32,7 +32,7 @@ public class ItemArrayAdapter extends ArrayAdapter<Item> {
         }
 
         // Get TextView objects
-        Item item = itemList.get(position);
+        Item item = getItem(position);
         TextView name = view.findViewById(R.id.itemNameText);
         TextView value = view.findViewById(R.id.itemCostText);
         TextView date = view.findViewById(R.id.itemDateText);
