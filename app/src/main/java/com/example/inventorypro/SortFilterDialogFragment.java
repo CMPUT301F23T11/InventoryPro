@@ -20,7 +20,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import java.util.ArrayList;
+
 public class SortFilterDialogFragment extends DialogFragment {
+    private ItemList itemList;
     private SortFragment sortFragment = new SortFragment();
     private FilterFragment filterFragment = new FilterFragment();
 
@@ -34,6 +37,12 @@ public class SortFilterDialogFragment extends DialogFragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
+        // Get itemList from main activity
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (mainActivity != null) {
+            itemList = mainActivity.getItemList();
+        }
+
         // view sort fragment after view is created
         switchToSort();
 
@@ -86,8 +95,15 @@ public class SortFilterDialogFragment extends DialogFragment {
         applyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sortFragment.apply();
-                filterFragment.apply();
+                // call sortAndFilter in itemList. Between the creation of a new item list, and when
+                // that list is displayed, the newly created item list is given so it can be modified
+                // by the apply functions.
+                itemList.sortAndFilter((ArrayList<Item> itemListCopy) -> {
+                    filterFragment.apply(itemListCopy);
+                    sortFragment.apply(itemListCopy);
+                });
+
+                // close sorting view
                 dismiss();
             }
         });
