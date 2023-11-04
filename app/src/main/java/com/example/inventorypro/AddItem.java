@@ -131,10 +131,20 @@ public class AddItem extends AppCompatActivity {
             date.setError("Enter (YYYY-MM-DD)!");
             return false;
         } else if(parseInt(date.getEditText().getText().toString().substring(8))<1 || parseInt(date.getEditText().getText().toString().substring(8)) > 30) {
-            List<Integer> thirtyDaymonths = new ArrayList<>(Arrays.asList(2,4,6,9,11));
+            List<Integer> thirtyDaymonths = new ArrayList<>(Arrays.asList(4,6,9,11));
             if (thirtyDaymonths.contains(parseInt(date.getEditText().getText().toString().substring(5,7)))){
                 date.setError("Enter (YYYY-MM-DD)!");
-                return false;}
+                return false;
+            }
+        } else if(parseInt(date.getEditText().getText().toString().substring(8))<1 || parseInt(date.getEditText().getText().toString().substring(8)) > 29) {
+
+            if (parseInt(date.getEditText().getText().toString().substring(5,7)) == 2){
+                date.setError("Enter (YYYY-MM-DD)!");
+                return false;
+            }
+
+
+
         }
 
         if(value.getEditText().length() == 0){
