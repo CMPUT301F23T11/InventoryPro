@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,7 @@ public class ItemArrayAdapter extends ArrayAdapter<Item> {
 
         // Get TextView objects
         Item item = getItem(position);
+        CheckBox checkbox = view.findViewById(R.id.checkbox);
         TextView name = view.findViewById(R.id.itemNameText);
         TextView value = view.findViewById(R.id.itemCostText);
         TextView date = view.findViewById(R.id.itemDateText);
@@ -42,11 +44,19 @@ public class ItemArrayAdapter extends ArrayAdapter<Item> {
 
         // Set TextView objects text
         name.setText(item.getName());
+        checkbox.setChecked(item.isSelected());
         value.setText(String.format("$%.2f", item.getValue()));
         date.setText(item.getDate().toString());
         make.setText(item.getMake());
         model.setText(item.getModel());
         serialNumber.setText(item.getSerialNumber());
+
+        checkbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                item.setSelected(checkbox.isChecked());
+            }
+        });
 
         return view;
     }
