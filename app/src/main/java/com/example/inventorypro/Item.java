@@ -25,6 +25,7 @@ public class Item implements Parcelable {
     private String serialNumber;
     private String description;
     private String comment;
+    private boolean selected;
 
     // TODO: images
     // TODO: tags
@@ -166,6 +167,13 @@ public class Item implements Parcelable {
     }
     public void setComment(String comment) {
         this.comment = comment;
+    }
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     /**

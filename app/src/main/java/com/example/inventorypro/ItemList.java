@@ -31,15 +31,15 @@ public class ItemList {
     private DatabaseManager database;
 
     private SortSettings sortSettings;
+    private FilterSettings filterSettings;
 
-    // TODO: Sorting
-    // TODO: Filtering
     // TODO: Find by barcode
     // TODO: Find by tag
     // TODO: Apply tags to items
     // TODO: Call database management
 
-    public ItemList(Context context, ListView itemListView, DatabaseManager database, @NonNull SortSettings sortSettings) {
+    public ItemList(Context context, ListView itemListView, DatabaseManager database,
+                    @NonNull SortSettings sortSettings,@NonNull FilterSettings filterSettings) {
         // save context and itemListView for later use
         this.context = context;
         this.itemListView = itemListView;
@@ -53,6 +53,7 @@ public class ItemList {
         this.database = database;
 
         this.sortSettings = sortSettings;
+        this.filterSettings = filterSettings;
     }
 
     /**
@@ -101,6 +102,14 @@ public class ItemList {
         if (database != null){
             database.removeItem(item);
         }
+    }
+    /**
+     * Gets the item list of an ItemList object
+     * @return
+     * Returns the item list for a specific ItemList object
+     */
+    public ArrayList<Item> getItemList() {
+        return itemList;
     }
 
     /**
@@ -157,6 +166,9 @@ public class ItemList {
                 break;
         }
     }
+    private void filter(){
+
+    }
 
     /**
      * Gets an item at a position.
@@ -170,6 +182,13 @@ public class ItemList {
     public SortSettings getSortSettings(){return sortSettings;}
     public void setSortSettings(SortSettings sortSettings) {
         this.sortSettings = sortSettings;
+    }
+
+    public FilterSettings getFilterSettings() {
+        return filterSettings;
+    }
+    public void setFilterSettings(FilterSettings filterSettings) {
+        this.filterSettings = filterSettings;
     }
 
     /**
