@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
+
 public class FilterFragment extends Fragment {
     // TODO: Add class variables to store settings
 
@@ -25,8 +27,10 @@ public class FilterFragment extends Fragment {
 
     /**
      * Applies all the filter settings to the items list view
+     * @param itemListCopy a list of items that can be modified by this function. This list will
+     *                     then be displayed (done in a different function).
      */
-    public void apply() {
+    public void apply(ArrayList<Item> itemListCopy) {
         // TODO: Change filtered items in list
         // This method is already called from the SortFilterDialogFragment when apply is clicked
         // Make sure that this method will actually change the viewed item list when this is called
