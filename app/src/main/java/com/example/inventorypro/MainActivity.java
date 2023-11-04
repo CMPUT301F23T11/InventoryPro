@@ -19,8 +19,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private ArrayList<Item> dataList = new ArrayList<>();
-
     private ListView listView;
     private DatabaseManager database;
 
