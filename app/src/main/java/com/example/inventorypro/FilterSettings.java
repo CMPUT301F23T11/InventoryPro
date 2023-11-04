@@ -24,6 +24,46 @@ public class FilterSettings {
         this(null,null,null,null,null);
     }
 
+    public LocalDate getFrom() {
+        return from;
+    }
+
+    public void setFrom(LocalDate from) {
+        this.from = from;
+    }
+
+    public LocalDate getTo() {
+        return to;
+    }
+
+    public void setTo(LocalDate to) {
+        this.to = to;
+    }
+
+    public ArrayList<String> getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(ArrayList<String> keywords) {
+        this.keywords = keywords;
+    }
+
+    public ArrayList<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(ArrayList<String> tags) {
+        this.tags = tags;
+    }
+
+    public ArrayList<String> getMakes() {
+        return makes;
+    }
+
+    public void setMakes(ArrayList<String> makes) {
+        this.makes = makes;
+    }
+
     public Boolean itemSatisfiesFilter(@NonNull Item item){
         if(from != null && item.getLocalDate().isBefore(from)){
             return Boolean.FALSE;

@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+//TODO: preserve filter settings and sort settings of the MainActivity
+// might justify putting these into some user preferences static object.
+
 /**
  * Activity to Help create Items
  */

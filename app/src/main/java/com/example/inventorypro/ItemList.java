@@ -66,6 +66,8 @@ public class ItemList {
 
     // Resorts and filters items then notifies the UI to update.
     public void refresh(){
+        if(itemArrayAdapter == null) return;
+
         filter();
         sort();
         itemArrayAdapter.notifyDataSetChanged();
@@ -84,6 +86,8 @@ public class ItemList {
         if (database != null){
             database.addItem(item);
         }
+
+        refresh(); //inefficient
     }
 
     /**
@@ -99,6 +103,8 @@ public class ItemList {
         if (database != null){
             database.removeItem(item);
         }
+
+        refresh(); //inefficient
     }
     /**
      * Gets the item list of an ItemList object

@@ -92,6 +92,9 @@ public class SortFilterDialogFragment extends DialogFragment {
                 SortSettings sortSettings = sortFragment.getSortSettings();
                 ItemList.getInstance().setSortSettings(sortSettings);
 
+                FilterSettings filterSettings = filterFragment.getFilterSettings();
+                ItemList.getInstance().setFilterSettings(filterSettings);
+
                 // Tell the item list to refresh itself (filter/sort then update ui).
                 ItemList.getInstance().refresh();
 
