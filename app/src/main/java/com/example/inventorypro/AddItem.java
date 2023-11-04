@@ -76,7 +76,7 @@ public class AddItem extends AppCompatActivity {
         Intent sendItemIntent = new Intent(this, MainActivity.class);
 
         //create date in LocalDate format from the user input
-        LocalDate itemDate = LocalDate.of(parseInt(date.getEditText().getText().toString().substring(0,4)),parseInt(date.getEditText().getText().toString().substring(5,7)),parseInt(date.getEditText().getText().toString().substring(8,10)));
+        LocalDate itemDate = Helpers.ParseDate(date.getEditText().getText().toString());
 
         //create new input
         Item newItem = new Item(name.getEditText().getText().toString(),
