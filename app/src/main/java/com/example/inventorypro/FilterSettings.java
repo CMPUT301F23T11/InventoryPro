@@ -1,5 +1,7 @@
 package com.example.inventorypro;
 
+import androidx.annotation.NonNull;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -20,5 +22,27 @@ public class FilterSettings {
 
     public FilterSettings() {
         this(null,null,null,null,null);
+    }
+
+    public Boolean ItemSatisfiesFilter(@NonNull Item item){
+        if(from != null && item.getLocalDate().isBefore(from)){
+            return Boolean.FALSE;
+        }
+        if(to != null && item.getLocalDate().isAfter(to)){
+            return Boolean.FALSE;
+        }
+        if(keywords != null){
+            Boolean hasOne = Boolean.FALSE;
+            for (String w : keywords){
+                if(item.getDescription().toLowerCase().contains(w.toLowerCase())){
+                    hasOne = Boolean.TRUE;
+                    break;
+                }
+            }
+            if(!hasOne) return Boolean.FALSE;
+        }
+        //TODO
+
+        return Boolean.TRUE;
     }
 }

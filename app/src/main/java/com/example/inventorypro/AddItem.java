@@ -6,8 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -49,6 +51,8 @@ public class AddItem extends AppCompatActivity {
         confirmButton = findViewById(R.id.confirm_button);
         cancelButton = findViewById(R.id.cancel_button);
 
+        date.getEditText().setText(LocalDate.now().toString());
+
         //calls sendItem if all inputs are valid
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,23 +76,23 @@ public class AddItem extends AppCompatActivity {
      * sends the item back to the main activity
      */
     private void sendItem(){
-        //intent to return to main activity
-        Intent sendItemIntent = new Intent(this, MainActivity.class);
-
         //create date in LocalDate format from the user input
         LocalDate itemDate = Helpers.ParseDate(date.getEditText().getText().toString());
 
         //create new input
-        Item newItem = new Item(name.getEditText().getText().toString(),
+        Item newItem = new Item(
+                name.getEditText().getText().toString(),
                 Double.parseDouble(value.getEditText().getText().toString()),
                 itemDate,
                 make.getEditText().getText().toString(),
                 model.getEditText().getText().toString(),
                 serialNumber.getEditText().getText().toString(),
                 description.getEditText().getText().toString(),
-                comments.getEditText().getText().toString());
+                comments.getEditText().getText().toString(),
+                null);
 
-
+        //intent to return to main activity
+        Intent sendItemIntent = new Intent(this, MainActivity.class);
         //sends the item back to main activity
         sendItemIntent.putExtra("new Item", newItem);
         startActivity(sendItemIntent);

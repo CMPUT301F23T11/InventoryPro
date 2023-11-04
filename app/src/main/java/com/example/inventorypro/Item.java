@@ -12,12 +12,15 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoField;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Item implements Parcelable {
     private String name;
     private Double value;
     private Long date; // Allows date to be serialized and deserialized by Firestore (also easier to query database).
-    private String make;
+    private String make; // uid reference to make.
     private String model;
 
     // This is String type so it can be any length, and sometimes serial numbers
@@ -25,7 +28,10 @@ public class Item implements Parcelable {
     private String serialNumber;
     private String description;
     private String comment;
-    private boolean selected;
+
+    private List<String> tags; // uid reference to tag
+
+    private boolean selected; // TODO: this shouldn't be here ideally.
 
     // TODO: images
     // TODO: tags
@@ -53,7 +59,8 @@ public class Item implements Parcelable {
                 String model,
                 String serialNumber,
                 String description,
-                String comment) {
+                String comment,
+                List<String> tags) {
         this.name = name;
         this.value = value;
         setLocalDate(date);
@@ -62,6 +69,11 @@ public class Item implements Parcelable {
         this.serialNumber = serialNumber;
         this.description = description;
         this.comment = comment;
+        if (tags == null){
+            this.tags = Arrays.asList();
+        }else{
+            this.tags= tags;
+        }
     }
 
     protected Item(Parcel in) {
@@ -81,6 +93,10 @@ public class Item implements Parcelable {
         serialNumber = in.readString();
         description = in.readString();
         comment = in.readString();
+
+        // rebuild array
+        // this.tags = new String[in.readInt()];
+        this.tags = in.createStringArrayList();
     }
 
     public static final Creator<Item> CREATOR = new Creator<Item>() {
@@ -168,12 +184,22 @@ public class Item implements Parcelable {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    @Exclude
     public boolean isSelected() {
         return selected;
     }
-
+    @Exclude
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 
     /**
@@ -210,5 +236,8 @@ public class Item implements Parcelable {
         dest.writeString(serialNumber);
         dest.writeString(description);
         dest.writeString(comment);
+        // store length to reconstruct array
+        // dest.writeInt(this.tags.length);
+        dest.writeStringList(this.tags);
     }
 }
