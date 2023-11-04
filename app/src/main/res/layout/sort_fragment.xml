@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sort:"
+            android:textAlignment="center"
+            android:textSize="@dimen/large_text_size"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <RadioGroup
+            android:id="@+id/sortType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp">
+
+            <RadioButton
+                android:id="@+id/sortNone"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginVertical="5dp"
+                android:text="None"
+                android:background="@drawable/input_field_round"/>
+
+            <RadioButton
+                android:id="@+id/sortDate"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginVertical="5dp"
+                android:text="Date"
+                android:background="@drawable/input_field_round"/>
+
+            <RadioButton
+                android:id="@+id/sortMake"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginVertical="5dp"
+                android:text="Make"
+                android:background="@drawable/input_field_round"/>
+
+            <RadioButton
+                android:id="@+id/sortValue"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginVertical="5dp"
+                android:text="Value"
+                android:background="@drawable/input_field_round"/>
+
+            <RadioButton
+                android:id="@+id/sortDescription"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginVertical="5dp"
+                android:text="Description"
+                android:background="@drawable/input_field_round"/>
+
+            <RadioButton
+                android:id="@+id/sortTag"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginVertical="5dp"
+                android:text="Tag"
+                android:background="@drawable/input_field_round"/>
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/ascendingButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Ascending"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:background="@drawable/button_filled"
+                android:layout_weight="1"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/descendingButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Descending"
+                android:textSize="18sp"
+                android:textColor="@color/primary"
+                android:background="@drawable/button_outline"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

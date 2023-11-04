@@ -1,5 +1,10 @@
 package com.example.inventorypro;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import com.google.firebase.firestore.Exclude;
 
 import java.math.BigDecimal;
@@ -8,7 +13,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoField;
 
-public class Item {
+public class Item implements Parcelable {
     private String name;
     private Double value;
     private Long date; // Allows date to be serialized and deserialized by Firestore (also easier to query database).
@@ -58,6 +63,37 @@ public class Item {
         this.description = description;
         this.comment = comment;
     }
+
+    protected Item(Parcel in) {
+        name = in.readString();
+        if (in.readByte() == 0) {
+            value = null;
+        } else {
+            value = in.readDouble();
+        }
+        if (in.readByte() == 0) {
+            date = null;
+        } else {
+            date = in.readLong();
+        }
+        make = in.readString();
+        model = in.readString();
+        serialNumber = in.readString();
+        description = in.readString();
+        comment = in.readString();
+    }
+
+    public static final Creator<Item> CREATOR = new Creator<Item>() {
+        @Override
+        public Item createFromParcel(Parcel in) {
+            return new Item(in);
+        }
+
+        @Override
+        public Item[] newArray(int size) {
+            return new Item[size];
+        }
+    };
 
     public String getName() {
         return name;
@@ -147,5 +183,32 @@ public class Item {
     @Exclude
     public String getUID(){
         return name;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(name);
+        if (value == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(value);
+        }
+        if (date == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(date);
+        }
+        dest.writeString(make);
+        dest.writeString(model);
+        dest.writeString(serialNumber);
+        dest.writeString(description);
+        dest.writeString(comment);
     }
 }

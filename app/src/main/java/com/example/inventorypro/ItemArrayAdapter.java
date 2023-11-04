@@ -33,7 +33,7 @@ public class ItemArrayAdapter extends ArrayAdapter<Item> {
         }
 
         // Get TextView objects
-        Item item = itemList.get(position);
+        Item item = getItem(position);
         CheckBox checkbox = view.findViewById(R.id.checkbox);
         TextView name = view.findViewById(R.id.itemNameText);
         TextView value = view.findViewById(R.id.itemCostText);

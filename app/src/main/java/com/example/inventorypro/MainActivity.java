@@ -1,7 +1,11 @@
 package com.example.inventorypro;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static java.lang.Integer.parseInt;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,15 +19,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoField;
-
-import kotlin.random.Random;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private ItemList itemList;
+    private ArrayList<Item> dataList = new ArrayList<>();
+
     private ListView listView;
-    private ItemArrayAdapter itemArrayAdapter;
     private ImageButton deleteButton;
     private DatabaseManager database;
 
@@ -45,28 +47,6 @@ public class MainActivity extends AppCompatActivity {
         itemList = new ItemList(this, listView, database);
         database.connect("testUserID", itemList);
 
-        itemArrayAdapter = new ItemArrayAdapter(this, itemList, itemList.getItemList());
-        listView.setAdapter(itemArrayAdapter);
-
-        // add items to test list
-        Item item1 = new Item("Item1", 12.36, LocalDate.of(2023, 9, 12), "make1", "model1", "SN-12345", "Description description", "Comment comment");
-        Item item2 = new Item("Item2", 8.5, LocalDate.of(2023, 9, 17), "make2", "model2", "SN-23456", "This is a description", "This is a comment");
-        Item item3 = new Item("Item3", 7.97, LocalDate.of(2023, 10, 8), "make3", "model3", "SN-34567", "Another description", null);
-        itemList.add(item1);
-        itemList.add(item2);
-        itemList.add(item3);
-        
-
-
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteSelectedItems();
-            }
-        });
-        // removes item from test list
-        itemList.remove(item3);
-
         TextView total = findViewById(R.id.totalText);
         total.setText(String.format("$%.2f", itemList.getTotalValue()));
 
@@ -74,9 +54,30 @@ public class MainActivity extends AppCompatActivity {
         ((ImageButton)findViewById(R.id.addButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                itemList.remove(item1);
-                item1.setName("Item"+Random.Default.nextInt());
-                itemList.add(item1);
+                Intent addItemIntent = new Intent(getBaseContext(), AddItem.class);
+                startActivity(addItemIntent);
+            }
+        });
+
+        // Try to get new item from intent.
+        Item potentialItem = parseItemFromAddItemActivity();
+        if (potentialItem != null){
+            itemList.add(potentialItem);
+        }
+
+        // show sort filter dialog fragment
+        ((ImageButton)findViewById(R.id.sortFilterButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment sortFilterDialogFragment = new SortFilterDialogFragment();
+                sortFilterDialogFragment.show(getSupportFragmentManager(), "sortFilterDialogFragment");
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteSelectedItems();
             }
         });
     }
@@ -84,18 +85,13 @@ public class MainActivity extends AppCompatActivity {
      * Deletes all the selected items from the listview as well as the database and updates the total value accordingly.
      */
     private void deleteSelectedItems() {
-        ArrayList<Item> itemsToRemove = new ArrayList<>();
-        for (Item item : itemList.getItemList()) {
+        // TODO: there might be a better way to do this down the line.
+        ArrayList<Item> copy = new ArrayList<>(itemList.getItemList());
+        for (Item item : copy) {
             if (item.isSelected()) {
-                itemsToRemove.add(item);
+                itemList.remove(item);
             }
         }
-        itemList.getItemList().removeAll(itemsToRemove);
-        // Remove selected items from the database
-        for (Item item : itemsToRemove) {
-            database.removeItem(item);
-        }
-        itemArrayAdapter.notifyDataSetChanged();
 
         TextView total = findViewById(R.id.totalText);
         total.setText(String.format("$%.2f", itemList.getTotalValue()));
@@ -106,5 +102,31 @@ public class MainActivity extends AppCompatActivity {
             total+=item.getValue();
         }
         return total;
+    }
+
+    /**
+     * Receives New Item if created from the AddItem Fragment
+     * @return
+     * New Item if created else returns null
+     */
+    private Item parseItemFromAddItemActivity(){
+
+        Intent receiverIntent = getIntent();
+        Item receivedItem = receiverIntent.getParcelableExtra("new Item");
+        if(receivedItem==null) {
+            return null;
+        }
+
+
+        return receivedItem;
+
+
+    }
+
+    /**
+     * Get a reference to itemList
+     */
+    public ItemList getItemList() {
+        return itemList;
     }
 }

@@ -8,8 +8,12 @@ import android.widget.Toast;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.function.Consumer;
 
 public class ItemList {
+    Context context;
+    ListView itemListView;
     private ArrayList<Item> itemList = new ArrayList<Item>();
     private ArrayAdapter<Item> itemArrayAdapter;
     private DatabaseManager database;
@@ -22,6 +26,10 @@ public class ItemList {
     // TODO: Call database management
 
     public ItemList(Context context, ListView itemListView, DatabaseManager database) {
+        // save context and itemListView for later use
+        this.context = context;
+        this.itemListView = itemListView;
+
         // setup list view
         if (context != null && itemListView != null) {
             itemArrayAdapter = new ItemArrayAdapter(context, this, itemList);
@@ -81,6 +89,27 @@ public class ItemList {
      */
     public ArrayList<Item> getItemList() {
         return itemList;
+    }
+
+    /**
+     * Sorts and filters the list.
+     * @param applyFunction An input lambda expression with ArrayList<Item> as an argument. The input
+     *                      lambda function will call the apply function for both the Sort and Filter
+     *                      fragments which will modify the list.
+     */
+    public void sortAndFilter(Consumer<ArrayList<Item>> applyFunction) {
+        // create a copy of the original list
+        ArrayList<Item> itemListCopy = new ArrayList<Item>(itemList);
+
+        // run sorting and filtering
+        if (applyFunction != null) {
+            applyFunction.accept(itemListCopy);
+        }
+
+        // Create new array adapter from the list copy
+        ArrayAdapter<Item> newItemArrayAdapter = new ItemArrayAdapter(context, this, itemListCopy);
+        // Set the list view to the new adapter
+        itemListView.setAdapter(newItemArrayAdapter);
     }
 
     /**
