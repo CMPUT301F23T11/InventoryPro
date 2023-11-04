@@ -1,17 +1,13 @@
 package com.example.inventorypro;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.function.Consumer;
 
 public class ItemList {
 
@@ -70,6 +66,7 @@ public class ItemList {
 
     // Resorts and filters items then notifies the UI to update.
     public void refresh(){
+        filter();
         sort();
         itemArrayAdapter.notifyDataSetChanged();
     }
@@ -167,7 +164,14 @@ public class ItemList {
         }
     }
     private void filter(){
-
+        ArrayList<Item> filteredItems = new ArrayList<>();
+        for (Item i : itemList){
+            if(filterSettings.itemSatisfiesFilter(i)){
+                filteredItems.add(i);
+            }
+        }
+        itemList.clear();
+        itemList.addAll(filteredItems);
     }
 
     /**

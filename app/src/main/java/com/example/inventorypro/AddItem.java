@@ -6,10 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -77,7 +75,7 @@ public class AddItem extends AppCompatActivity {
      */
     private void sendItem(){
         //create date in LocalDate format from the user input
-        LocalDate itemDate = Helpers.ParseDate(date.getEditText().getText().toString());
+        LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
 
         //create new input
         Item newItem = new Item(
