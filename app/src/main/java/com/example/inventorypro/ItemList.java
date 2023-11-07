@@ -64,7 +64,9 @@ public class ItemList {
         refresh();
     }
 
-    // Resorts and filters items then notifies the UI to update.
+    /**
+     * Resorts and filters items then notifies the UI to update.
+     */
     public void refresh(){
         if(itemArrayAdapter == null) return;
 
@@ -110,6 +112,7 @@ public class ItemList {
 
         refresh(); //inefficient
     }
+
     /**
      * Gets the item list of an ItemList object
      * @return
@@ -173,6 +176,10 @@ public class ItemList {
                 break;
         }
     }
+
+    /**
+     * Filters the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.
+     */
     private void filter(){
         ArrayList<Item> filteredItems = new ArrayList<>();
         for (Item i : itemList){

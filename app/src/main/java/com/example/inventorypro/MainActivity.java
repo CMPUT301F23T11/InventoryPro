@@ -84,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
         refreshTotalText();
     }
 
+    /**
+     * Refreshes the UI with the calculated new total value for all items.
+     */
     public void refreshTotalText(){
         TextView total = findViewById(R.id.totalText);
         total.setText(String.format("$%.2f", ItemList.getInstance().getTotalValue()));

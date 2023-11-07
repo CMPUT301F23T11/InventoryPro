@@ -5,6 +5,9 @@ import androidx.annotation.NonNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/**
+ * The FilterSettings contain all of the settings data required to perform filtering on the item list.
+ */
 public class FilterSettings {
 
     private LocalDate from, to;
