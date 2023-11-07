@@ -49,14 +49,13 @@ public class AddItem extends AppCompatActivity {
         confirmButton = findViewById(R.id.confirm_button);
         cancelButton = findViewById(R.id.cancel_button);
 
-        String uid = getIntent().getExtras().getString("uid");
 
         //calls sendItem if all inputs are valid
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(validateInput()){
-                    sendItem(uid);
+                    sendItem();
                 }
             }
         });
@@ -73,7 +72,7 @@ public class AddItem extends AppCompatActivity {
      * creates a new item from the user inputs
      * sends the item back to the main activity
      */
-    private void sendItem(String uid){
+    private void sendItem(){
         //intent to return to main activity
         Intent sendItemIntent = new Intent(this, MainActivity.class);
 
@@ -93,7 +92,7 @@ public class AddItem extends AppCompatActivity {
 
         //sends the item back to main activity
         sendItemIntent.putExtra("new Item", newItem);
-        sendItemIntent.putExtra("uid", uid);
+        sendItemIntent.putExtra(getString(R.string.user_id_token), getUserIdFromIntent());
         startActivity(sendItemIntent);
     }
 
@@ -155,5 +154,19 @@ public class AddItem extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Extracts user id from intent
+     * @return unique google id token if exists null otherwise
+     */
+    private String getUserIdFromIntent() {
+        Intent intent = getIntent();
+        String userIdToken = getString(R.string.user_id_token);
+        if (intent.hasExtra(userIdToken)) {
+            return intent.getExtras().getString(userIdToken);
+        }
+
+        return null;
     }
 }

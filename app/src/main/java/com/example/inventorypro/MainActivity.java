@@ -41,17 +41,15 @@ public class MainActivity extends AppCompatActivity {
         deleteButton = findViewById(R.id.deleteButton);
         profileButton = findViewById(R.id.profileButton);
 
-        // creates test database
-        database = new DatabaseManager();
-
         // test sorting settings (these could be conceivably saved per user)
         SortSettings sortSettings = new SortSettings();
         FilterSettings filterSettings = new FilterSettings();
 
+        // creates test database
+        database = new DatabaseManager();
         // create database connected test list
         ItemList itemList = new ItemList(this, listView, database, sortSettings,filterSettings);
-        String uid = getIntent().getExtras().getString("uid");
-        database.connect(uid, itemList);
+        database.connect(getUserIdFromIntent(), itemList);
         ItemList.setInstance(itemList);
 
 
@@ -63,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent addItemIntent = new Intent(getBaseContext(), AddItem.class);
-                addItemIntent.putExtra("uid", uid);
+                addItemIntent.putExtra(getString(R.string.user_id_token), getUserIdFromIntent());
                 startActivity(addItemIntent);
             }
         });
@@ -136,5 +134,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return receivedItem;
+    }
+
+    /**
+     * Extracts user id from intent
+     * @return unique google id token if exists null otherwise
+     */
+    private String getUserIdFromIntent() {
+        Intent intent = getIntent();
+        String userIdToken = getString(R.string.user_id_token);
+        if (intent.hasExtra(userIdToken)) {
+            return intent.getExtras().getString(userIdToken);
+        }
+
+        return null;
     }
 }

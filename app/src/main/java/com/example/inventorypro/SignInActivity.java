@@ -48,8 +48,8 @@ public class SignInActivity extends AppCompatActivity {
         oneTapClient = Identity.getSignInClient(this);
         mAuth = FirebaseAuth.getInstance();
 
-        if (getIntent().hasExtra("logout") &&
-                getIntent().getExtras().getBoolean("logout")) {
+        if (getIntent().hasExtra(getString(R.string.logout_token)) &&
+                getIntent().getExtras().getBoolean(getString(R.string.logout_token))) {
             logOut();
         }
 
@@ -111,7 +111,9 @@ public class SignInActivity extends AppCompatActivity {
                         .addOnFailureListener(SignInActivity.this, new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.d("TAG", e.getLocalizedMessage());
+                                String warning = "Please sign into a google account on this phone to continue!";
+                                Toast.makeText(getApplicationContext(), warning, Toast.LENGTH_LONG);
+                                Log.d("Google Sign-In", e.getLocalizedMessage());
                             }
                         });
             }
@@ -131,7 +133,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private void logIn(FirebaseUser user) {
         Intent mainActivityIntent = new Intent(getBaseContext(), MainActivity.class);
-        mainActivityIntent.putExtra("uid", user.getUid());
+        mainActivityIntent.putExtra(getString(R.string.user_id_token), user.getUid());
         startActivity(mainActivityIntent);
     }
 
