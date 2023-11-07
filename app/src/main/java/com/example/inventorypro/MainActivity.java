@@ -8,6 +8,8 @@ import androidx.fragment.app.DialogFragment;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private ImageButton deleteButton;
+    private ImageButton profileButton;
     private DatabaseManager database;
 
     @Override
@@ -29,20 +32,20 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.itemsListView);
         // creates a delete button
         deleteButton = findViewById(R.id.deleteButton);
-
-        // creates test database
-        database = new DatabaseManager();
+        profileButton = findViewById(R.id.profileButton);
 
         // test sorting settings (these could be conceivably saved per user)
         SortSettings sortSettings = new SortSettings();
         FilterSettings filterSettings = new FilterSettings();
 
+        // creates test database
+        database = new DatabaseManager();
         // create database connected test list
         ItemList itemList = new ItemList(this, listView, database, sortSettings,filterSettings);
-        database.connect("gan", itemList);
+        database.connect(UserPreferences.getInstance().getUserID(), itemList);
         ItemList.setInstance(itemList);
 
-        // replaces item1 with a random item (testing behavior).
+        // Launch add item activity.
         ((ImageButton)findViewById(R.id.addButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +81,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 DialogFragment createTags = new CreateTagsFragment();
                 createTags.show(getSupportFragmentManager(), "createTags");
+            }
+        });
+
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent signInActivity = new Intent(getBaseContext(), SignInActivity.class);
+                signInActivity.putExtra("logout", true);
+                startActivity(signInActivity);
             }
         });
 

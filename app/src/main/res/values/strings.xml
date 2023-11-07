@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">InventoryPro</string>
     <string name="app_name_readable">InventoryPro</string>
+    <string name="default_web_client_id">917945070979-onagg4lilraobnpre55nj4td9tepfuoj.apps.googleusercontent.com</string>
+    <string name="sign_in_welcome">Welcome to InventoryPro</string>
+    <string name="sign_in_button">Sign-in using Google</string>
+    <string name="user_id_token">uid</string>
+    <string name="logout_token">logout</string>
 </resources>
