@@ -49,12 +49,14 @@ public class AddItem extends AppCompatActivity {
         confirmButton = findViewById(R.id.confirm_button);
         cancelButton = findViewById(R.id.cancel_button);
 
+        String uid = getIntent().getExtras().getString("uid");
+
         //calls sendItem if all inputs are valid
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(validateInput()){
-                    sendItem();
+                    sendItem(uid);
                 }
             }
         });
@@ -71,7 +73,7 @@ public class AddItem extends AppCompatActivity {
      * creates a new item from the user inputs
      * sends the item back to the main activity
      */
-    private void sendItem(){
+    private void sendItem(String uid){
         //intent to return to main activity
         Intent sendItemIntent = new Intent(this, MainActivity.class);
 
@@ -91,6 +93,7 @@ public class AddItem extends AppCompatActivity {
 
         //sends the item back to main activity
         sendItemIntent.putExtra("new Item", newItem);
+        sendItemIntent.putExtra("uid", uid);
         startActivity(sendItemIntent);
     }
 

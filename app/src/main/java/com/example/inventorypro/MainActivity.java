@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -26,8 +27,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private ImageButton deleteButton;
+    private ImageButton profileButton;
     private DatabaseManager database;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.itemsListView);
         // creates a delete button
         deleteButton = findViewById(R.id.deleteButton);
+        profileButton = findViewById(R.id.profileButton);
 
         // creates test database
         database = new DatabaseManager();
@@ -48,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
         // create database connected test list
         ItemList itemList = new ItemList(this, listView, database, sortSettings,filterSettings);
-        database.connect("gan", itemList);
+        String uid = getIntent().getExtras().getString("uid");
+        database.connect(uid, itemList);
         ItemList.setInstance(itemList);
 
 
@@ -60,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent addItemIntent = new Intent(getBaseContext(), AddItem.class);
+                addItemIntent.putExtra("uid", uid);
                 startActivity(addItemIntent);
             }
         });
@@ -83,6 +87,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deleteSelectedItems();
+            }
+        });
+
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent signInActivity = new Intent(getBaseContext(), SignInActivity.class);
+                signInActivity.putExtra("logout", true);
+                startActivity(signInActivity);
             }
         });
     }

@@ -12,7 +12,20 @@
           "package_name": "com.example.inventorypro"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "917945070979-6ouc38kfivjt9vsiadd6vqn43j4ikl7p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.inventorypro",
+            "certificate_hash": "1de2b1c249b9fac18143772e067e490adf55d071"
+          }
+        },
+        {
+          "client_id": "917945070979-onagg4lilraobnpre55nj4td9tepfuoj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDs7C_TEKa5OFAyGPBfSbKbmDgnl6-ONqM"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "917945070979-onagg4lilraobnpre55nj4td9tepfuoj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
