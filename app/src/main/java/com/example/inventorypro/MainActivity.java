@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void deleteSelectedItems() {
         // TODO: there might be a better way to do this down the line.
+        
         ArrayList<Item> copy = new ArrayList<>(itemList.getItemList());
         for (Item item : copy) {
             if (item.isSelected()) {
