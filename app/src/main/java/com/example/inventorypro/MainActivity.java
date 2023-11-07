@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -26,8 +27,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private ImageButton deleteButton;
+    private ImageButton profileButton;
     private DatabaseManager database;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,17 +39,17 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.itemsListView);
         // creates a delete button
         deleteButton = findViewById(R.id.deleteButton);
-
-        // creates test database
-        database = new DatabaseManager();
+        profileButton = findViewById(R.id.profileButton);
 
         // test sorting settings (these could be conceivably saved per user)
         SortSettings sortSettings = new SortSettings();
         FilterSettings filterSettings = new FilterSettings();
 
+        // creates test database
+        database = new DatabaseManager();
         // create database connected test list
         ItemList itemList = new ItemList(this, listView, database, sortSettings,filterSettings);
-        database.connect("gan", itemList);
+        database.connect(getUserIdFromIntent(), itemList);
         ItemList.setInstance(itemList);
 
 
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent addItemIntent = new Intent(getBaseContext(), AddItem.class);
+                addItemIntent.putExtra(getString(R.string.user_id_token), getUserIdFromIntent());
                 startActivity(addItemIntent);
             }
         });
@@ -83,6 +85,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deleteSelectedItems();
+            }
+        });
+
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent signInActivity = new Intent(getBaseContext(), SignInActivity.class);
+                signInActivity.putExtra("logout", true);
+                startActivity(signInActivity);
             }
         });
     }
@@ -123,5 +134,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return receivedItem;
+    }
+
+    /**
+     * Extracts user id from intent
+     * @return unique google id token if exists null otherwise
+     */
+    private String getUserIdFromIntent() {
+        Intent intent = getIntent();
+        String userIdToken = getString(R.string.user_id_token);
+        if (intent.hasExtra(userIdToken)) {
+            return intent.getExtras().getString(userIdToken);
+        }
+
+        return null;
     }
 }
