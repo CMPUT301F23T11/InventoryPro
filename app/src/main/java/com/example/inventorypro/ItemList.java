@@ -71,6 +71,10 @@ public class ItemList {
         filter();
         sort();
         itemArrayAdapter.notifyDataSetChanged();
+
+        if(context != null){
+            ((MainActivity)context).refreshTotalText();
+        }
     }
 
     /**

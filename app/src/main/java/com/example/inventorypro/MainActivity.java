@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -18,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private ImageButton deleteButton;
     private DatabaseManager database;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +41,6 @@ public class MainActivity extends AppCompatActivity {
         ItemList itemList = new ItemList(this, listView, database, sortSettings,filterSettings);
         database.connect("gan", itemList);
         ItemList.setInstance(itemList);
-
-
-        TextView total = findViewById(R.id.totalText);
-        total.setText(String.format("$%.2f", itemList.getTotalValue()));
 
         // replaces item1 with a random item (testing behavior).
         ((ImageButton)findViewById(R.id.addButton)).setOnClickListener(new View.OnClickListener() {
@@ -84,7 +80,15 @@ public class MainActivity extends AppCompatActivity {
                 createTags.show(getSupportFragmentManager(), "createTags");
             }
         });
+
+        refreshTotalText();
     }
+
+    public void refreshTotalText(){
+        TextView total = findViewById(R.id.totalText);
+        total.setText(String.format("$%.2f", ItemList.getInstance().getTotalValue()));
+    }
+
     /**
      * Deletes all the selected items from the listview as well as the database and updates the total value accordingly.
      */
@@ -99,13 +103,6 @@ public class MainActivity extends AppCompatActivity {
                 itemList.remove(item);
             }
         }
-        //
-
-        TextView total = findViewById(R.id.totalText);
-        total.setText(String.format("$%.0f", itemList.getTotalValue()));
-    }
-    public double getTotalValue() {
-        return ItemList.getInstance().getTotalValue();
     }
 
     /**
