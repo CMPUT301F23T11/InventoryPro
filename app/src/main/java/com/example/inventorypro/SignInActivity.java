@@ -112,7 +112,7 @@ public class SignInActivity extends AppCompatActivity {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 String warning = "Please sign into a google account on this phone to continue!";
-                                Toast.makeText(getApplicationContext(), warning, Toast.LENGTH_LONG);
+                                Toast.makeText(getApplicationContext(), warning, Toast.LENGTH_LONG).show();
                                 Log.d("Google Sign-In", e.getLocalizedMessage());
                             }
                         });
