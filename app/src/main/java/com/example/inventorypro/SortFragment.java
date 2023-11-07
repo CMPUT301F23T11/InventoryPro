@@ -14,15 +14,12 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.firestore.auth.User;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class SortFragment extends Fragment {
-
-    private SortSettings sortSettings;
-    public SortSettings getSortSettings(){
-        return sortSettings;
-    }
 
     // Store settings for ascending or descending
     public enum SortOrder {
@@ -45,32 +42,34 @@ public class SortFragment extends Fragment {
         return layoutInflater.inflate(R.layout.sort_fragment, viewGroup, false);
     }
 
+    private SortSettings sortSettings(){
+        return UserPreferences.getInstance().getSortSettings();
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
-        sortSettings = ItemList.getInstance().getSortSettings();
-
         // Add functionality to radioGroup (sort type checkboxes)
         RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.sortType);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedID) {
                 if (checkedID == R.id.sortNone) {
-                    sortSettings.setSortType(SortType.NONE);
+                    sortSettings().setSortType(SortType.NONE);
                 } else if (checkedID == R.id.sortDate) {
-                    sortSettings.setSortType(SortType.DATE);
+                    sortSettings().setSortType(SortType.DATE);
                 } else if (checkedID == R.id.sortMake) {
-                    sortSettings.setSortType(SortType.MAKE);
+                    sortSettings().setSortType(SortType.MAKE);
                 } else if (checkedID == R.id.sortValue) {
-                    sortSettings.setSortType(SortType.VALUE);
+                    sortSettings().setSortType(SortType.VALUE);
                 } else if (checkedID == R.id.sortDescription) {
-                    sortSettings.setSortType(SortType.DESCRIPTION);
+                    sortSettings().setSortType(SortType.DESCRIPTION);
                 } else if (checkedID == R.id.sortTag) {
-                    sortSettings.setSortType(SortType.TAG);
+                    sortSettings().setSortType(SortType.TAG);
                 }
             }
         });
         // Set value of radioGroup to current setting
-        switch (sortSettings.getSortType()) {
+        switch (sortSettings().getSortType()) {
             case NONE:
                 radioGroup.check(R.id.sortNone);
                 break;
@@ -102,7 +101,7 @@ public class SortFragment extends Fragment {
                 ascButton.setTextColor(Color.WHITE);
                 desButton.setBackgroundResource(R.drawable.button_outline);
                 desButton.setTextColor(primaryColor);
-                sortSettings.setSortOrder(SortOrder.ASCENDING);
+                sortSettings().setSortOrder(SortOrder.ASCENDING);
             }
         });
         desButton.setOnClickListener(new View.OnClickListener() {
@@ -112,11 +111,11 @@ public class SortFragment extends Fragment {
                 desButton.setTextColor(Color.WHITE);
                 ascButton.setBackgroundResource(R.drawable.button_outline);
                 ascButton.setTextColor(primaryColor);
-                sortSettings.setSortOrder(SortOrder.DESCENDING);
+                sortSettings().setSortOrder(SortOrder.DESCENDING);
             }
         });
         // set button based on settings
-        switch (sortSettings.getSortOrder()) {
+        switch (sortSettings().getSortOrder()) {
             case ASCENDING:
                 ascButton.callOnClick();
                 break;
@@ -124,12 +123,5 @@ public class SortFragment extends Fragment {
                 desButton.callOnClick();
                 break;
         }
-    }
-
-    /**
-     * Resets all the sorting settings to default
-     */
-    public void clear() {
-        sortSettings = new SortSettings();
     }
 }

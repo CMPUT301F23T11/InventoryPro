@@ -9,12 +9,19 @@ public class SortSettings{
     private SortFragment.SortOrder sortOrder;
     private SortFragment.SortType sortType;
 
+
+    public SortSettings() {
+        this(SortFragment.SortOrder.ASCENDING, SortFragment.SortType.NONE);
+    }
+
     public SortSettings(SortFragment.SortOrder sortOrder, SortFragment.SortType sortType) {
         this.sortOrder = sortOrder;
         this.sortType = sortType;
     }
-    public SortSettings() {
-        this(SortFragment.SortOrder.ASCENDING, SortFragment.SortType.NONE);
+
+    public void clear(){
+        sortOrder = SortFragment.SortOrder.ASCENDING;
+        sortType = SortFragment.SortType.NONE;
     }
 
     public SortFragment.SortOrder getSortOrder() {

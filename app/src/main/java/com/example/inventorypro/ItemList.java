@@ -1,6 +1,7 @@
 package com.example.inventorypro;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -26,16 +27,15 @@ public class ItemList {
     private ArrayAdapter<Item> itemArrayAdapter;
     private DatabaseManager database;
 
-    private SortSettings sortSettings;
-    private FilterSettings filterSettings;
+    //TODO: make this approach cleaner. Currently, itemList is the list of items as filtered/sorted. Store a copy of original.
+    private ArrayList<Item> originalItemList = new ArrayList<Item>();
 
     // TODO: Find by barcode
     // TODO: Find by tag
     // TODO: Apply tags to items
     // TODO: Call database management
 
-    public ItemList(Context context, ListView itemListView, DatabaseManager database,
-                    @NonNull SortSettings sortSettings,@NonNull FilterSettings filterSettings) {
+    public ItemList(Context context, ListView itemListView, DatabaseManager database) {
         // save context and itemListView for later use
         this.context = context;
         this.itemListView = itemListView;
@@ -47,9 +47,6 @@ public class ItemList {
         }
 
         this.database = database;
-
-        this.sortSettings = sortSettings;
-        this.filterSettings = filterSettings;
     }
 
     /**
@@ -61,6 +58,9 @@ public class ItemList {
         itemList.clear();
         itemList.addAll(items);
 
+        originalItemList.clear();
+        originalItemList.addAll(items);
+
         refresh();
     }
 
@@ -69,6 +69,10 @@ public class ItemList {
      */
     public void refresh(){
         if(itemArrayAdapter == null) return;
+
+        // Must re-add the original items (this should be cleaner later)
+        itemList.clear();
+        itemList.addAll(originalItemList);
 
         filter();
         sort();
@@ -126,10 +130,13 @@ public class ItemList {
      * Sorts the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.
      */
     private void sort(){
-        // Sorts according to sorting settings.
+        if(UserPreferences.getInstance().getSortSettings() == null){
+            Log.e("ITEMLIST", "Sort settings is null.");
+            return;
+        }
 
-        SortFragment.SortType sortType = sortSettings.getSortType();
-        SortFragment.SortOrder sortOrder = sortSettings.getSortOrder();
+        SortFragment.SortType sortType = UserPreferences.getInstance().getSortSettings().getSortType();
+        SortFragment.SortOrder sortOrder = UserPreferences.getInstance().getSortSettings().getSortOrder();
 
         switch (sortType) {
             case NONE:
@@ -181,9 +188,14 @@ public class ItemList {
      * Filters the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.
      */
     private void filter(){
+        if(UserPreferences.getInstance().getFilterSettings() == null){
+            Log.e("ITEMLIST", "Filter settings is null.");
+            return;
+        }
+
         ArrayList<Item> filteredItems = new ArrayList<>();
         for (Item i : itemList){
-            if(filterSettings.itemSatisfiesFilter(i)){
+            if(UserPreferences.getInstance().getFilterSettings().itemSatisfiesFilter(i)){
                 filteredItems.add(i);
             }
         }
@@ -198,18 +210,6 @@ public class ItemList {
      */
     public Item get(int position) {
         return itemList.get(position);
-    }
-
-    public SortSettings getSortSettings(){return sortSettings;}
-    public void setSortSettings(SortSettings sortSettings) {
-        this.sortSettings = sortSettings;
-    }
-
-    public FilterSettings getFilterSettings() {
-        return filterSettings;
-    }
-    public void setFilterSettings(FilterSettings filterSettings) {
-        this.filterSettings = filterSettings;
     }
 
     /**

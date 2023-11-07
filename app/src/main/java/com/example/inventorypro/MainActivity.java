@@ -34,14 +34,10 @@ public class MainActivity extends AppCompatActivity {
         deleteButton = findViewById(R.id.deleteButton);
         profileButton = findViewById(R.id.profileButton);
 
-        // test sorting settings (these could be conceivably saved per user)
-        SortSettings sortSettings = new SortSettings();
-        FilterSettings filterSettings = new FilterSettings();
-
         // creates test database
         database = new DatabaseManager();
         // create database connected test list
-        ItemList itemList = new ItemList(this, listView, database, sortSettings,filterSettings);
+        ItemList itemList = new ItemList(this, listView, database);
         database.connect(UserPreferences.getInstance().getUserID(), itemList);
         ItemList.setInstance(itemList);
 
