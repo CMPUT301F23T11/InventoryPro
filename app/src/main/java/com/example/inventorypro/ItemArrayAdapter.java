@@ -45,8 +45,8 @@ public class ItemArrayAdapter extends ArrayAdapter<Item> {
         // Set TextView objects text
         name.setText(item.getName());
         checkbox.setChecked(item.isSelected());
-        value.setText(String.format("$%.2f", item.getValue()));
-        date.setText(item.getDate().toString());
+        value.setText(String.format("$%.0f", item.getValue()));
+        date.setText(item.getLocalDate().toString());
         make.setText(item.getMake());
         model.setText(item.getModel());
         serialNumber.setText(item.getSerialNumber());

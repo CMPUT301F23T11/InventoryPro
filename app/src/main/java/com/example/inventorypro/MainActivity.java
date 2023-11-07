@@ -1,12 +1,14 @@
 package com.example.inventorypro;
 
 import static java.lang.Integer.parseInt;
+import static java.security.AccessController.getContext;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -22,9 +24,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private ItemList itemList;
-    private ArrayList<Item> dataList = new ArrayList<>();
-
     private ListView listView;
     private ImageButton deleteButton;
     private DatabaseManager database;
@@ -43,9 +42,15 @@ public class MainActivity extends AppCompatActivity {
         // creates test database
         database = new DatabaseManager();
 
+        // test sorting settings (these could be conceivably saved per user)
+        SortSettings sortSettings = new SortSettings();
+        FilterSettings filterSettings = new FilterSettings();
+
         // create database connected test list
-        itemList = new ItemList(this, listView, database);
-        database.connect("testUserID", itemList);
+        ItemList itemList = new ItemList(this, listView, database, sortSettings,filterSettings);
+        database.connect("gan", itemList);
+        ItemList.setInstance(itemList);
+
 
         TextView total = findViewById(R.id.totalText);
         total.setText(String.format("$%.2f", itemList.getTotalValue()));
@@ -86,23 +91,22 @@ public class MainActivity extends AppCompatActivity {
      */
     private void deleteSelectedItems() {
         // TODO: there might be a better way to do this down the line.
-        
+        // Actually there is, just do this operation on the ItemList.
+        ItemList itemList = ItemList.getInstance();
+
         ArrayList<Item> copy = new ArrayList<>(itemList.getItemList());
         for (Item item : copy) {
             if (item.isSelected()) {
                 itemList.remove(item);
             }
         }
+        //
 
         TextView total = findViewById(R.id.totalText);
-        total.setText(String.format("$%.2f", itemList.getTotalValue()));
+        total.setText(String.format("$%.0f", itemList.getTotalValue()));
     }
     public double getTotalValue() {
-        double total = 0d;
-        for (Item item : itemList.getItemList()) {
-            total+=item.getValue();
-        }
-        return total;
+        return ItemList.getInstance().getTotalValue();
     }
 
     /**
@@ -118,16 +122,6 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
-
         return receivedItem;
-
-
-    }
-
-    /**
-     * Get a reference to itemList
-     */
-    public ItemList getItemList() {
-        return itemList;
     }
 }
