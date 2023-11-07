@@ -12,15 +12,55 @@
         android:layout_height="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/white">
 
         <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:id="@+id/headerText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/app_name_readable"
+                android:textAlignment="center"
+                android:textColor="@color/primary"
+                android:textSize="@dimen/header_text_size"
+                android:textStyle=""
+
+                android:fontFamily="sans-serif"/>
+
+            <TextView
+                android:id="@+id/totalText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="$10000"
+                android:textAlignment="center"
+                android:textColor="@color/primary"
+                android:textSize="@dimen/large_text_size"
+                android:textStyle=""
+                android:fontFamily="sans-serif-condensed"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout6"
             android:layout_width="409dp"
             android:layout_height="98dp"
             android:layout_marginStart="1dp"
             android:layout_marginTop="1dp"
             android:layout_marginEnd="1dp"
             android:layout_marginBottom="1dp"
+            android:gravity="left"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -31,50 +71,45 @@
                 android:id="@+id/deleteButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_margin="6dp"
                 android:layout_weight="0"
-                android:src="@android:drawable/ic_menu_delete" />
+                android:background="@drawable/delete_main"
+                android:layout_gravity="bottom" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:orientation="vertical">
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/headerText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="@string/app_name_readable"
-                    android:textAlignment="center"
-                    android:textSize="@dimen/header_text_size"/>
-
-                <TextView
-                    android:id="@+id/totalText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="$10000"
-                    android:textAlignment="center"
-                    android:textSize="@dimen/large_text_size" />
-            </LinearLayout>
+        <LinearLayout
+            android:id="@+id/linearLayout5"
+            android:layout_width="409dp"
+            android:layout_height="98dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="1dp"
+            android:gravity="right"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageButton
-                android:id="@+id/tagsButton"
+                android:id="@+id/createsTagsButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="bottom"
+                android:layout_margin="6dp"
                 android:layout_weight="0"
-                android:src="@android:drawable/ic_dialog_dialer" />
+                android:background="@drawable/tags_main" />
 
             <ImageButton
                 android:id="@+id/scanButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="bottom"
+                android:layout_margin="6dp"
                 android:layout_weight="0"
-                android:src="@android:drawable/ic_menu_view" />
+                android:background="@drawable/scan_main" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -89,7 +124,8 @@
         app:layout_constraintTop_toBottomOf="@id/header"
         android:background="@color/gray"
         android:divider="@android:color/transparent"
-        android:dividerHeight="10dp"/>
+        android:dividerHeight="10dp"
+        android:paddingTop="10dp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/footer"
@@ -114,7 +150,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:backgroundTint="@color/white"
-                android:src="@drawable/baseline_person_24" />
+                android:src="@drawable/baseline_person_24"
+                android:tint="#5A5A5A" />
 
             <ImageButton
                 android:id="@+id/addButton"
@@ -130,7 +167,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:backgroundTint="@color/white"
-                android:src="@drawable/baseline_filter_list_24" />
+                android:src="@drawable/baseline_filter_list_24"
+                android:tint="#5A5A5A" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

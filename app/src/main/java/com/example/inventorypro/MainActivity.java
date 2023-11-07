@@ -1,27 +1,20 @@
 package com.example.inventorypro;
 
 import static java.lang.Integer.parseInt;
-import static java.security.AccessController.getContext;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.lang.reflect.Array;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,19 +42,14 @@ public class MainActivity extends AppCompatActivity {
         database = new DatabaseManager();
         // create database connected test list
         ItemList itemList = new ItemList(this, listView, database, sortSettings,filterSettings);
-        database.connect(getUserIdFromIntent(), itemList);
+        database.connect(UserPreferences.getInstance().getUserID(), itemList);
         ItemList.setInstance(itemList);
 
-
-        TextView total = findViewById(R.id.totalText);
-        total.setText(String.format("$%.2f", itemList.getTotalValue()));
-
-        // replaces item1 with a random item (testing behavior).
+        // Launch add item activity.
         ((ImageButton)findViewById(R.id.addButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent addItemIntent = new Intent(getBaseContext(), AddItem.class);
-                addItemIntent.putExtra(getString(R.string.user_id_token), getUserIdFromIntent());
                 startActivity(addItemIntent);
             }
         });
@@ -88,6 +76,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        ((ImageButton)findViewById(R.id.createsTagsButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment createTags = new CreateTagsFragment();
+                createTags.show(getSupportFragmentManager(), "createTags");
+            }
+        });
+
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,7 +92,18 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(signInActivity);
             }
         });
+
+        refreshTotalText();
     }
+
+    /**
+     * Refreshes the UI with the calculated new total value for all items.
+     */
+    public void refreshTotalText(){
+        TextView total = findViewById(R.id.totalText);
+        total.setText(String.format("$%.2f", ItemList.getInstance().getTotalValue()));
+    }
+
     /**
      * Deletes all the selected items from the listview as well as the database and updates the total value accordingly.
      */
@@ -111,13 +118,6 @@ public class MainActivity extends AppCompatActivity {
                 itemList.remove(item);
             }
         }
-        //
-
-        TextView total = findViewById(R.id.totalText);
-        total.setText(String.format("$%.0f", itemList.getTotalValue()));
-    }
-    public double getTotalValue() {
-        return ItemList.getInstance().getTotalValue();
     }
 
     /**
@@ -134,19 +134,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return receivedItem;
-    }
-
-    /**
-     * Extracts user id from intent
-     * @return unique google id token if exists null otherwise
-     */
-    private String getUserIdFromIntent() {
-        Intent intent = getIntent();
-        String userIdToken = getString(R.string.user_id_token);
-        if (intent.hasExtra(userIdToken)) {
-            return intent.getExtras().getString(userIdToken);
-        }
-
-        return null;
     }
 }

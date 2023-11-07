@@ -9,9 +9,9 @@ import java.math.BigDecimal;
 public class ItemListTest {
     private ItemList mockItemList() {
         ItemList itemList = new ItemList(null, null,null,new SortSettings(),new FilterSettings());
-        Item item1 = new Item("Item1", 12.36, null, null, null, null, null, null);
-        Item item2 = new Item("Item2", 8.5, null, null, null, null, null, null);
-        Item item3 = new Item("Item3", 7.97, null, null, null, null, null, null);
+        Item item1 = new Item("Item1", 12.36, null, null, null, null, null, null,null);
+        Item item2 = new Item("Item2", 8.5, null, null, null, null, null, null,null);
+        Item item3 = new Item("Item3", 7.97, null, null, null, null, null, null,null);
         itemList.add(item1);
         itemList.add(item2);
         itemList.add(item3);

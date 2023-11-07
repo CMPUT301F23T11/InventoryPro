@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+//TODO: preserve filter settings and sort settings of the MainActivity
+// might justify putting these into some user preferences static object.
+
 /**
  * Activity to Help create Items
  */
@@ -49,6 +52,7 @@ public class AddItem extends AppCompatActivity {
         confirmButton = findViewById(R.id.confirm_button);
         cancelButton = findViewById(R.id.cancel_button);
 
+        date.getEditText().setText(LocalDate.now().toString());
 
         //calls sendItem if all inputs are valid
         confirmButton.setOnClickListener(new View.OnClickListener() {
@@ -73,26 +77,25 @@ public class AddItem extends AppCompatActivity {
      * sends the item back to the main activity
      */
     private void sendItem(){
-        //intent to return to main activity
-        Intent sendItemIntent = new Intent(this, MainActivity.class);
-
         //create date in LocalDate format from the user input
-        LocalDate itemDate = Helpers.ParseDate(date.getEditText().getText().toString());
+        LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
 
         //create new input
-        Item newItem = new Item(name.getEditText().getText().toString(),
+        Item newItem = new Item(
+                name.getEditText().getText().toString(),
                 Double.parseDouble(value.getEditText().getText().toString()),
                 itemDate,
                 make.getEditText().getText().toString(),
                 model.getEditText().getText().toString(),
                 serialNumber.getEditText().getText().toString(),
                 description.getEditText().getText().toString(),
-                comments.getEditText().getText().toString());
+                comments.getEditText().getText().toString(),
+                null);
 
-
+        //intent to return to main activity
+        Intent sendItemIntent = new Intent(this, MainActivity.class);
         //sends the item back to main activity
         sendItemIntent.putExtra("new Item", newItem);
-        sendItemIntent.putExtra(getString(R.string.user_id_token), getUserIdFromIntent());
         startActivity(sendItemIntent);
     }
 
@@ -154,19 +157,5 @@ public class AddItem extends AppCompatActivity {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Extracts user id from intent
-     * @return unique google id token if exists null otherwise
-     */
-    private String getUserIdFromIntent() {
-        Intent intent = getIntent();
-        String userIdToken = getString(R.string.user_id_token);
-        if (intent.hasExtra(userIdToken)) {
-            return intent.getExtras().getString(userIdToken);
-        }
-
-        return null;
     }
 }

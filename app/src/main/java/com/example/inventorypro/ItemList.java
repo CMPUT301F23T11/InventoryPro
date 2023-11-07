@@ -1,17 +1,13 @@
 package com.example.inventorypro;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.function.Consumer;
 
 public class ItemList {
 
@@ -68,10 +64,19 @@ public class ItemList {
         refresh();
     }
 
-    // Resorts and filters items then notifies the UI to update.
+    /**
+     * Resorts and filters items then notifies the UI to update.
+     */
     public void refresh(){
+        if(itemArrayAdapter == null) return;
+
+        filter();
         sort();
         itemArrayAdapter.notifyDataSetChanged();
+
+        if(context != null){
+            ((MainActivity)context).refreshTotalText();
+        }
     }
 
     /**
@@ -87,6 +92,8 @@ public class ItemList {
         if (database != null){
             database.addItem(item);
         }
+
+        refresh(); //inefficient
     }
 
     /**
@@ -102,7 +109,10 @@ public class ItemList {
         if (database != null){
             database.removeItem(item);
         }
+
+        refresh(); //inefficient
     }
+
     /**
      * Gets the item list of an ItemList object
      * @return
@@ -166,8 +176,19 @@ public class ItemList {
                 break;
         }
     }
-    private void filter(){
 
+    /**
+     * Filters the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.
+     */
+    private void filter(){
+        ArrayList<Item> filteredItems = new ArrayList<>();
+        for (Item i : itemList){
+            if(filterSettings.itemSatisfiesFilter(i)){
+                filteredItems.add(i);
+            }
+        }
+        itemList.clear();
+        itemList.addAll(filteredItems);
     }
 
     /**
