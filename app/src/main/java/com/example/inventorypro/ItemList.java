@@ -80,6 +80,7 @@ public class ItemList {
 
         if(context != null){
             ((MainActivity)context).refreshTotalText();
+            ((MainActivity)context).showSortAndFilterChips();
         }
     }
 
