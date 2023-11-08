@@ -18,7 +18,6 @@ import java.util.ArrayList;
 public class ItemArrayAdapter extends ArrayAdapter<Item> {
     private Context context;
     ItemList itemList;
-    private boolean multiSelectMode = false;
 
     public ItemArrayAdapter(Context context, ItemList itemList, ArrayList<Item> items) {
         super(context, 0, items);
@@ -53,20 +52,6 @@ public class ItemArrayAdapter extends ArrayAdapter<Item> {
         model.setText(item.getModel());
         serialNumber.setText(item.getSerialNumber());
 
-        view.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                multiSelectMode = !multiSelectMode;
-                if (multiSelectMode) {
-                    checkbox.setVisibility(View.VISIBLE);
-                    checkbox.setChecked(true);
-                }
-                else {
-                    checkbox.setVisibility(View.GONE);
-                }
-                return true;
-            }
-        });
         checkbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,36 +59,6 @@ public class ItemArrayAdapter extends ArrayAdapter<Item> {
             }
         });
 
-        // Hide checkboxes if multi-select mode is disabled and no items are selected
-        if (!areAnyItemsSelected()) {
-            multiSelectMode = false;
-            checkbox.setVisibility(View.GONE);
-        }
-
         return view;
     }
-    // Method to check if any items are selected
-    private boolean areAnyItemsSelected() {
-        for (Item item : itemList.getItemList()) {
-            if (item.isSelected()) {
-                return true;
-            }
-        }
-        return false;
-    }
-//    private void updateCheckboxesVisibility() {
-//        if (multiSelectMode) {
-//            for (int i = 0; i < getCount(); i++) {
-//                View view = getView(i, null, null);
-//                CheckBox checkbox = view.findViewById(R.id.checkbox);
-//                checkbox.setVisibility(View.VISIBLE);
-//            }
-//        } else {
-//            for (int i = 0; i < getCount(); i++) {
-//                View view = getView(i, null, null);
-//                CheckBox checkbox = view.findViewById(R.id.checkbox);
-//                checkbox.setVisibility(View.GONE);
-//            }
-//        }
-//    }
 }
