@@ -1,13 +1,17 @@
 package com.example.inventorypro;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.function.Consumer;
 
 public class ItemList {
 
@@ -34,7 +38,9 @@ public class ItemList {
     // TODO: Apply tags to items
     // TODO: Call database management
 
-    public ItemList(Context context, ListView itemListView, DatabaseManager database,
+
+
+    public ItemList(Context context, ListView itemListView, DatabaseManager database,RecyclerViewListener recyclerViewListener,
                     @NonNull SortSettings sortSettings,@NonNull FilterSettings filterSettings) {
         // save context and itemListView for later use
         this.context = context;
@@ -42,7 +48,8 @@ public class ItemList {
 
         // setup list view
         if (context != null && itemListView != null) {
-            itemArrayAdapter = new ItemArrayAdapter(context, this, itemList);
+
+            itemArrayAdapter = new ItemArrayAdapter(context, this, itemList, recyclerViewListener);
             itemListView.setAdapter(itemArrayAdapter);
         }
 
@@ -112,6 +119,8 @@ public class ItemList {
 
         refresh(); //inefficient
     }
+
+
 
     /**
      * Gets the item list of an ItemList object
