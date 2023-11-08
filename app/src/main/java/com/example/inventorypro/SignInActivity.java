@@ -48,9 +48,6 @@ public class SignInActivity extends AppCompatActivity {
         oneTapClient = Identity.getSignInClient(this);
         mAuth = FirebaseAuth.getInstance();
 
-        // Create user preferences object for user (new one)
-        UserPreferences.createInstance();
-
         if (getIntent().hasExtra(getString(R.string.logout_token)) &&
                 getIntent().getExtras().getBoolean(getString(R.string.logout_token))) {
             logOut();
@@ -136,7 +133,10 @@ public class SignInActivity extends AppCompatActivity {
 
     private void logIn(FirebaseUser user) {
         Intent mainActivityIntent = new Intent(getBaseContext(), MainActivity.class);
-        UserPreferences.getInstance().setUserID(user.getUid());
+
+        // Now construct user preferences.
+        UserPreferences.createInstance(user.getUid());
+
         startActivity(mainActivityIntent);
     }
 
