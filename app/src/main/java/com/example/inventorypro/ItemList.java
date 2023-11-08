@@ -133,36 +133,33 @@ public class ItemList {
 
     public void replace(Item item, int position){
         // Lookup the item, don't rely on position which may change.
-        // TODO: For some reason the item list is empty when this is immediately called?
-        // As a temporary fix, we can just rely on the database to sync when its ready async.
-        // Downside is ItemList is not immediately updated but whatever for now.
 
-        Log.e("GAN", item.getUID() + " and " + originalItemList.size());
-
+        // Lookup the old item by comparing their unique IDs.
         Item oldItem = null;
         for(Item i : originalItemList){
             if (i.getUID().equals(item.getUID())){
                 oldItem = i;
-                Log.e("GAN", "got it");
                 break;
             }
         }
         if(oldItem == null) {
-            Log.e("GAN", "old item is null");
+            // As a failsafe, this call will automatically update the database and eventually asynchronously
+            // call onSynchronize.
+            database.addItem(item);
             return;
         }
 
+        // Perform operations to update the original item list.
         originalItemList.remove(oldItem);
         originalItemList.add(item);
-        if (itemArrayAdapter != null) {
-            itemArrayAdapter.notifyDataSetChanged();
-        }
 
+        // Perform the same operations on the database (redundant to remove the item I think).
         if (database != null){
             database.removeItem(oldItem);
             database.addItem(item); // Automatically overwrites preexisting data.
         }
 
+        // Tell ItemList to immediately update.
         refresh();
     }
 

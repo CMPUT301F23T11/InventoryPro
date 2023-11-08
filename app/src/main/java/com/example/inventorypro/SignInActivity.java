@@ -136,6 +136,8 @@ public class SignInActivity extends AppCompatActivity {
 
         // Now construct user preferences.
         UserPreferences.createInstance(user.getUid());
+        // Invalidate any active item list.
+        ItemList.setInstance(null);
 
         startActivity(mainActivityIntent);
     }

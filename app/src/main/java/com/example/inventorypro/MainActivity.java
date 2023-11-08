@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         deleteButton = findViewById(R.id.deleteButton);
         profileButton = findViewById(R.id.profileButton);
 
+        // Only create a single instance of ItemList.
         if(ItemList.getInstance() == null){
             // creates test database
             DatabaseManager database = new DatabaseManager();
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
             database.connect(UserPreferences.getInstance().getUserID(), itemList);
             ItemList.setInstance(itemList);
         } else{
+            // Need to re-hook instance variables from MainActivity.
             ItemList.getInstance().resetup(this,listView);
         }
 
