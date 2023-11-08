@@ -4,11 +4,14 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.function.Consumer;
 
 public class ItemList {
 
@@ -42,6 +45,7 @@ public class ItemList {
 
         // setup list view
         if (context != null && itemListView != null) {
+
             itemArrayAdapter = new ItemArrayAdapter(context, this, itemList);
             itemListView.setAdapter(itemArrayAdapter);
         }
@@ -55,6 +59,7 @@ public class ItemList {
      */
     public void onSynchronize(ArrayList<Item> items){
         // NOTE: this is called almost immediately after any add/remove (could be a performance problem later).
+        Log.e("GAN", "Database sync occuring.");
         itemList.clear();
         itemList.addAll(items);
 
@@ -116,6 +121,41 @@ public class ItemList {
 
         refresh(); //inefficient
     }
+
+    public void replace(Item item, int position){
+        // Lookup the item, don't rely on position which may change.
+        // TODO: For some reason the item list is empty when this is immediately called?
+        // As a temporary fix, we can just rely on the database to sync when its ready async.
+        // Downside is ItemList is not immediately updated but whatever for now.
+
+        /*Log.e("GAN", item.getUID() + " and " + originalItemList.size());
+
+        Item oldItem = null;
+        for(Item i : originalItemList){
+            if (i.getUID().equals(item.getUID())){
+                oldItem = i;
+                Log.e("GAN", "got it");
+                break;
+            }
+        }
+        if(oldItem == null) {
+            Log.e("GAN", "old item is null");
+            return;
+        }
+
+        originalItemList.remove(oldItem);
+        originalItemList.add(item);
+        if (itemArrayAdapter != null) {
+            itemArrayAdapter.notifyDataSetChanged();
+        }*/
+
+        if (database != null){
+            database.addItem(item); // Automatically overwrites preexisting data.
+        }
+
+        refresh();
+    }
+
 
     /**
      * Gets the item list of an ItemList object
