@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private ImageButton deleteButton;
     private ImageButton profileButton;
-    private DatabaseManager database;
     private int editPosition;
 
     @Override
@@ -45,15 +44,17 @@ public class MainActivity extends AppCompatActivity {
         // creates a delete button
         deleteButton = findViewById(R.id.deleteButton);
         profileButton = findViewById(R.id.profileButton);
-        // creates test database
-        database = new DatabaseManager();
 
-        // creates test database
-        database = new DatabaseManager();
-        // create database connected test list
-        ItemList itemList = new ItemList(this, listView, database);
-        database.connect(UserPreferences.getInstance().getUserID(), itemList);
-        ItemList.setInstance(itemList);
+        if(ItemList.getInstance() == null){
+            // creates test database
+            DatabaseManager database = new DatabaseManager();
+            // create database connected test list
+            ItemList itemList = new ItemList(this, listView, database);
+            database.connect(UserPreferences.getInstance().getUserID(), itemList);
+            ItemList.setInstance(itemList);
+        } else{
+            ItemList.getInstance().resetup(this,listView);
+        }
 
         //Redirect to add Item activity
         ((ImageButton)findViewById(R.id.addButton)).setOnClickListener(new View.OnClickListener() {
@@ -107,14 +108,14 @@ public class MainActivity extends AppCompatActivity {
         // Try to get new item from intent.
         Item potentialItem = parseItemFromAddItemActivity();
         if (potentialItem != null){
-            itemList.add(potentialItem);
+            ItemList.getInstance().add(potentialItem);
         }
 
         // Try to get edited item from intent.
         Item editedItem = parseItemFromEdit();
         if (editedItem != null){
             //itemList.add(editedItem);
-            itemList.replace(editedItem,editPosition);
+            ItemList.getInstance().replace(editedItem,editPosition);
 
         }
 

@@ -40,6 +40,17 @@ public class ItemList {
 
     public ItemList(Context context, ListView itemListView, DatabaseManager database) {
         // save context and itemListView for later use
+        resetup(context, itemListView);
+
+        this.database = database;
+    }
+
+    /**
+     * Used to update references when the MainActivity is created and destroyed.
+     * @param context From MainActivity
+     * @param itemListView The updated list view object.
+     */
+    public void resetup(Context context, ListView itemListView){
         this.context = context;
         this.itemListView = itemListView;
 
@@ -49,8 +60,6 @@ public class ItemList {
             itemArrayAdapter = new ItemArrayAdapter(context, this, itemList);
             itemListView.setAdapter(itemArrayAdapter);
         }
-
-        this.database = database;
     }
 
     /**
@@ -59,7 +68,7 @@ public class ItemList {
      */
     public void onSynchronize(ArrayList<Item> items){
         // NOTE: this is called almost immediately after any add/remove (could be a performance problem later).
-        Log.e("GAN", "Database sync occuring.");
+        Log.e("GAN", "Database sync occuring " + items.size() + " items.");
         itemList.clear();
         itemList.addAll(items);
 
@@ -128,7 +137,7 @@ public class ItemList {
         // As a temporary fix, we can just rely on the database to sync when its ready async.
         // Downside is ItemList is not immediately updated but whatever for now.
 
-        /*Log.e("GAN", item.getUID() + " and " + originalItemList.size());
+        Log.e("GAN", item.getUID() + " and " + originalItemList.size());
 
         Item oldItem = null;
         for(Item i : originalItemList){
@@ -147,9 +156,10 @@ public class ItemList {
         originalItemList.add(item);
         if (itemArrayAdapter != null) {
             itemArrayAdapter.notifyDataSetChanged();
-        }*/
+        }
 
         if (database != null){
+            database.removeItem(oldItem);
             database.addItem(item); // Automatically overwrites preexisting data.
         }
 
