@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private ImageButton deleteButton;
     private ImageButton profileButton;
+    private DatabaseManager database;
     private int editPosition;
 
     @Override

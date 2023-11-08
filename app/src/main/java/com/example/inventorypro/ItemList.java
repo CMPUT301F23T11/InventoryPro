@@ -78,6 +78,9 @@ public class ItemList {
         refresh();
     }
 
+    public void update(){
+        itemArrayAdapter.notifyDataSetChanged();
+    }
     /**
      * Resorts and filters items then notifies the UI to update.
      */
