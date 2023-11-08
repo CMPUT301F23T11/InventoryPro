@@ -16,14 +16,12 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 
 public class ItemArrayAdapter extends ArrayAdapter<Item> {
-    private final RecyclerViewListener recyclerViewListener;
     private Context context;
     ItemList itemList;
-    public ItemArrayAdapter(Context context, ItemList itemList, ArrayList<Item> items, RecyclerViewListener recyclerViewListener) {
+    public ItemArrayAdapter(Context context, ItemList itemList, ArrayList<Item> items) {
         super(context, 0, items);
         this.context = context;
         this.itemList = itemList;
-        this.recyclerViewListener = recyclerViewListener;
     }
 
     @NonNull
@@ -47,7 +45,7 @@ public class ItemArrayAdapter extends ArrayAdapter<Item> {
         // Set TextView objects text
         name.setText(item.getName());
         checkbox.setChecked(item.isSelected());
-        value.setText(String.format("$%.0f", item.getValue()));
+        value.setText(String.format("$%.2f", item.getValue()));
         date.setText(item.getLocalDate().toString());
         make.setText(item.getMake());
         model.setText(item.getModel());
@@ -57,15 +55,6 @@ public class ItemArrayAdapter extends ArrayAdapter<Item> {
             @Override
             public void onClick(View v) {
                 item.setSelected(checkbox.isChecked());
-            }
-        });
-
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (recyclerViewListener != null){
-                    recyclerViewListener.onItemClicked(position);
-                }
             }
         });
 

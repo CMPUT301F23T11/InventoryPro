@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -27,7 +28,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements RecyclerViewListener {
+public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private ImageButton deleteButton;
     private ImageButton profileButton;
@@ -47,20 +48,12 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewListe
         // creates test database
         database = new DatabaseManager();
 
-        // test sorting settings (these could be conceivably saved per user)
-        SortSettings sortSettings = new SortSettings();
-        FilterSettings filterSettings = new FilterSettings();
-
         // creates test database
         database = new DatabaseManager();
         // create database connected test list
-        ItemList itemList = new ItemList(this, listView, database,this, sortSettings,filterSettings);
+        ItemList itemList = new ItemList(this, listView, database);
         database.connect(UserPreferences.getInstance().getUserID(), itemList);
         ItemList.setInstance(itemList);
-
-
-        TextView total = findViewById(R.id.totalText);
-        total.setText(String.format("$%.2f", itemList.getTotalValue()));
 
         //Redirect to add Item activity
         ((ImageButton)findViewById(R.id.addButton)).setOnClickListener(new View.OnClickListener() {
@@ -70,21 +63,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewListe
                 startActivity(addItemIntent);
             }
         });
-
-        // Try to get new item from intent.
-        Item potentialItem = parseItemFromAddItemActivity();
-        if (potentialItem != null){
-            itemList.add(potentialItem);
-        }
-
-        // Try to get edited item from intent.
-        Item editedItem = parseItemFromEdit();
-        if (editedItem != null){
-
-            //itemList.add(editedItem);
-            itemList.replace(editedItem,editPosition);
-
-        }
 
         // show sort filter dialog fragment
         ((ImageButton)findViewById(R.id.sortFilterButton)).setOnClickListener(new View.OnClickListener() {
@@ -118,6 +96,27 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewListe
                 startActivity(signInActivity);
             }
         });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                onItemClicked(position);
+            }
+        });
+
+        // Try to get new item from intent.
+        Item potentialItem = parseItemFromAddItemActivity();
+        if (potentialItem != null){
+            itemList.add(potentialItem);
+        }
+
+        // Try to get edited item from intent.
+        Item editedItem = parseItemFromEdit();
+        if (editedItem != null){
+            //itemList.add(editedItem);
+            itemList.replace(editedItem,editPosition);
+
+        }
 
         refreshTotalText();
     }
@@ -182,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewListe
         return receivedItem;
     }
 
-    @Override
     public void onItemClicked(int position) {
         // Retrieve the item based on the position
         ItemList itemList = ItemList.getInstance();

@@ -27,6 +27,14 @@ public class FilterSettings {
         this(null,null,null,null,null);
     }
 
+    public void clear(){
+        from = null;
+        to = null;
+        keywords = null;
+        tags = null;
+        makes = null;
+    }
+
     public LocalDate getFrom() {
         return from;
     }
@@ -74,7 +82,7 @@ public class FilterSettings {
         if(to != null && item.getLocalDate().isAfter(to)){
             return Boolean.FALSE;
         }
-        if(keywords != null){
+        if(keywords != null && keywords.size() > 0){
             Boolean hasOne = Boolean.FALSE;
             for (String w : keywords){
                 if(item.getDescription().toLowerCase().contains(w.toLowerCase())){
@@ -84,7 +92,7 @@ public class FilterSettings {
             }
             if(!hasOne) return Boolean.FALSE;
         }
-        if(tags != null){
+        if(tags != null && tags.size() > 0){
             Boolean hasOne = Boolean.FALSE;
             for (String w : tags){
                 if(item.hasTag(w)){
@@ -94,7 +102,7 @@ public class FilterSettings {
             }
             if(!hasOne) return Boolean.FALSE;
         }
-        if(makes != null){
+        if(makes != null&& makes.size()>0){
             Boolean hasOne = Boolean.FALSE;
             for (String w : makes){
                 if(item.getMake().equals(w)){

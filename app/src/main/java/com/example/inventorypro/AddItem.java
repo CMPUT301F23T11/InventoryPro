@@ -101,11 +101,6 @@ public class AddItem extends AppCompatActivity {
             header.setText("Edit Item");
 
             editMode = true;
-
-
-
-
-
         }
     }
 

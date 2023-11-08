@@ -21,31 +21,30 @@ public class FilterFragment extends Fragment {
 
     private EditText from,to,keywords;
 
-    private FilterSettings filterSettings;
-    public FilterSettings getFilterSettings(){return filterSettings;}
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater layoutInflater, @Nullable ViewGroup viewGroup, @Nullable Bundle bundle) {
         return layoutInflater.inflate(R.layout.filter_fragment, viewGroup, false);
     }
 
+    private FilterSettings filterSettings(){
+        return UserPreferences.getInstance().getFilterSettings();
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
-        filterSettings = ItemList.getInstance().getFilterSettings();
-
         // Load ui from current settings.
         from = view.findViewById(R.id.date_from_input);
         to = view.findViewById(R.id.date_to_input);
         keywords = view.findViewById(R.id.keywords_input);
 
         // Load UI with current filter settings.
-        LocalDate fd = filterSettings.getFrom();
+        LocalDate fd = filterSettings().getFrom();
         from.setText(fd==null ? "" : fd.toString());
-        LocalDate td = filterSettings.getTo();
+        LocalDate td = filterSettings().getTo();
         to.setText(td==null ? "" : td.toString());
 
-        ArrayList<String> words = (filterSettings.getKeywords() == null) ? new ArrayList<>() : filterSettings.getKeywords();
+        ArrayList<String> words = (filterSettings().getKeywords() == null) ? new ArrayList<>() : filterSettings().getKeywords();
         String keyword = "";
         for (String k : words){
             keyword += k+", ";
@@ -69,7 +68,7 @@ public class FilterFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                filterSettings.setFrom(tryParseDate(s.toString()));
+                filterSettings().setFrom(tryParseDate(s.toString()));
             }
         });
 
@@ -86,7 +85,7 @@ public class FilterFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                filterSettings.setTo(tryParseDate(s.toString()));
+                filterSettings().setTo(tryParseDate(s.toString()));
             }
         });
 
@@ -110,7 +109,7 @@ public class FilterFragment extends Fragment {
                     if(i.isEmpty()) continue;
                     t.add(i.toLowerCase());
                 }
-                filterSettings.setKeywords(t);
+                filterSettings().setKeywords(t);
             }
         });
     }
@@ -118,15 +117,5 @@ public class FilterFragment extends Fragment {
     @Nullable
     private LocalDate tryParseDate(String s){
         return Helpers.parseDate(s.toString());
-    }
-
-    /**
-     * Resets all the filter settings to default
-     */
-    public void clear() {
-        // TODO: Reset the settings
-        // This method is already called from the SortFilterDialogFragment when clear is clicked
-        // This should reset all settings to default
-        filterSettings = new FilterSettings();
     }
 }
