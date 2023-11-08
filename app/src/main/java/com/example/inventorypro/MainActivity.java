@@ -81,10 +81,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewListe
         Item editedItem = parseItemFromEdit();
         if (editedItem != null){
 
-            itemList.add(editedItem);
-            Item rm = itemList.get(editPosition);
+            //itemList.add(editedItem);
+            itemList.replace(editedItem,editPosition);
 
-            itemList.remove(rm);
         }
 
         // show sort filter dialog fragment

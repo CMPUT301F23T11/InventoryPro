@@ -87,7 +87,7 @@ public class AddItem extends AppCompatActivity {
         // Try to get new item from intent.
         Item potentialItem = parseItemFromAddItemActivity();
         if (potentialItem != null){
-
+            //set editText to the values of the selected Item
             name.getEditText().setText(potentialItem.getName());
             name.setHelperText("");
             value.getEditText().setText(String.valueOf(potentialItem.getValue()));
@@ -97,7 +97,8 @@ public class AddItem extends AppCompatActivity {
             serialNumber.getEditText().setText(potentialItem.getSerialNumber());
             description.getEditText().setText(potentialItem.getDescription());
             comments.getEditText().setText(potentialItem.getComment());
-
+            //changing the header to Edit text
+            header.setText("Edit Item");
 
             editMode = true;
 

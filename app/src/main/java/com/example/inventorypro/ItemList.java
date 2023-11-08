@@ -120,6 +120,19 @@ public class ItemList {
         refresh(); //inefficient
     }
 
+    public void replace(Item item, int position){
+        Item oldItem = itemList.get(position);
+        itemList.set(position, item); // Replace the item at the specified position
+        if (itemArrayAdapter != null) {
+            itemArrayAdapter.notifyDataSetChanged();
+        }
+
+        if (database != null){
+            database.removeItem(oldItem);
+            database.addItem(item);
+        }
+
+    }
 
 
     /**
