@@ -6,6 +6,4 @@
     <string name="sign_in_button">Sign-in using Google</string>
     <string name="user_id_token">uid</string>
     <string name="logout_token">logout</string>
-    <string name="sort_bar_heading">Sort:</string>
-    <string name="filter_bar_heading">Filters:</string>
 </resources>

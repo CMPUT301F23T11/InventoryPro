@@ -92,6 +92,8 @@ public class SortFilterDialogFragment extends DialogFragment {
         applyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Toast.makeText(getContext(), ""+UserPreferences.getInstance().getFilterSettings().getKeywords(), Toast.LENGTH_LONG).show();
                 ItemList.getInstance().refresh();
 
                 // close sorting view
