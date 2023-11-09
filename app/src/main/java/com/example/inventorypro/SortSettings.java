@@ -1,18 +1,27 @@
 package com.example.inventorypro;
 
 
-// The objective of the sort fragment is to return a sort preferences.
+/**
+ * The SortSettings contain all of the settings data required to perform sorting on the item list.
+ */
 public class SortSettings{
 
     private SortFragment.SortOrder sortOrder;
     private SortFragment.SortType sortType;
 
+
+    public SortSettings() {
+        this(SortFragment.SortOrder.ASCENDING, SortFragment.SortType.NONE);
+    }
+
     public SortSettings(SortFragment.SortOrder sortOrder, SortFragment.SortType sortType) {
         this.sortOrder = sortOrder;
         this.sortType = sortType;
     }
-    public SortSettings() {
-        this(SortFragment.SortOrder.ASCENDING, SortFragment.SortType.NONE);
+
+    public void clear(){
+        sortOrder = SortFragment.SortOrder.ASCENDING;
+        sortType = SortFragment.SortType.NONE;
     }
 
     public SortFragment.SortOrder getSortOrder() {

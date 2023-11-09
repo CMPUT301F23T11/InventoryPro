@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -79,8 +80,11 @@ public class SortFilterDialogFragment extends DialogFragment {
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sortFragment.clear();
-                filterFragment.clear();
+                UserPreferences.getInstance().getFilterSettings().clear();
+                UserPreferences.getInstance().getSortSettings().clear();
+                Toast.makeText(getContext(), ""+UserPreferences.getInstance().getFilterSettings().getKeywords(), Toast.LENGTH_LONG).show();
+                ItemList.getInstance().refresh();
+                dismiss();
             }
         });
         // Apply button
@@ -88,11 +92,8 @@ public class SortFilterDialogFragment extends DialogFragment {
         applyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Fetch the settings and relay them to the item list
-                SortSettings sortSettings = sortFragment.getSortSettings();
-                ItemList.getInstance().setSortSettings(sortSettings);
 
-                // Tell the item list to refresh itself (filter/sort then update ui).
+                Toast.makeText(getContext(), ""+UserPreferences.getInstance().getFilterSettings().getKeywords(), Toast.LENGTH_LONG).show();
                 ItemList.getInstance().refresh();
 
                 // close sorting view
