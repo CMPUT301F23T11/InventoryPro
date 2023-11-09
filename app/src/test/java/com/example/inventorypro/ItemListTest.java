@@ -44,6 +44,15 @@ public class ItemListTest {
         itemList.add(item2);
         itemList.add(item3);
         return itemList;
+
+    }
+    private void deleteSelectedItems(ItemList itemList) {
+        ArrayList<Item> copy = new ArrayList<>(itemList.getItemList());
+        for (Item item : copy) {
+            if (item.isSelected()) {
+                itemList.remove(item);
+            }
+        }
     }
     @Test
     public void testTotal() {
@@ -129,6 +138,22 @@ public class ItemListTest {
         assert("description 1" == mockList.get(0).getDescription());
         assert("description 2" == mockList.get(1).getDescription());
         assert("description 3" == mockList.get(2).getDescription());
+    }
+
+    @Test
+    public void testDeleteSelectedItems() {
+        ItemList itemList = mockItemList();
+
+        itemList.get(1).setSelected(true);
+        itemList.get(2).setSelected(true);
+
+        assertEquals(3, itemList.getItemList().size());
+
+        deleteSelectedItems(itemList);
+
+        assertEquals(1, itemList.getItemList().size());
+        assertEquals("Item1", itemList.get(0).getName());
+
     }
 }
 

@@ -291,7 +291,8 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:text="Cancel" />
+            android:text="Cancel"
+            android:layout_marginRight="4dp"/>
 
         <Button
             android:id="@+id/confirm_button"
@@ -299,7 +300,8 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:text="Confirm" />
+            android:text="Confirm"
+            android:layout_marginLeft="4dp"/>
 
     </LinearLayout>
 

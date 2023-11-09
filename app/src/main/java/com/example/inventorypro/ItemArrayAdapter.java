@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class ItemArrayAdapter extends ArrayAdapter<Item> {
     private Context context;
     ItemList itemList;
+
     public ItemArrayAdapter(Context context, ItemList itemList, ArrayList<Item> items) {
         super(context, 0, items);
         this.context = context;
