@@ -134,6 +134,13 @@ public class ItemList {
         refresh(); //inefficient
     }
 
+    public void replace2(Item item,int position){
+        Item oldItem  = originalItemList.get(position);
+        originalItemList.set(position,item);
+        database.addItem(item);
+        database.removeItem(oldItem);
+        refresh();
+    }
     public void replace(Item item, int position){
         // Lookup the item, don't rely on position which may change.
 

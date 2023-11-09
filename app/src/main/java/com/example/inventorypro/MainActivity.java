@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         Item editedItem = parseItemFromEdit();
         if (editedItem != null){
             //itemList.add(editedItem);
-            ItemList.getInstance().replace(editedItem,editPosition);
+            ItemList.getInstance().replace2(editedItem,editPosition);
 
         }
 
