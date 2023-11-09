@@ -162,28 +162,32 @@ public class MainActivity extends AppCompatActivity {
      * @return None
      */
     public void showSortAndFilterChips() {
+        // reset all previous chips and hide bars
+        sortChipGroup.removeAllViews();
+        filterChipGroup.removeAllViews();
+        sortBar.setVisibility(View.GONE);
+        filterBar.setVisibility(View.GONE);
+
         // populate sort chips
         SortSettings sortSettings = userPreferences.getSortSettings();
         SortFragment.SortType sortType = sortSettings.getSortType();
         String chipText = sortType.describe();
 
         if (sortType != SortFragment.SortType.NONE) {
-            if (!chipAlreadyExists(sortChipGroup, chipText)) {
-                Chip sortChip = InitializeChip(sortType.describe());
-                sortChip.setOnCloseIconClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        userPreferences.getSortSettings().setSortType(SortFragment.SortType.NONE);
-                        ItemList.getInstance().refresh();
-                        sortChipGroup.removeView(sortChip);
+            Chip sortChip = InitializeChip(sortType.describe());
+            sortChip.setOnCloseIconClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    userPreferences.getSortSettings().setSortType(SortFragment.SortType.NONE);
+                    ItemList.getInstance().refresh();
+                    sortChipGroup.removeView(sortChip);
 
-                        if (sortChipGroup.getChildCount() == 0) {
-                            sortBar.setVisibility(View.GONE);
-                        }
+                    if (sortChipGroup.getChildCount() == 0) {
+                        sortBar.setVisibility(View.GONE);
                     }
-                });
-                sortChipGroup.addView(sortChip);
-            }
+                }
+            });
+            sortChipGroup.addView(sortChip);
 
             SortFragment.SortOrder sortOrder = userPreferences.getSortSettings().getSortOrder();
             if (sortOrder == SortFragment.SortOrder.ASCENDING) {
@@ -218,29 +222,27 @@ public class MainActivity extends AppCompatActivity {
         if (filterKeywords != null) {
             String filterKeywordsString = String.join(", ", filterSettings.getKeywords());
             String filterKeywordsChipText = String.format("keywords: %s", filterKeywordsString);
+            Chip filterKeywordsChip = InitializeChip(filterKeywordsChipText);
 
-            if (!chipAlreadyExists(filterChipGroup, filterKeywordsChipText)) {
-                Chip filterKeywordsChip = InitializeChip(filterKeywordsChipText);
-                filterKeywordsChip.setOnCloseIconClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        userPreferences.getFilterSettings().setKeywords(null);
-                        ItemList.getInstance().refresh();
-                        filterChipGroup.removeView(filterKeywordsChip);
+            filterKeywordsChip.setOnCloseIconClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    userPreferences.getFilterSettings().setKeywords(null);
+                    ItemList.getInstance().refresh();
+                    filterChipGroup.removeView(filterKeywordsChip);
 
-                        if (filterChipGroup.getChildCount() == 0) {
-                            filterBar.setVisibility(View.GONE);
-                        }
+                    if (filterChipGroup.getChildCount() == 0) {
+                        filterBar.setVisibility(View.GONE);
                     }
-                });
-                filterChipGroup.addView(filterKeywordsChip);
-            }
+                }
+            });
+            filterChipGroup.addView(filterKeywordsChip);
         }
 
         // filter from chip
         LocalDate filterFrom = filterSettings.getFrom();
         String filterFromChipText = String.format("from: %s", filterFrom);
-        if (filterFrom != null && !chipAlreadyExists(filterChipGroup, filterFromChipText)) {
+        if (filterFrom != null) {
             Chip filterFromChip = InitializeChip(filterFromChipText);
             filterFromChip.setOnCloseIconClickListener(new View.OnClickListener() {
                 @Override
@@ -260,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
         // filter to chip
         LocalDate filterTo = filterSettings.getTo();
         String filterToChipText = String.format("to: %s", filterTo);
-        if (filterTo != null && !chipAlreadyExists(filterChipGroup, filterToChipText)) {
+        if (filterTo != null) {
             Chip filterToChip = InitializeChip(filterToChipText);
             filterToChip.setOnCloseIconClickListener(new View.OnClickListener() {
                 @Override
@@ -296,16 +298,5 @@ public class MainActivity extends AppCompatActivity {
         chip.setCloseIcon(getDrawable(R.drawable.baseline_cancel_24));
         chip.setCloseIconVisible(true);
         return chip;
-    }
-
-    private Boolean chipAlreadyExists(ChipGroup chipGroup, String chipText) {
-        Boolean result = false;
-        for (int i = 0; i < chipGroup.getChildCount(); i++) {
-            Chip chip = (Chip)chipGroup.getChildAt(i);
-            if (chip.getText().equals(chipText)) {
-                result = true;
-            }
-        }
-        return result;
     }
 }
