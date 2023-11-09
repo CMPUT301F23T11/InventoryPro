@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
             if (sortOrder == SortFragment.SortOrder.ASCENDING) {
                 sortOrderButton.setImageDrawable(getDrawable(R.drawable.baseline_arrow_upward_24));
             } else {
-                sortOrderButton.setImageDrawable(getDrawable(R.drawable.baseline_arrow_upward_24));
+                sortOrderButton.setImageDrawable(getDrawable(R.drawable.baseline_arrow_downward_24));
             }
             sortOrderButton.setOnClickListener(new View.OnClickListener() {
                 @Override
