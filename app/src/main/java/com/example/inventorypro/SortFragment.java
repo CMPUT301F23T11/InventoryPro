@@ -26,14 +26,25 @@ public class SortFragment extends Fragment {
         ASCENDING,
         DESCENDING
     }
+
     // Store settings for sort type
     public enum SortType {
-        NONE,
-        DATE,
-        MAKE,
-        VALUE,
-        DESCRIPTION,
-        TAG
+        NONE("None"),
+        DATE("Date"),
+        MAKE("Make"),
+        VALUE("Value"),
+        DESCRIPTION("Description"),
+        TAG("Tag");
+
+        private String description;
+
+        private SortType(String description) {
+            this.description = description;
+        }
+
+        public String describe() {
+            return description;
+        }
     }
 
     @Nullable

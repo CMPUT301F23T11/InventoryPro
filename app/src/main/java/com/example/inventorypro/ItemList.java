@@ -94,6 +94,7 @@ public class ItemList {
 
         if(context != null){
             ((MainActivity)context).refreshTotalText();
+            ((MainActivity)context).showSortAndFilterChips();
         }
     }
 
@@ -176,7 +177,7 @@ public class ItemList {
     /**
      * Sorts the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.
      */
-    private void sort(){
+    protected void sort(){
         if(UserPreferences.getInstance().getSortSettings() == null){
             Log.e("ITEMLIST", "Sort settings is null.");
             return;
@@ -213,9 +214,9 @@ public class ItemList {
             case VALUE:
                 // sort ascending or descending
                 if (sortOrder == SortFragment.SortOrder.ASCENDING) {
-                    Collections.sort(itemList, (item1, item2) -> (int) (item1.getValue() - item2.getValue()));
+                    Collections.sort(itemList, (item1, item2) -> (int) Math.signum(item1.getValue() - item2.getValue()));
                 } else {
-                    Collections.sort(itemList, (item2, item1) -> (int) (item1.getValue() - item2.getValue()));
+                    Collections.sort(itemList, (item2, item1) -> (int) Math.signum(item1.getValue() - item2.getValue()));
                 }
                 break;
             case DESCRIPTION:
@@ -234,7 +235,7 @@ public class ItemList {
     /**
      * Filters the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.
      */
-    private void filter(){
+    protected void filter(){
         if(UserPreferences.getInstance().getFilterSettings() == null){
             Log.e("ITEMLIST", "Filter settings is null.");
             return;
