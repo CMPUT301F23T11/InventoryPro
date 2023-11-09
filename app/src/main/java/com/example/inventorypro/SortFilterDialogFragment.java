@@ -82,7 +82,6 @@ public class SortFilterDialogFragment extends DialogFragment {
             public void onClick(View v) {
                 UserPreferences.getInstance().getFilterSettings().clear();
                 UserPreferences.getInstance().getSortSettings().clear();
-                Toast.makeText(getContext(), ""+UserPreferences.getInstance().getFilterSettings().getKeywords(), Toast.LENGTH_LONG).show();
                 ItemList.getInstance().refresh();
                 dismiss();
             }
@@ -93,7 +92,6 @@ public class SortFilterDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(getContext(), ""+UserPreferences.getInstance().getFilterSettings().getKeywords(), Toast.LENGTH_LONG).show();
                 ItemList.getInstance().refresh();
 
                 // close sorting view

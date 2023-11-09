@@ -2,6 +2,10 @@ package com.example.inventorypro;
 
 import static java.lang.Integer.parseInt;
 
+import android.content.Context;
+import android.view.View;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 
 import java.time.LocalDate;
@@ -13,6 +17,25 @@ import java.util.List;
  * A class containing helper functions which are used throughout the application.
  */
 public class Helpers {
+
+    public static View.OnClickListener NotImplementedClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            NotImplementedToast(v.getContext());
+        }
+    };
+
+    public static void NotImplementedToast(Context context){
+        Helpers.Toast(context, "This feature is not implemented yet.");
+    }
+    /**
+     * Utility to quickly show toast.
+     * @param context
+     * @param string The message to use.
+     */
+    public static void Toast(Context context, String string){
+        Toast.makeText(context, string, Toast.LENGTH_SHORT).show();
+    }
 
     /**
      * Parse the date from text.

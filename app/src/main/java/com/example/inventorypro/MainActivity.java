@@ -1,7 +1,6 @@
 package com.example.inventorypro;
 
 import static java.lang.Integer.parseInt;
-import static java.security.AccessController.getContext;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -9,29 +8,20 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.lang.reflect.Array;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private ImageButton deleteButton;
     private ImageButton profileButton;
+    private ImageButton createsTagsButton,scanButton;
     private int editPosition;
 
     @Override
@@ -44,6 +34,11 @@ public class MainActivity extends AppCompatActivity {
         // creates a delete button
         deleteButton = findViewById(R.id.deleteButton);
         profileButton = findViewById(R.id.profileButton);
+
+        createsTagsButton = findViewById(R.id.createsTagsButton);
+        scanButton = findViewById(R.id.scanButton);
+        createsTagsButton.setOnClickListener(Helpers.NotImplementedClickListener);
+        scanButton.setOnClickListener(Helpers.NotImplementedClickListener);
 
         // Only create a single instance of ItemList.
         if(ItemList.getInstance() == null){
@@ -86,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         ((ImageButton)findViewById(R.id.createsTagsButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Helpers.NotImplementedToast(v.getContext());
                 DialogFragment createTags = new CreateTagsFragment();
                 createTags.show(getSupportFragmentManager(), "createTags");
             }
@@ -97,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent signInActivity = new Intent(getBaseContext(), SignInActivity.class);
                 signInActivity.putExtra("logout", true);
                 startActivity(signInActivity);
+
+                Helpers.Toast(view.getContext(),"You have been signed out.");
             }
         });
 
@@ -138,17 +136,21 @@ public class MainActivity extends AppCompatActivity {
     private void deleteSelectedItems() {
         // TODO: there might be a better way to do this down the line.
         // Actually there is, just do this operation on the ItemList.
+        Boolean removedAtLeastOne = Boolean.FALSE;
+
         ItemList itemList = ItemList.getInstance();
 
         ArrayList<Item> copy = new ArrayList<>(itemList.getItemList());
         for (Item item : copy) {
             if (item.isSelected()) {
                 itemList.remove(item);
+                removedAtLeastOne = Boolean.TRUE;
             }
         }
-        //
 
-
+        if(!removedAtLeastOne){
+            Helpers.Toast(getBaseContext(),"Select item(s) to delete first.");
+        }
     }
 
     /**

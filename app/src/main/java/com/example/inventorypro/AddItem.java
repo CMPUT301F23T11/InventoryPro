@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -35,6 +36,7 @@ public class AddItem extends AppCompatActivity {
     private TextInputLayout description;
     private TextInputLayout comments;
     private TextInputLayout value;
+    private ImageButton addTagButton, addImageButton, addCodeButton;
     private int selectedPosition;
     private boolean editMode = false;
     List<String> tags;
@@ -61,6 +63,14 @@ public class AddItem extends AppCompatActivity {
         header = findViewById(R.id.add_header);
 
         date.getEditText().setText(LocalDate.now().toString());
+
+        addTagButton = findViewById(R.id.addTagButton);
+        addImageButton = findViewById(R.id.addImageButton);
+        addCodeButton = findViewById(R.id.addcode_button);
+
+        addTagButton.setOnClickListener(Helpers.NotImplementedClickListener);
+        addImageButton.setOnClickListener(Helpers.NotImplementedClickListener);
+        addCodeButton.setOnClickListener(Helpers.NotImplementedClickListener);
 
         //calls sendItem if all inputs are valid
         confirmButton.setOnClickListener(new View.OnClickListener() {

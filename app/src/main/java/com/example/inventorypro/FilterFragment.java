@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -112,6 +113,9 @@ public class FilterFragment extends Fragment {
                 filterSettings().setKeywords(t);
             }
         });
+
+        ((Button)view.findViewById(R.id.select_make_button)).setOnClickListener(Helpers.NotImplementedClickListener);
+        ((Button)view.findViewById(R.id.select_tags_button)).setOnClickListener(Helpers.NotImplementedClickListener);
     }
 
     @Nullable

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ScrollView;
@@ -143,4 +144,13 @@ public class ViewItem_Fragment extends DialogFragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // add rounded corners to dialog fragment
+        Window window = getDialog().getWindow();
+        if (window != null) {
+            window.setBackgroundDrawableResource(R.drawable.dialog_fragment_rounded);
+        }
     }
+}
