@@ -1,7 +1,6 @@
 package com.example.inventorypro;
 
 import static java.lang.Integer.parseInt;
-import static java.security.AccessController.getContext;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -9,23 +8,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.lang.reflect.Array;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -118,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         Item editedItem = parseItemFromEdit();
         if (editedItem != null){
             //itemList.add(editedItem);
-            ItemList.getInstance().replace2(editedItem,editPosition);
+            ItemList.getInstance().replace(editedItem,editPosition);
 
         }
 

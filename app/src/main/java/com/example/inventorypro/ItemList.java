@@ -4,14 +4,9 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.function.Consumer;
 
 public class ItemList {
 
@@ -134,45 +129,22 @@ public class ItemList {
         refresh(); //inefficient
     }
 
-    public void replace2(Item item,int position){
-        Item oldItem  = originalItemList.get(position);
-        originalItemList.set(position,item);
-        database.addItem(item);
-        database.removeItem(oldItem);
-        refresh();
-    }
+    /**
+     * Replaces the item at position with a new item.
+     * @param item The new item.
+     * @param position The position of the old item.
+     */
     public void replace(Item item, int position){
-        // Lookup the item, don't rely on position which may change.
+        Item oldItem = originalItemList.get(position);
+        originalItemList.set(position,item);
 
-        // Lookup the old item by comparing their unique IDs.
-        Item oldItem = null;
-        for(Item i : originalItemList){
-            if (i.getUID().equals(item.getUID())){
-                oldItem = i;
-                break;
-            }
-        }
-        if(oldItem == null) {
-            // As a failsafe, this call will automatically update the database and eventually asynchronously
-            // call onSynchronize.
+        if(database != null){
             database.addItem(item);
-            return;
-        }
-
-        // Perform operations to update the original item list.
-        originalItemList.remove(oldItem);
-        originalItemList.add(item);
-
-        // Perform the same operations on the database (redundant to remove the item I think).
-        if (database != null){
             database.removeItem(oldItem);
-            database.addItem(item); // Automatically overwrites preexisting data.
         }
 
-        // Tell ItemList to immediately update.
         refresh();
     }
-
 
     /**
      * Gets the item list of an ItemList object
