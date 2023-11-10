@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddItem">
+    tools:context=".MainActivity">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-    >
+        >
 
         <ImageView
             android:id="@+id/imageView"
@@ -22,82 +23,35 @@
             android:layout_marginEnd="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.585"
-            app:layout_constraintStart_toStartOf="parent"
             android:background="@drawable/baseline_image"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"></ImageView>
 
-        <RelativeLayout
-            android:id="@+id/relativeLayout2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
-            tools:layout_editor_absoluteX="2dp">
-
-
-            <TextView
-                android:id="@+id/add_header"
-                android:layout_width="251dp"
-                android:layout_height="40dp"
-                android:accessibilityHeading="true"
-                android:text="Add Item"
-                android:textSize="34sp" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:gravity="end"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/addLabelButton"
-                    android:layout_width="40dp"
-                    android:layout_height="42dp"
-
-                    android:background="@color/white"
-                    android:clickable="true"
-
-                    app:srcCompat="@drawable/addtag" />
-
-                <ImageButton
-                    android:id="@+id/addImageButton"
-                    android:layout_width="40dip"
-                    android:layout_height="42dip"
-
-                    android:background="@color/white"
-                    android:clickable="true"
-
-                    app:srcCompat="@drawable/camera" />
-            </LinearLayout>
-
-        </RelativeLayout>
-
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/inputItemName"
+            android:id="@+id/viewItemName"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
             android:layout_marginEnd="2dp"
-            app:endIconMode="clear_text"
-            app:helperText="*required"
-            app:helperTextTextColor="@color/red"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/relativeLayout2"
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
             app:layout_constraintVertical_bias="0.0"
             app:startIconDrawable="@drawable/baseline_shopping_bag_24">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:enabled="false"
+                android:focusable="false"
+                android:text="1234"
+                android:textSize="20dp"
                 android:hint="Name"
-                android:textColor="@color/purple"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textColor="@color/purple" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
@@ -110,18 +64,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/inputItemName">
+            app:layout_constraintTop_toBottomOf="@+id/viewItemName">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputValue"
+                android:id="@+id/viewValue"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="2dp"
                 android:layout_marginEnd="2dp"
                 android:layout_weight="1"
-                app:endIconMode="clear_text"
-                app:helperText="*required"
-                app:helperTextTextColor="@color/red"
                 app:layout_constraintEnd_toEndOf="@+id/inputMake"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/inputItemName"
@@ -130,20 +81,20 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:enabled="false"
+                    android:textSize="20dp"
                     android:hint="Value"
                     android:textColor="@color/purple"
                     android:inputType="numberDecimal" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputDate"
+                android:id="@+id/viewDate"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="2dp"
                 android:layout_weight="1"
-                app:endIconMode="clear_text"
-                app:helperText="*required"
-                app:helperTextTextColor="@color/red"
                 app:layout_constraintEnd_toEndOf="parent"
 
                 app:layout_constraintHorizontal_bias="1.0"
@@ -152,9 +103,13 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:focusable="false"
                     android:hint="Date"
                     android:textColor="@color/purple"
-                    android:inputType="date" />
+                    android:inputType="date"
+                    android:textSize="20dp" />
+
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
@@ -172,8 +127,10 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputMake"
+                android:id="@+id/viewMake"
                 android:layout_width="0dp"
+                android:enabled="false"
+                android:focusable="false"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 app:endIconMode="clear_text"
@@ -184,11 +141,13 @@
                     android:layout_height="wrap_content"
                     android:hint="Make"
                     android:textColor="@color/purple"
-                    android:inputType="text"/>
+                    android:inputType="text"
+                    android:textSize="20dp" />
+
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputModel"
+                android:id="@+id/viewModel"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -198,9 +157,12 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:focusable="false"
                     android:hint="Model"
+                    android:inputType="text"
                     android:textColor="@color/purple"
-                    android:inputType="text"/>
+                    android:textSize="20dp" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
@@ -218,32 +180,27 @@
 
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputSerialNumber"
-                android:layout_width="0dp"
+                android:id="@+id/viewSerialNumber"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="6"
                 app:endIconMode="clear_text"
                 app:startIconDrawable="@drawable/qrcode">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:enabled="false"
+                    android:textSize="20dp"
                     android:hint="SerialNumber"
                     android:textColor="@color/purple"
                     android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
-            <ImageButton
-                android:id="@+id/addcode_button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:background="@color/white"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/qrcodescanner" />
 
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/inputDescription"
+            android:id="@+id/viewDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
@@ -257,15 +214,17 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:focusable="false"
+                android:enabled="false"
+                android:textSize="20dp"
                 android:hint="Description"
                 android:textColor="@color/purple"
                 android:inputType="textMultiLine"
-                android:maxLines="10"
-                />
+                android:maxLines="10"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/comments"
+            android:id= "@+id/viewComments"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
@@ -273,24 +232,29 @@
             app:endIconMode="clear_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/inputDescription"
+            app:layout_constraintTop_toBottomOf="@+id/viewDescription"
             app:startIconDrawable="@drawable/comments">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:focusable="false"
+                android:enabled="false"
+                android:textSize="20dp"
                 android:hint="Comments"
-                android:inputType="textMultiLine"
-                android:textColor="@color/purple" />
+                android:textColor="@color/purple"
+                android:inputType="textMultiLine"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/comments">
+            app:layout_constraintTop_toBottomOf="@id/viewComments">
 
             <Button
                 android:id="@+id/cancel_button"
@@ -301,12 +265,12 @@
                 android:text="Cancel" />
 
             <Button
-                android:id="@+id/confirm_button"
+                android:id="@+id/edit_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:clickable="true"
-                android:text="Confirm" />
+                android:text="Edit" />
 
         </LinearLayout>
 
@@ -317,4 +281,5 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </ScrollView>

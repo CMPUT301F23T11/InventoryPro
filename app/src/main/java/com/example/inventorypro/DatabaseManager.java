@@ -57,7 +57,20 @@ public class DatabaseManager {
         db.document(getDBItemPath(item.getUID())).set(item);
         Log.d(TAG,"Adding Item: "+item.getUID());
     }
+    public void replaceItem(Item oldItem, Item newItem){
+        if (!isConnected) {
+            throw new RuntimeException("Database is not connected.");
+        }
 
+        if (oldItem == null || newItem == null) {
+            throw new IllegalArgumentException("Both oldItem and newItem must be non-null.");
+        }
+
+        // Check if the oldItem exists in the database and replace it with newItem
+        db.document(getDBItemPath(oldItem.getUID())).set(newItem);
+        Log.d(TAG, "Replacing Item: " + oldItem.getUID() + " with " + newItem.getUID());
+
+    }
     /**
      * Removes an item from the database.
      * @param item The item to remove.

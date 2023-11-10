@@ -5,8 +5,6 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -37,16 +35,26 @@ public class ItemList {
 
     public ItemList(Context context, ListView itemListView, DatabaseManager database) {
         // save context and itemListView for later use
+        resetup(context, itemListView);
+
+        this.database = database;
+    }
+
+    /**
+     * Used to update references when the MainActivity is created and destroyed.
+     * @param context From MainActivity
+     * @param itemListView The updated list view object.
+     */
+    public void resetup(Context context, ListView itemListView){
         this.context = context;
         this.itemListView = itemListView;
 
         // setup list view
         if (context != null && itemListView != null) {
+
             itemArrayAdapter = new ItemArrayAdapter(context, this, itemList);
             itemListView.setAdapter(itemArrayAdapter);
         }
-
-        this.database = database;
     }
 
     /**
@@ -55,6 +63,7 @@ public class ItemList {
      */
     public void onSynchronize(ArrayList<Item> items){
         // NOTE: this is called almost immediately after any add/remove (could be a performance problem later).
+        Log.e("GAN", "Database sync occuring " + items.size() + " items.");
         itemList.clear();
         itemList.addAll(items);
 
@@ -64,6 +73,9 @@ public class ItemList {
         refresh();
     }
 
+    public void update(){
+        itemArrayAdapter.notifyDataSetChanged();
+    }
     /**
      * Resorts and filters items then notifies the UI to update.
      */
@@ -101,6 +113,7 @@ public class ItemList {
         refresh(); //inefficient
     }
 
+
     /**
      * Removes an item from the list of items and calls the database manager.
      * @param item The item to remove.
@@ -116,6 +129,23 @@ public class ItemList {
         }
 
         refresh(); //inefficient
+    }
+
+    /**
+     * Replaces the item at position with a new item.
+     * @param item The new item.
+     * @param position The position of the old item.
+     */
+    public void replace(Item item, int position){
+        Item oldItem = originalItemList.get(position);
+        originalItemList.set(position,item);
+
+        if(database != null){
+            database.removeItem(oldItem);
+            database.addItem(item);
+        }
+
+        refresh();
     }
 
     /**

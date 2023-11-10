@@ -5,14 +5,15 @@ import static java.lang.Integer.parseInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,9 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout filterBar;
     private ChipGroup filterChipGroup;
     private ImageButton sortOrderButton;
-
-    // User data
-    private UserPreferences userPreferences;
+    private int editPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,18 +53,20 @@ public class MainActivity extends AppCompatActivity {
         filterBar = findViewById(R.id.filterBar);
         filterChipGroup = findViewById(R.id.filterChipGroup);
 
-        // Initialize user preferences
-        userPreferences = UserPreferences.getInstance();
+        // Only create a single instance of ItemList.
+        if(ItemList.getInstance() == null){
+            // creates test database
+            DatabaseManager database = new DatabaseManager();
+            // create database connected test list
+            ItemList itemList = new ItemList(this, listView, database);
+            database.connect(UserPreferences.getInstance().getUserID(), itemList);
+            ItemList.setInstance(itemList);
+        } else{
+            // Need to re-hook instance variables from MainActivity.
+            ItemList.getInstance().resetup(this,listView);
+        }
 
-
-        // creates test database
-        database = new DatabaseManager();
-        // create database connected test list
-        ItemList itemList = new ItemList(this, listView, database);
-        database.connect(userPreferences.getUserID(), itemList);
-        ItemList.setInstance(itemList);
-
-        // Launch add item activity.
+        //Redirect to add Item activity
         ((ImageButton)findViewById(R.id.addButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,12 +74,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(addItemIntent);
             }
         });
-
-        // Try to get new item from intent.
-        Item potentialItem = parseItemFromAddItemActivity();
-        if (potentialItem != null){
-            itemList.add(potentialItem);
-        }
 
         // show sort filter dialog fragment
         ((ImageButton)findViewById(R.id.sortFilterButton)).setOnClickListener(new View.OnClickListener() {
@@ -113,6 +108,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                onItemClicked(position);
+            }
+        });
+
+        // Try to get new item from intent.
+        Item potentialItem = parseItemFromAddItemActivity();
+        if (potentialItem != null){
+            ItemList.getInstance().add(potentialItem);
+        }
+
+        // Try to get edited item from intent.
+        Item editedItem = parseItemFromEdit();
+        if (editedItem != null){
+            //itemList.add(editedItem);
+            ItemList.getInstance().replace(editedItem,editPosition);
+
+        }
+
         refreshTotalText();
     }
 
@@ -138,6 +154,9 @@ public class MainActivity extends AppCompatActivity {
                 itemList.remove(item);
             }
         }
+        //
+
+
     }
 
     /**
@@ -156,12 +175,55 @@ public class MainActivity extends AppCompatActivity {
         return receivedItem;
     }
 
+    /**
+     * Receives edit Item if created from the AddItem Fragment
+     * @return
+     * New Item if created else returns null
+     */
+    private Item parseItemFromEdit(){
+
+        Intent receiverIntent = getIntent();
+        Item receivedItem = receiverIntent.getParcelableExtra("edit Item");
+        editPosition = receiverIntent.getIntExtra("edit Position",-1);
+        if(receivedItem==null) {
+            return null;
+        }
+
+        return receivedItem;
+    }
+
+    /**
+     * Called whenever an Item on the list is clicked
+     * Sends the postion of the clicked item, as well as the Item to view_fragment
+     * @param position
+     */
+    public void onItemClicked(int position) {
+        // Retrieve the item based on the position
+        ItemList itemList = ItemList.getInstance();
+        Item item = itemList.get(position);
+        // Create a Bundle and put the Item object into it
+        Bundle args = new Bundle();
+        args.putParcelable(ViewItem_Fragment.ARG_ITEM, item);
+
+        // Create an instance of the ViewItem_Fragment fragment and set the Bundle as its arguments
+        ViewItem_Fragment fragment = ViewItem_Fragment.newInstance(item,position);
+
+        // Use a FragmentManager to display the ViewItem_Fragment fragment as a dialog
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        // Begin a transaction to show the ViewItem_Fragment fragment as a dialog
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        fragment.show(transaction, "viewItemDialog");
+    }
+
 
     /**
      * Dynamically show/hides sort and filter bars and relevant chips
      * @return None
      */
     public void showSortAndFilterChips() {
+        UserPreferences userPreferences = UserPreferences.getInstance();
+
         // reset all previous chips and hide bars
         sortChipGroup.removeAllViews();
         filterChipGroup.removeAllViews();
