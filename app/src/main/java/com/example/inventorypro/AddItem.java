@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-//TODO: preserve filter settings and sort settings of the MainActivity
-// might justify putting these into some user preferences static object.
+// TODO: Preserve filter settings and sort settings of the MainActivity
+// This might justify putting these into some user preferences static object.
 
 /**
  * AddItem Activity is responsible for gathering user input and re-creating the MainActivity with the parsed Item.
@@ -41,7 +41,7 @@ public class AddItem extends AppCompatActivity {
     private boolean editMode = false;
     List<String> tags;
 
-    private Button  confirmButton;
+    private Button confirmButton;
     private Button cancelButton;
 
     @Override
@@ -49,7 +49,7 @@ public class AddItem extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
-        //gets values from the EditText
+        // Gets values from the EditText
         name = findViewById(R.id.inputItemName);
         value = findViewById(R.id.inputValue);
         date = findViewById(R.id.inputDate);
@@ -62,6 +62,7 @@ public class AddItem extends AppCompatActivity {
         cancelButton = findViewById(R.id.cancel_button);
         header = findViewById(R.id.add_header);
 
+        // Set the default date to the current date
         date.getEditText().setText(LocalDate.now().toString());
 
         addTagButton = findViewById(R.id.addTagButton);
@@ -76,17 +77,17 @@ public class AddItem extends AppCompatActivity {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validateInput()){
-                    if (editMode){
+                if (validateInput()) {
+                    if (editMode) {
                         sendEditItem();
-                    }
-                    else{
+                    } else {
                         sendItem();
                     }
                 }
             }
         });
-        // calls cancel, if user wants to return to main activity
+
+        // Calls cancel if the user wants to return to the main activity
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,10 +95,10 @@ public class AddItem extends AppCompatActivity {
             }
         });
 
-        // Try to get new item from intent.
+        // Try to get a new item from the intent.
         Item potentialItem = parseItemFromAddItemActivity();
-        if (potentialItem != null){
-            //set editText to the values of the selected Item
+        if (potentialItem != null) {
+            // Set EditText values to the values of the selected Item
             name.getEditText().setText(potentialItem.getName());
             name.setHelperText("");
             value.getEditText().setText(String.valueOf(potentialItem.getValue()));
@@ -107,9 +108,9 @@ public class AddItem extends AppCompatActivity {
             serialNumber.getEditText().setText(potentialItem.getSerialNumber());
             description.getEditText().setText(potentialItem.getDescription());
             comments.getEditText().setText(potentialItem.getComment());
-            //changing the header to Edit text
-            header.setText("Edit Item");
 
+            // Change the header to "Edit Item"
+            header.setText("Edit Item");
             editMode = true;
         }
     }
@@ -118,39 +119,37 @@ public class AddItem extends AppCompatActivity {
      * Parses the item if this activity is in edit mode and starts MainActivity
      */
     private void sendEditItem() {
-        //intent to return to main activity
+        // Intent to return to the main activity
         Intent sendEditIntent = new Intent(this, MainActivity.class);
 
-        //create date in LocalDate format from the user input
+        // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
 
-        //create new input
-        Item editItem = new Item(name.getEditText().getText().toString(),
+        // Create a new input
+        Item editItem = new Item(
+                name.getEditText().getText().toString(),
                 Double.parseDouble(value.getEditText().getText().toString()),
                 itemDate,
                 make.getEditText().getText().toString(),
                 model.getEditText().getText().toString(),
                 serialNumber.getEditText().getText().toString(),
                 description.getEditText().getText().toString(),
-                comments.getEditText().getText().toString(),tags);
+                comments.getEditText().getText().toString(), tags);
 
-
-        //sends the item back to main activity
+        // Send the edited item back to the main activity
         sendEditIntent.putExtra("edit Item", editItem);
         sendEditIntent.putExtra("edit Position", selectedPosition);
         startActivity(sendEditIntent);
-
     }
 
     /**
-     * Creates a new item from the user inputs
-     * sends the item back to the main activity
+     * Creates a new item from the user inputs and sends it back to the main activity.
      */
-    private void sendItem(){
-        //create date in LocalDate format from the user input
+    private void sendItem() {
+        // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
 
-        //create new input
+        // Create a new input
         Item newItem = new Item(
                 name.getEditText().getText().toString(),
                 Double.parseDouble(value.getEditText().getText().toString()),
@@ -162,67 +161,69 @@ public class AddItem extends AppCompatActivity {
                 comments.getEditText().getText().toString(),
                 null);
 
-        //intent to return to main activity
+        // Intent to return to the main activity
         Intent sendItemIntent = new Intent(this, MainActivity.class);
-        //sends the item back to main activity
+
+        // Send the new item back to the main activity
         sendItemIntent.putExtra("new Item", newItem);
         startActivity(sendItemIntent);
     }
 
     /**
-     * Returns to main activity
+     * Returns to the main activity.
      */
-    private void cancel(){
+    private void cancel() {
         Intent cancelIntent = new Intent(this, MainActivity.class);
         startActivity(cancelIntent);
     }
 
     /**
-     * Validate all the user inputs
-     * @return
-     * true if all inputs pass validation
-     * false otherwise
+     * Validates all the user inputs.
+     *
+     * @return true if all inputs pass validation, false otherwise.
      */
-    private boolean validateInput(){
-        //validate name
-        if(name.getEditText().length() == 0){
+    private boolean validateInput() {
+        // Validate name
+        if (name.getEditText().length() == 0) {
             name.setError("This field is required!");
             return false;
         }
 
-        //validate date
-        if(date.getEditText().length() == 0){
+        // Validate date
+        if (date.getEditText().length() == 0) {
             date.setError("This field is required!");
             return false;
-        } else if(date.getEditText().length() != 10){
+        } else if (date.getEditText().length() != 10) {
             date.setError("Enter (YYYY-MM-DD)!");
             return false;
-            //check for month
-        } else if(parseInt(date.getEditText().getText().toString().substring(5,7))>12 || parseInt(date.getEditText().getText().toString().substring(5,7))<1) {
+            // Check for month
+        } else if (parseInt(date.getEditText().getText().toString().substring(5, 7)) > 12 ||
+                parseInt(date.getEditText().getText().toString().substring(5, 7)) < 1) {
             date.setError("Enter (YYYY-MM-DD)!");
             return false;
-            //validate day
-        } else if(parseInt(date.getEditText().getText().toString().substring(8))<1 || parseInt(date.getEditText().getText().toString().substring(8)) > 31) {
+            // Validate day
+        } else if (parseInt(date.getEditText().getText().toString().substring(8)) < 1 ||
+                parseInt(date.getEditText().getText().toString().substring(8)) > 31) {
             date.setError("Enter (YYYY-MM-DD)!");
             return false;
-        } else if(parseInt(date.getEditText().getText().toString().substring(8))<1 || parseInt(date.getEditText().getText().toString().substring(8)) > 30) {
-            List<Integer> thirtyDaymonths = new ArrayList<>(Arrays.asList(4,6,9,11));
-            if (thirtyDaymonths.contains(parseInt(date.getEditText().getText().toString().substring(5,7)))){
+        } else if (parseInt(date.getEditText().getText().toString().substring(8)) < 1 ||
+                parseInt(date.getEditText().getText().toString().substring(8)) > 30) {
+            List<Integer> thirtyDaymonths = new ArrayList<>(Arrays.asList(4, 6, 9, 11));
+            if (thirtyDaymonths.contains(parseInt(date.getEditText().getText().toString().substring(5, 7)))) {
                 date.setError("Enter (YYYY-MM-DD)!");
                 return false;
             }
-        } else if(parseInt(date.getEditText().getText().toString().substring(8))<1 || parseInt(date.getEditText().getText().toString().substring(8)) > 29) {
+        } else if (parseInt(date.getEditText().getText().toString().substring(8)) < 1 ||
+                parseInt(date.getEditText().getText().toString().substring(8)) > 29) {
 
-            if (parseInt(date.getEditText().getText().toString().substring(5,7)) == 2){
+            if (parseInt(date.getEditText().getText().toString().substring(5, 7)) == 2) {
                 date.setError("Enter (YYYY-MM-DD)!");
                 return false;
             }
-
-
-
         }
 
-        if(value.getEditText().length() == 0){
+        // Validate value
+        if (value.getEditText().length() == 0) {
             name.setError("This field is required!");
             return false;
         }
@@ -230,21 +231,19 @@ public class AddItem extends AppCompatActivity {
     }
 
     /**
-     * Receives New Item if created from the AddItem Fragment
-     * @return
-     * New Item if created else returns null
+     * Receives a new item if created from the AddItem Fragment.
+     *
+     * @return New Item if created; otherwise, returns null.
      */
-    private Item parseItemFromAddItemActivity(){
-
+    private Item parseItemFromAddItemActivity() {
         Intent receiverIntent = getIntent();
         Item receivedItem = receiverIntent.getParcelableExtra("edit");
         selectedPosition = getIntent().getIntExtra("editPositon", -1);
 
-        if(receivedItem==null) {
+        if (receivedItem == null) {
             return null;
         }
 
         return receivedItem;
     }
-
 }

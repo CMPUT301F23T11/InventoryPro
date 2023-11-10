@@ -230,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
         fragment.show(transaction, "viewItemDialog");
     }
 
+
     /**
      * Dynamically show/hides sort and filter bars and relevant chips
      * @return None
