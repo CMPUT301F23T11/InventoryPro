@@ -5,13 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddItem">
+    tools:context=".Activities.AddItemActivity"
+    android:layout_margin="8dp">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-    >
+        >
 
         <ImageView
             android:id="@+id/imageView"
@@ -52,7 +53,7 @@
                 android:orientation="horizontal">
 
                 <ImageButton
-                    android:id="@+id/addLabelButton"
+                    android:id="@+id/addTagButton"
                     android:layout_width="40dp"
                     android:layout_height="42dp"
 
@@ -93,11 +94,12 @@
             app:startIconDrawable="@drawable/baseline_shopping_bag_24">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/itemInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Name"
-                android:textColor="@color/purple"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textColor="@color/purple" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
@@ -128,11 +130,12 @@
                 app:startIconDrawable="@drawable/value">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/valueInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Value"
-                    android:textColor="@color/purple"
-                    android:inputType="numberDecimal" />
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/purple" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -150,11 +153,12 @@
                 app:startIconDrawable="@drawable/date">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/dateInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Date"
-                    android:textColor="@color/purple"
-                    android:inputType="date" />
+                    android:inputType="date"
+                    android:textColor="@color/purple" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
@@ -180,11 +184,12 @@
                 app:startIconDrawable="@drawable/make">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/makeInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Make"
-                    android:textColor="@color/purple"
-                    android:inputType="text"/>
+                    android:inputType="text"
+                    android:textColor="@color/purple" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -196,11 +201,12 @@
                 app:startIconDrawable="@drawable/model">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/modelInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Model"
-                    android:textColor="@color/purple"
-                    android:inputType="text"/>
+                    android:inputType="text"
+                    android:textColor="@color/purple" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
@@ -226,11 +232,12 @@
                 app:startIconDrawable="@drawable/qrcode">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/serialNumberInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="SerialNumber"
-                    android:textColor="@color/purple"
-                    android:inputType="text"/>
+                    android:inputType="text"
+                    android:textColor="@color/purple" />
             </com.google.android.material.textfield.TextInputLayout>
             <ImageButton
                 android:id="@+id/addcode_button"
@@ -255,13 +262,13 @@
             app:startIconDrawable="@drawable/description">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/descriptionInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Description"
-                android:textColor="@color/purple"
                 android:inputType="textMultiLine"
                 android:maxLines="10"
-                />
+                android:textColor="@color/purple" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -277,6 +284,7 @@
             app:startIconDrawable="@drawable/comments">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/commentsInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Comments"
@@ -298,7 +306,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:clickable="true"
-                android:text="Cancel" />
+                android:text="Cancel"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="8dp"/>
 
             <Button
                 android:id="@+id/confirm_button"
@@ -306,7 +316,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:clickable="true"
-                android:text="Confirm" />
+                android:text="Confirm"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="8dp"/>
 
         </LinearLayout>
 

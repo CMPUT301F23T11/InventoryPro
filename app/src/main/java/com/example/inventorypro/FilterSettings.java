@@ -27,6 +27,9 @@ public class FilterSettings {
         this(null,null,null,null,null);
     }
 
+    /**
+     * Clears the filter settings back to default.
+     */
     public void clear(){
         from = null;
         to = null;
@@ -75,6 +78,11 @@ public class FilterSettings {
         this.makes = makes;
     }
 
+    /**
+     * Returns whether or not an item satisfies this filter.
+     * @param item The item to test.
+     * @return True if the item passes this filter (satisfies the configuration of this filter).
+     */
     public Boolean itemSatisfiesFilter(@NonNull Item item){
         if(from != null && item.getLocalDate().isBefore(from)){
             return Boolean.FALSE;

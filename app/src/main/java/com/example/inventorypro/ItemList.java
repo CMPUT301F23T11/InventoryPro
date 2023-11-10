@@ -5,16 +5,32 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.inventorypro.Activities.MainActivity;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * The list of items for the user automatically synchronized using a DatabaseManager.
+ * Uses Singleton pattern.
+ */
 public class ItemList {
 
     // Singleton pattern for item list. Don't need a reference to main activity anymore.
     private static ItemList instance = null;
+
+    /**
+     * Fetch the static instance of this item list.
+     * @return
+     */
     public static ItemList getInstance(){
         return instance;
     }
+
+    /**
+     * Set the static instance of this item list (usually after user authentication).
+     * @param itemList The initialized ItemList.
+     */
     public static void setInstance(ItemList itemList){
         instance = itemList;
     }
@@ -132,9 +148,9 @@ public class ItemList {
     }
 
     /**
-     * Replaces the item at position with a new item.
+     * Replaces the old item at position with a new item.
      * @param item The new item.
-     * @param position The position of the old item.
+     * @param position The position of the old item to replace.
      */
     public void replace(Item item, int position){
         Item oldItem = originalItemList.get(position);

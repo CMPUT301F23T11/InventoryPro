@@ -1,4 +1,4 @@
-package com.example.inventorypro;
+package com.example.inventorypro.Fragments;
 
 import android.app.Dialog;
 import android.graphics.Color;
@@ -21,8 +21,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.inventorypro.R;
+
 import java.util.ArrayList;
 
+/**
+ * This DialogFragment is the screen used to define/create/edit tags.
+ * WORK IN PROGRESS.
+ */
 public class CreateTagsFragment extends DialogFragment {
 
     @Nullable

@@ -1,4 +1,4 @@
-package com.example.inventorypro;
+package com.example.inventorypro.Activities;
 
 import static java.lang.Integer.parseInt;
 
@@ -9,8 +9,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,25 +16,39 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.inventorypro.Fragments.CreateTagsFragment;
+import com.example.inventorypro.DatabaseManager;
+import com.example.inventorypro.FilterSettings;
+import com.example.inventorypro.Helpers;
+import com.example.inventorypro.Item;
+import com.example.inventorypro.ItemList;
+import com.example.inventorypro.R;
+import com.example.inventorypro.Fragments.SortFilterDialogFragment;
+import com.example.inventorypro.SortFragment;
+import com.example.inventorypro.SortSettings;
+import com.example.inventorypro.UserPreferences;
+import com.example.inventorypro.Fragments.ViewItemFragment;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.google.type.DateTime;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/**
+ * The MainActivity is effectively the "main screen" which launches various dialogues and other activities based on user input.
+ */
 public class MainActivity extends AppCompatActivity {
     // UI elements
     private ListView listView;
     private ImageButton deleteButton;
     private ImageButton profileButton;
-    private DatabaseManager database;
+    private ImageButton createsTagsButton,scanButton;
+    private int editPosition;
     private ConstraintLayout sortBar;
     private ChipGroup sortChipGroup;
     private ConstraintLayout filterBar;
     private ChipGroup filterChipGroup;
     private ImageButton sortOrderButton;
-    private int editPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +64,11 @@ public class MainActivity extends AppCompatActivity {
         sortOrderButton = findViewById(R.id.sortOrderButton);
         filterBar = findViewById(R.id.filterBar);
         filterChipGroup = findViewById(R.id.filterChipGroup);
+
+        createsTagsButton = findViewById(R.id.createsTagsButton);
+        scanButton = findViewById(R.id.scanButton);
+        createsTagsButton.setOnClickListener(Helpers.notImplementedClickListener);
+        scanButton.setOnClickListener(Helpers.notImplementedClickListener);
 
         // Only create a single instance of ItemList.
         if(ItemList.getInstance() == null){
@@ -70,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         ((ImageButton)findViewById(R.id.addButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent addItemIntent = new Intent(getBaseContext(), AddItem.class);
+                Intent addItemIntent = new Intent(getBaseContext(), AddItemActivity.class);
                 startActivity(addItemIntent);
             }
         });
@@ -94,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         ((ImageButton)findViewById(R.id.createsTagsButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Helpers.notImplementedToast(v.getContext());
                 DialogFragment createTags = new CreateTagsFragment();
                 createTags.show(getSupportFragmentManager(), "createTags");
             }
@@ -105,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent signInActivity = new Intent(getBaseContext(), SignInActivity.class);
                 signInActivity.putExtra("logout", true);
                 startActivity(signInActivity);
+
+                Helpers.toast(view.getContext(),"You have been signed out.");
             }
         });
 
@@ -146,17 +166,21 @@ public class MainActivity extends AppCompatActivity {
     private void deleteSelectedItems() {
         // TODO: there might be a better way to do this down the line.
         // Actually there is, just do this operation on the ItemList.
+        Boolean removedAtLeastOne = Boolean.FALSE;
+
         ItemList itemList = ItemList.getInstance();
 
         ArrayList<Item> copy = new ArrayList<>(itemList.getItemList());
         for (Item item : copy) {
             if (item.isSelected()) {
                 itemList.remove(item);
+                removedAtLeastOne = Boolean.TRUE;
             }
         }
-        //
 
-
+        if(!removedAtLeastOne){
+            Helpers.toast(getBaseContext(),"Select item(s) to delete first.");
+        }
     }
 
     /**
@@ -193,20 +217,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Called whenever an Item on the list is clicked
-     * Sends the postion of the clicked item, as well as the Item to view_fragment
-     * @param position
+     * Called when a item is clicked in the list of items. Launches ViewItem window.
+     * @param position The position of the item that's clicked in the list.
      */
-    public void onItemClicked(int position) {
+    private void onItemClicked(int position) {
         // Retrieve the item based on the position
         ItemList itemList = ItemList.getInstance();
         Item item = itemList.get(position);
         // Create a Bundle and put the Item object into it
         Bundle args = new Bundle();
-        args.putParcelable(ViewItem_Fragment.ARG_ITEM, item);
+        args.putParcelable(ViewItemFragment.ARG_ITEM, item);
 
         // Create an instance of the ViewItem_Fragment fragment and set the Bundle as its arguments
-        ViewItem_Fragment fragment = ViewItem_Fragment.newInstance(item,position);
+        ViewItemFragment fragment = ViewItemFragment.newInstance(item,position);
 
         // Use a FragmentManager to display the ViewItem_Fragment fragment as a dialog
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -236,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
         String chipText = sortType.describe();
 
         if (sortType != SortFragment.SortType.NONE) {
-            Chip sortChip = InitializeChip(sortType.describe());
+            Chip sortChip = initializeChip(sortType.describe());
             sortChip.setOnCloseIconClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -284,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
         if (filterKeywords != null) {
             String filterKeywordsString = String.join(", ", filterSettings.getKeywords());
             String filterKeywordsChipText = String.format("keywords: %s", filterKeywordsString);
-            Chip filterKeywordsChip = InitializeChip(filterKeywordsChipText);
+            Chip filterKeywordsChip = initializeChip(filterKeywordsChipText);
 
             filterKeywordsChip.setOnCloseIconClickListener(new View.OnClickListener() {
                 @Override
@@ -305,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
         LocalDate filterFrom = filterSettings.getFrom();
         String filterFromChipText = String.format("from: %s", filterFrom);
         if (filterFrom != null) {
-            Chip filterFromChip = InitializeChip(filterFromChipText);
+            Chip filterFromChip = initializeChip(filterFromChipText);
             filterFromChip.setOnCloseIconClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -325,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
         LocalDate filterTo = filterSettings.getTo();
         String filterToChipText = String.format("to: %s", filterTo);
         if (filterTo != null) {
-            Chip filterToChip = InitializeChip(filterToChipText);
+            Chip filterToChip = initializeChip(filterToChipText);
             filterToChip.setOnCloseIconClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -354,7 +377,12 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> filterTags = filterSettings.getTags();
     }
 
-    private Chip InitializeChip(String description) {
+    /**
+     * Creates a chip for displaying the current sorting and filter options.
+     * @param description The text for the chip.
+     * @return
+     */
+    private Chip initializeChip(String description) {
         Chip chip = new Chip(this);
         chip.setText(description);
         chip.setCloseIcon(getDrawable(R.drawable.baseline_cancel_24));

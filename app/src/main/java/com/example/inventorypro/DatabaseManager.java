@@ -13,6 +13,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * Responsible for communication with Firestore as well as invoking updates to the application in relation to this data.
+ */
 public class DatabaseManager {
     private FirebaseFirestore db;
 
@@ -24,7 +27,7 @@ public class DatabaseManager {
     }
 
     /**
-     * Connect to firebase using the user ID (probably ID from Google authentication).
+     * Connect to firebase using the user ID (usually ID from Google authentication).
      * @param userID Unique identifier for each user.
      * @param itemList The itemList to synchronize with.
      */
@@ -122,18 +125,26 @@ public class DatabaseManager {
         itemList.onSynchronize(items);
     }
 
+    /**
+     * Fetch the database path for a users Items.
+     * @return The path considering the userID.
+     */
     private String getDBItemsCollectionPath(){
         return String.format("Users/%s/Items", userUID);
     }
     /**
      * Fetch the database path for a user's item.
      * @param itemUID The item uid.
-     * @return
+     * @return The path considering the userID + itemID.
      */
     private String getDBItemPath(String itemUID){
         return String.format("Users/%s/Items/%s", userUID, itemUID);
     }
 
+    /**
+     * Returns true if this database manager has been properly configured to be used.
+     * @return
+     */
     public Boolean getConnected() {
         return isConnected;
     }

@@ -1,4 +1,4 @@
-package com.example.inventorypro;
+package com.example.inventorypro.Activities;
 
 import static java.lang.Integer.parseInt;
 
@@ -8,24 +8,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.inventorypro.Helpers;
+import com.example.inventorypro.Item;
+import com.example.inventorypro.R;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
-// TODO: Preserve filter settings and sort settings of the MainActivity
-// This might justify putting these into some user preferences static object.
-
 /**
- * Activity to help create and edit items.
+ * AddItem Activity is responsible for gathering user input and re-creating the MainActivity with the parsed Item.
  */
-public class AddItem extends AppCompatActivity {
+public class AddItemActivity extends AppCompatActivity {
     private TextView header;
     private TextInputLayout name;
     private TextInputLayout date;
@@ -35,6 +34,7 @@ public class AddItem extends AppCompatActivity {
     private TextInputLayout description;
     private TextInputLayout comments;
     private TextInputLayout value;
+    private ImageButton addTagButton, addImageButton, addCodeButton;
     private int selectedPosition;
     private boolean editMode = false;
     List<String> tags;
@@ -63,7 +63,15 @@ public class AddItem extends AppCompatActivity {
         // Set the default date to the current date
         date.getEditText().setText(LocalDate.now().toString());
 
-        // Calls sendItem or sendEditItem if all inputs are valid
+        addTagButton = findViewById(R.id.addTagButton);
+        addImageButton = findViewById(R.id.addImageButton);
+        addCodeButton = findViewById(R.id.addcode_button);
+
+        addTagButton.setOnClickListener(Helpers.notImplementedClickListener);
+        addImageButton.setOnClickListener(Helpers.notImplementedClickListener);
+        addCodeButton.setOnClickListener(Helpers.notImplementedClickListener);
+
+        //calls sendItem if all inputs are valid
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,7 +114,7 @@ public class AddItem extends AppCompatActivity {
     }
 
     /**
-     * Sends an edited item back to the main activity.
+     * Parses the item if this activity is in edit mode and starts MainActivity
      */
     private void sendEditItem() {
         // Intent to return to the main activity

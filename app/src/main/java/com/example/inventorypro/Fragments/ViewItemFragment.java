@@ -1,4 +1,4 @@
-package com.example.inventorypro;
+package com.example.inventorypro.Fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -6,15 +6,22 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ScrollView;
 
 import androidx.fragment.app.DialogFragment;
 
+import com.example.inventorypro.Activities.AddItemActivity;
+import com.example.inventorypro.Item;
+import com.example.inventorypro.R;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class ViewItem_Fragment extends DialogFragment {
+/**
+ * Displays a read-only view for the item from which the user can edit the item if they choose.
+ */
+public class ViewItemFragment extends DialogFragment {
 
     private Item selectedItem;
     private int selectedPosition;
@@ -31,9 +38,13 @@ public class ViewItem_Fragment extends DialogFragment {
     private Button confirmButton;
     private Button cancelButton;
 
-    private OnFragmentInteractionListener listener;
-
+    /**
+     * The key to access the item object this fragment is viewing.
+     */
     public static final String ARG_ITEM = "item";
+    /**
+     * The key to access the position in the list of this item that is being viewed.
+     */
     public static final String ARG_POSITION = "position";
 
     /**
@@ -118,37 +129,29 @@ public class ViewItem_Fragment extends DialogFragment {
     }
 
     /**
-     *Interface to communicate between between fragment and main activity
-     */
-    public interface OnFragmentInteractionListener {
-        void onOkPressed(Item item);
-    }
-
-    /**
-     * Initiates the process of editing a selected item by launching the AddItem activity.
-     * The selected item and its position are bundled into an intent and sent to the AddItem activity.
-     * The AddItem activity is then responsible for handling the editing process.
+     * Called when the user requests to edit this item that is being viewed.
+     * Starts AddItem Activity prepopulated with the item parameters in edit mode.
      */
     private void editItem(){
-        Intent sendItemIntent = new Intent(getContext(), AddItem.class);
+        Intent sendItemIntent = new Intent(getContext(), AddItemActivity.class);
         //sends the item back to main activity
         sendItemIntent.putExtra("edit", selectedItem);
         sendItemIntent.putExtra("editPositon", selectedPosition);
         startActivity(sendItemIntent);
     }
-    public ViewItem_Fragment() {
+    public ViewItemFragment() {
         // Required empty public constructor
     }
 
     /**
-     *create a new instance of the ViewItem_Fragment.
-     * @param item
-     * @param position
+     * Creates a new ViewItem_Fragment with the item and position input.
+     * @param item The item to view.
+     * @param position The position of the item to view.
      * @return new instance of ViewItem_Fragment with the provided item
      */
-    public static ViewItem_Fragment newInstance(Item item, int position) {
+    public static ViewItemFragment newInstance(Item item, int position) {
         // Create a new instance of the ViewItem_Fragment.
-        ViewItem_Fragment fragment = new ViewItem_Fragment();
+        ViewItemFragment fragment = new ViewItemFragment();
         // Bundle the item and position into the fragment's arguments.
         Bundle args = new Bundle();
         args.putInt(ARG_POSITION, position);
@@ -176,4 +179,13 @@ public class ViewItem_Fragment extends DialogFragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // add rounded corners to dialog fragment
+        Window window = getDialog().getWindow();
+        if (window != null) {
+            window.setBackgroundDrawableResource(R.drawable.dialog_fragment_rounded);
+        }
     }
+}

@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Primitive Item object. Automatically serializable/deserializable by Firestore and also can be passed via intent.
+ */
 public class Item implements Parcelable {
     private String name;
     private Double value;
@@ -99,6 +102,9 @@ public class Item implements Parcelable {
         this.tags = in.createStringArrayList();
     }
 
+    /**
+     * Required to be able to pass the item between activities using intents.
+     */
     public static final Creator<Item> CREATOR = new Creator<Item>() {
         @Override
         public Item createFromParcel(Parcel in) {
@@ -125,13 +131,26 @@ public class Item implements Parcelable {
         this.value = value;
     }
 
+    /**
+     * Gets the date as a long (used by firestore serialization).
+     * @return Returns the date as a long.
+     */
     public Long getDate() {
         return date;
     }
+
+    /**
+     * Sets the date using a long.
+     * @param date The date as a long to set to.
+     */
     public void setDate(Long date) {
         this.date = date;
     }
 
+    /**
+     * Gets the date as a LocalDate object (implicit conversion of long to date object).
+     * @return The LocalDate that this item is assigned.
+     */
     @Exclude
     public LocalDate getLocalDate() {
         if(this.date == null){
@@ -141,6 +160,10 @@ public class Item implements Parcelable {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
     }
+
+    /**
+     * Sets the date given a LocalDate object (implicit conversion of date to long for storage).
+     */
     @Exclude
     public void setLocalDate(LocalDate date) {
         if(date == null) {
@@ -185,10 +208,19 @@ public class Item implements Parcelable {
         this.comment = comment;
     }
 
+    /**
+     * Returns true if this item is selected.
+     * @return
+     */
     @Exclude
     public boolean isSelected() {
         return selected;
     }
+
+    /**
+     * Set the selected flag (ignored by the database).
+     * @param selected
+     */
     @Exclude
     public void setSelected(boolean selected) {
         this.selected = selected;
@@ -200,24 +232,40 @@ public class Item implements Parcelable {
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
+
+    /**
+     * Returns true if the tag exists in this item (WIP).
+     * @param tag
+     * @return
+     */
     public boolean hasTag(String tag){
         return tags.contains(tag);
     }
 
     /**
      * Gets the unique identifier that identifies this item.
-     * @return The unique identifier that identifies this item (currently the name)
+     * @return The unique identifier that identifies this item (currently the name, might be changed to UUID later).
      */
     @Exclude
     public String getUID(){
         return name;
     }
 
+    /**
+     * Required to pass this item by intent between activities.
+     * @return
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * Used to pass the objects between activities using intents.
+     * @param dest The Parcel in which the object should be written.
+     * @param flags Additional flags about how the object should be written.
+     * May be 0 or {@link #PARCELABLE_WRITE_RETURN_VALUE}.
+     */
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(name);
@@ -238,8 +286,6 @@ public class Item implements Parcelable {
         dest.writeString(serialNumber);
         dest.writeString(description);
         dest.writeString(comment);
-        // store length to reconstruct array
-        // dest.writeInt(this.tags.length);
         dest.writeStringList(this.tags);
     }
 }

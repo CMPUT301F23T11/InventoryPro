@@ -13,7 +13,10 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
-// WIP
+/**
+ * Array adapter to display Tags.
+ * WORK IN PROGRESS.
+ */
 public class TagArrayAdapter extends ArrayAdapter<Item> {
     private Context context;
     ItemList itemList;
