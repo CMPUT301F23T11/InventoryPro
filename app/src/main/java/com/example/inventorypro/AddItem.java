@@ -24,7 +24,7 @@ import java.util.List;
 // might justify putting these into some user preferences static object.
 
 /**
- * Activity to Help create Items
+ * AddItem Activity is responsible for gathering user input and re-creating the MainActivity with the parsed Item.
  */
 public class AddItem extends AppCompatActivity {
     private TextView header;
@@ -114,6 +114,9 @@ public class AddItem extends AppCompatActivity {
         }
     }
 
+    /**
+     * Parses the item if this activity is in edit mode and starts MainActivity
+     */
     private void sendEditItem() {
         //intent to return to main activity
         Intent sendEditIntent = new Intent(this, MainActivity.class);
@@ -140,7 +143,7 @@ public class AddItem extends AppCompatActivity {
     }
 
     /**
-     * creates a new item from the user inputs
+     * Creates a new item from the user inputs
      * sends the item back to the main activity
      */
     private void sendItem(){
@@ -175,7 +178,7 @@ public class AddItem extends AppCompatActivity {
     }
 
     /**
-     * validate all the user inputs
+     * Validate all the user inputs
      * @return
      * true if all inputs pass validation
      * false otherwise

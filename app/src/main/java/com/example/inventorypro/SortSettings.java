@@ -19,6 +19,9 @@ public class SortSettings{
         this.sortType = sortType;
     }
 
+    /**
+     * Clear the settings back to default.
+     */
     public void clear(){
         sortOrder = SortFragment.SortOrder.ASCENDING;
         sortType = SortFragment.SortType.NONE;

@@ -16,8 +16,9 @@ import androidx.fragment.app.Fragment;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-//TODO: some inheritance in settings and the fragments would be appropriate.
-
+/**
+ * Fragment which updates the UserPreferences FilterSettings.
+ */
 public class FilterFragment extends Fragment {
 
     private EditText from,to,keywords;

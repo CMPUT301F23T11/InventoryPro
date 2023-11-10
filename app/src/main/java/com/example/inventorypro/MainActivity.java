@@ -25,6 +25,9 @@ import com.google.type.DateTime;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/**
+ * The MainActivity is effectively the "main screen" which launches various dialogues and other activities based on user input.
+ */
 public class MainActivity extends AppCompatActivity {
     // UI elements
     private ListView listView;
@@ -204,7 +207,11 @@ public class MainActivity extends AppCompatActivity {
         return receivedItem;
     }
 
-    public void onItemClicked(int position) {
+    /**
+     * Called when a item is clicked in the list of items. Launches ViewItem window.
+     * @param position The position of the item that's clicked in the list.
+     */
+    private void onItemClicked(int position) {
         // Retrieve the item based on the position
         ItemList itemList = ItemList.getInstance();
         Item item = itemList.get(position);
@@ -222,7 +229,6 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         fragment.show(transaction, "viewItemDialog");
     }
-
 
     /**
      * Dynamically show/hides sort and filter bars and relevant chips
@@ -361,6 +367,11 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> filterTags = filterSettings.getTags();
     }
 
+    /**
+     * Creates a chip for displaying the current sorting and filter options.
+     * @param description The text for the chip.
+     * @return
+     */
     private Chip InitializeChip(String description) {
         Chip chip = new Chip(this);
         chip.setText(description);

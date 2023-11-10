@@ -15,6 +15,9 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+/**
+ * Specifies how to display an Item in the ListView.
+ */
 public class ItemArrayAdapter extends ArrayAdapter<Item> {
     private Context context;
     ItemList itemList;

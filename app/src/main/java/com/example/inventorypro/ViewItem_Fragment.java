@@ -15,6 +15,9 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+/**
+ * Displays a read-only view for the item from which the user can edit the item if they choose.
+ */
 public class ViewItem_Fragment extends DialogFragment {
 
     private Item selectedItem;
@@ -32,9 +35,13 @@ public class ViewItem_Fragment extends DialogFragment {
     private Button confirmButton;
     private Button cancelButton;
 
-    private OnFragmentInteractionListener listener;
-
+    /**
+     * The key to access the item object this fragment is viewing.
+     */
     public static final String ARG_ITEM = "item";
+    /**
+     * The key to access the position in the list of this item that is being viewed.
+     */
     public static final String ARG_POSITION = "position";
 
     @Override
@@ -110,11 +117,10 @@ public class ViewItem_Fragment extends DialogFragment {
         return dialog;
     }
 
-    public interface OnFragmentInteractionListener {
-        void onOkPressed(Item item);
-    }
-
-
+    /**
+     * Called when the user requests to edit this item that is being viewed.
+     * Starts AddItem Activity prepopulated with the item parameters in edit mode.
+     */
     private void editItem(){
         Intent sendItemIntent = new Intent(getContext(), AddItem.class);
         //sends the item back to main activity
@@ -126,6 +132,12 @@ public class ViewItem_Fragment extends DialogFragment {
         // Required empty public constructor
     }
 
+    /**
+     * Creates a new ViewItem_Fragment with the item and position input.
+     * @param item The item to view.
+     * @param position The position of the item to view.
+     * @return
+     */
     public static ViewItem_Fragment newInstance(Item item, int position) {
         ViewItem_Fragment fragment = new ViewItem_Fragment();
         Bundle args = new Bundle();

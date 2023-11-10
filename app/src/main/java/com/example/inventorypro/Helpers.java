@@ -18,6 +18,9 @@ import java.util.List;
  */
 public class Helpers {
 
+    /**
+     * OnClickListener which displays a toast notifying the user of an incomplete feature.
+     */
     public static View.OnClickListener NotImplementedClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -25,9 +28,14 @@ public class Helpers {
         }
     };
 
+    /**
+     * Displays a toast notifying the user of an incomplete feature.
+     * @param context
+     */
     public static void NotImplementedToast(Context context){
         Helpers.Toast(context, "This feature is not implemented yet.");
     }
+
     /**
      * Utility to quickly show toast.
      * @param context

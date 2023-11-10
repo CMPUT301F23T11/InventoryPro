@@ -23,6 +23,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 
+/**
+ * Hosts the SortFragment and FilterFragment.
+ * Is responsible for clearing and refreshing the ItemList as sort/filter options change.
+ */
 public class SortFilterDialogFragment extends DialogFragment {
     private SortFragment sortFragment = new SortFragment();
     private FilterFragment filterFragment = new FilterFragment();

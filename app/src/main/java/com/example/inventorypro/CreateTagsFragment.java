@@ -23,6 +23,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 
+/**
+ * This DialogFragment is the screen used to define/create/edit tags.
+ * WORK IN PROGRESS.
+ */
 public class CreateTagsFragment extends DialogFragment {
 
     @Nullable

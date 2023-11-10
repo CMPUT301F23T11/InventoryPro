@@ -34,6 +34,9 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 import androidx.annotation.Nullable;
 
+/**
+ * The initial activity where the user must login using their Google account to launch the MainActivity.
+ */
 public class SignInActivity extends AppCompatActivity {
     private SignInClient oneTapClient;
     private BeginSignInRequest signInRequest;
@@ -131,6 +134,11 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Called when the user successfully logs in.
+     * Initializes UserPreferences and passed to the MainActivity to complete intitialization using the userID.
+     * @param user The firebase user.
+     */
     private void logIn(FirebaseUser user) {
         Intent mainActivityIntent = new Intent(getBaseContext(), MainActivity.class);
 
@@ -142,6 +150,9 @@ public class SignInActivity extends AppCompatActivity {
         startActivity(mainActivityIntent);
     }
 
+    /**
+     * Logs the user out.
+     */
     private void logOut() {
         mAuth.signOut();
         mAuth = FirebaseAuth.getInstance();

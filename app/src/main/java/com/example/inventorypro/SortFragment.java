@@ -19,15 +19,22 @@ import com.google.firebase.firestore.auth.User;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Allows the user to adjust their UserPreferences FilterSettings.
+ */
 public class SortFragment extends Fragment {
 
-    // Store settings for ascending or descending
+    /**
+     * Store settings for ascending or descending.
+     */
     public enum SortOrder {
         ASCENDING,
         DESCENDING
     }
 
-    // Store settings for sort type
+    /**
+     * Store settings for sort type.
+     */
     public enum SortType {
         NONE("None"),
         DATE("Date"),
@@ -42,6 +49,10 @@ public class SortFragment extends Fragment {
             this.description = description;
         }
 
+        /**
+         * Get the user friendly representation for this enum.
+         * @return The user friendly description.
+         */
         public String describe() {
             return description;
         }
