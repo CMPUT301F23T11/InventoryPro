@@ -113,6 +113,7 @@ public class ItemList {
         refresh(); //inefficient
     }
 
+
     /**
      * Removes an item from the list of items and calls the database manager.
      * @param item The item to remove.

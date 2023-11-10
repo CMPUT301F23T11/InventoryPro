@@ -192,6 +192,11 @@ public class MainActivity extends AppCompatActivity {
         return receivedItem;
     }
 
+    /**
+     * Called whenever an Item on the list is clicked
+     * Sends the postion of the clicked item, as well as the Item to view_fragment
+     * @param position
+     */
     public void onItemClicked(int position) {
         // Retrieve the item based on the position
         ItemList itemList = ItemList.getInstance();

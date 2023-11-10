@@ -219,7 +219,8 @@
                 android:textSize="20dp"
                 android:hint="Description"
                 android:textColor="@color/purple"
-                android:inputType="text"/>
+                android:inputType="textMultiLine"
+                android:maxLines="10"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -242,7 +243,7 @@
                 android:textSize="20dp"
                 android:hint="Comments"
                 android:textColor="@color/purple"
-                android:inputType="text"/>
+                android:inputType="textMultiLine"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout

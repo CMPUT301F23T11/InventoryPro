@@ -36,6 +36,13 @@ public class ViewItem_Fragment extends DialogFragment {
     public static final String ARG_ITEM = "item";
     public static final String ARG_POSITION = "position";
 
+    /**
+     * Create Dialogue to view Item
+     * @param savedInstanceState The last saved instance state of the Fragment,
+     * or null if this is a freshly created Fragment.
+     *
+     * @return Dialogue
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -57,7 +64,6 @@ public class ViewItem_Fragment extends DialogFragment {
 
         builder.setView(scrollView);
 
-        // Your button handlers remain the same
 
 
 
@@ -66,8 +72,9 @@ public class ViewItem_Fragment extends DialogFragment {
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Sends Item to AddItem Activity for user to editing
                 editItem();
-                dismiss(); // Close the dialog
+
             }
         });
 
@@ -96,6 +103,7 @@ public class ViewItem_Fragment extends DialogFragment {
         comments = view.findViewById(R.id.viewComments);
 
         if (selectedItem != null) {
+            //Setting Item values to the EditText to view
             name.getEditText().setText(selectedItem.getName());
             value.getEditText().setText(String.valueOf(selectedItem.getValue()));
             date.getEditText().setText(selectedItem.getLocalDate().toString());
@@ -109,11 +117,18 @@ public class ViewItem_Fragment extends DialogFragment {
         return dialog;
     }
 
+    /**
+     *Interface to communicate between between fragment and main activity
+     */
     public interface OnFragmentInteractionListener {
         void onOkPressed(Item item);
     }
 
-
+    /**
+     * Initiates the process of editing a selected item by launching the AddItem activity.
+     * The selected item and its position are bundled into an intent and sent to the AddItem activity.
+     * The AddItem activity is then responsible for handling the editing process.
+     */
     private void editItem(){
         Intent sendItemIntent = new Intent(getContext(), AddItem.class);
         //sends the item back to main activity
@@ -125,19 +140,37 @@ public class ViewItem_Fragment extends DialogFragment {
         // Required empty public constructor
     }
 
+    /**
+     *create a new instance of the ViewItem_Fragment.
+     * @param item
+     * @param position
+     * @return new instance of ViewItem_Fragment with the provided item
+     */
     public static ViewItem_Fragment newInstance(Item item, int position) {
+        // Create a new instance of the ViewItem_Fragment.
         ViewItem_Fragment fragment = new ViewItem_Fragment();
+        // Bundle the item and position into the fragment's arguments.
         Bundle args = new Bundle();
         args.putInt(ARG_POSITION, position);
         args.putParcelable(ARG_ITEM, item);
         fragment.setArguments(args);
+
+        // Return the newly created fragment.
         return fragment;
     }
 
+    /**
+     * Called to do initial creation of the fragment.
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // Perform the default creation process of the fragment.
         super.onCreate(savedInstanceState);
+        // Check if the fragment has arguments.
         if (getArguments() != null) {
+            // Retrieve the item and its position from the arguments.
             selectedItem = getArguments().getParcelable(ARG_ITEM);
             selectedPosition = getArguments().getInt(ARG_POSITION);
         }
