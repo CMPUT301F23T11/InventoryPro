@@ -23,7 +23,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class testAddItem {
+public class TestAddItem {
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new
             ActivityScenarioRule<>(MainActivity.class);
@@ -57,7 +57,7 @@ public class testAddItem {
 
 
     @Test
-    public void testaddedItem(){
+    public void testAddedItem(){
         // Click on Add Item button
         onView(withId(R.id.addButton)).perform(click());
 

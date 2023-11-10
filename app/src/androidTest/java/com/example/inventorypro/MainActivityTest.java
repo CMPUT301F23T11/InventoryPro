@@ -1,15 +1,26 @@
 package com.example.inventorypro;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+
 import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.example.inventorypro.Activities.AddItemActivity;
 import com.example.inventorypro.Activities.MainActivity;
+import com.example.inventorypro.Activities.SignInActivity;
+import com.example.inventorypro.Fragments.SortFilterDialogFragment;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -31,34 +42,18 @@ public class MainActivityTest {
         UserPreferences.createInstance("DEBUG_TEST_USER");
     }
 
-    private String safeString(String s){
-        return s == null ? " " : s;
-    }
-    private void inputItem(Item i){
-        onView(withId(R.id.itemInput)).perform(ViewActions.typeText(safeString(i.getName())));
-        onView(withId(R.id.valueInput)).perform(ViewActions.typeText(String.format("%f", i.getValue())));
-        onView(withId(R.id.dateInput)).perform(ViewActions.typeText(safeString(i.getLocalDate().toString())));
-        onView(withId(R.id.makeInput)).perform(ViewActions.typeText(safeString(i.getMake())));
-        onView(withId(R.id.modelInput)).perform(ViewActions.typeText(safeString(i.getModel())));
-        onView(withId(R.id.serialNumberInput)).perform(ViewActions.typeText(safeString(i.getSerialNumber())));
-        onView(withId(R.id.descriptionInput)).perform(ViewActions.typeText(safeString(i.getDescription())));
-        onView(withId(R.id.commentsInput)).perform(ViewActions.typeText(safeString(i.getComment())));
-    }
-
     @Test
-    public void testAdd(){
-
-
-        // Click on Add City button
+    public void switchActivitiesTest(){
+        Intents.init();
         onView(withId(R.id.addButton)).perform(click());
-        inputItem(new Item("Item3",
-                7.97,
-                LocalDate.of(2022, 10, 14),
-                "make b",
-                null,
-                null,
-                "description 1",
-                null,
-                null));
+        intended(hasComponent(AddItemActivity.class.getName()));
+        Intents.release();
+
+        onView(withId(R.id.cancel_button)).perform(click());
+
+        Intents.init();
+        onView(withId(R.id.profileButton)).perform(click());
+        intended(hasComponent(SignInActivity.class.getName()));
+        Intents.release();
     }
 }
