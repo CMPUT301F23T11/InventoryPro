@@ -3,21 +3,17 @@ package com.example.inventorypro;
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.is;
 
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.matcher.ViewMatchers;
+import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import com.example.inventorypro.Activities.MainActivity;
@@ -36,7 +32,7 @@ public class ViewItemTester {
 
     @BeforeClass
     public static void setup() {
-        UserPreferences.createInstance("DEBUG_TEST_USER");
+        UserPreferences.createInstance("DEBUG_VIEW");
     }
 
     private static Matcher<View> childAtPosition(
@@ -59,7 +55,7 @@ public class ViewItemTester {
     }
 
     @Test
-    public void TestViewandEdit(){
+    public void TestViewItem() throws InterruptedException {
         // Click on Add Item button
         onView(withId(R.id.addButton)).perform(click());
 
@@ -71,23 +67,32 @@ public class ViewItemTester {
         onView(withId(R.id.serialNumberInput)).perform(ViewActions.replaceText("#0000"));
         onView(withId(R.id.descriptionInput)).perform(ViewActions.replaceText("Test description"));
         onView(withId(R.id.commentsInput)).perform(ViewActions.replaceText("Test comments"));
-        onView(withId(R.id.itemsListView));
-
         onView(withId(R.id.confirm_button)).perform(click());
 
+
+        //click Item
         onData(anything()).inAdapterView(withId(R.id.itemsListView)).atPosition(0).perform(click());
 
-        //TODO: Need to fix this, ie click Item
-        /*onData(anything()).inAdapterView(allOf(withId(R.id.itemsListView), childAtPosition(
-                                withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                0))).atPosition(0).perform(click());*/
+        //check values added are same as values viewed
+        onView(withId(R.id.viewItemName))
+                .check(ViewAssertions.matches(hasDescendant(withText("Test Item"))));
+        onView(withId(R.id.viewValue))
+                .check(ViewAssertions.matches(hasDescendant(withText("15.0"))));
+        onView(withId(R.id.viewMake))
+                .check(ViewAssertions.matches(hasDescendant(withText("Test make"))));
+        onView(withId(R.id.viewModel))
+                .check(ViewAssertions.matches(hasDescendant(withText("Test model"))));
+        onView(withId(R.id.viewSerialNumber))
+                .check(ViewAssertions.matches(hasDescendant(withText("#0000"))));
+        onView(withId(R.id.viewDescription))
+                .check(ViewAssertions.matches(hasDescendant(withText("Test description"))));
+        onView(withId(R.id.viewComments))
+                .check(ViewAssertions.matches(hasDescendant(withText("Test comments"))));
 
-
-        onView(withText("Test Item")).check(matches(isDisplayed()));
-        // onView(withId(R.id.viewItemName).matches("Test Item");
 
 
     }
+
 
 }
 
