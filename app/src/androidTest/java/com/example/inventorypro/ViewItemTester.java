@@ -4,6 +4,7 @@ import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -72,13 +73,18 @@ public class ViewItemTester {
         onView(withId(R.id.commentsInput)).perform(ViewActions.replaceText("Test comments"));
         onView(withId(R.id.itemsListView));
 
+        onView(withId(R.id.confirm_button)).perform(click());
+
+        onData(anything()).inAdapterView(withId(R.id.itemsListView)).atPosition(0).perform(click());
+
         //TODO: Need to fix this, ie click Item
-        onData(anything()).inAdapterView(allOf(withId(R.id.itemsListView), childAtPosition(
+        /*onData(anything()).inAdapterView(allOf(withId(R.id.itemsListView), childAtPosition(
                                 withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                0))).atPosition(0).perform(click());
+                                0))).atPosition(0).perform(click());*/
 
 
-        onView(withId(R.id.viewItemName).matches("Test Item");
+        onView(withText("Test Item")).check(matches(isDisplayed()));
+        // onView(withId(R.id.viewItemName).matches("Test Item");
 
 
     }
