@@ -13,10 +13,10 @@
         android:theme="@style/Theme.InventoryPro"
         tools:targetApi="31">
         <activity
-            android:name=".AddItem"
+            android:name=".Activities.AddItemActivity"
             android:exported="false" />
         <activity
-            android:name=".SignInActivity"
+            android:name=".Activities.SignInActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:exported="false" />
     </application>
 

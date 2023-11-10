@@ -1,4 +1,4 @@
-package com.example.inventorypro;
+package com.example.inventorypro.Activities;
 
 import static java.lang.Integer.parseInt;
 
@@ -9,8 +9,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,9 +16,20 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.inventorypro.Fragments.CreateTagsFragment;
+import com.example.inventorypro.DatabaseManager;
+import com.example.inventorypro.FilterSettings;
+import com.example.inventorypro.Helpers;
+import com.example.inventorypro.Item;
+import com.example.inventorypro.ItemList;
+import com.example.inventorypro.R;
+import com.example.inventorypro.Fragments.SortFilterDialogFragment;
+import com.example.inventorypro.SortFragment;
+import com.example.inventorypro.SortSettings;
+import com.example.inventorypro.UserPreferences;
+import com.example.inventorypro.Fragments.ViewItemFragment;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.google.type.DateTime;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -58,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
         createsTagsButton = findViewById(R.id.createsTagsButton);
         scanButton = findViewById(R.id.scanButton);
-        createsTagsButton.setOnClickListener(Helpers.NotImplementedClickListener);
-        scanButton.setOnClickListener(Helpers.NotImplementedClickListener);
+        createsTagsButton.setOnClickListener(Helpers.notImplementedClickListener);
+        scanButton.setOnClickListener(Helpers.notImplementedClickListener);
 
         // Only create a single instance of ItemList.
         if(ItemList.getInstance() == null){
@@ -78,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         ((ImageButton)findViewById(R.id.addButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent addItemIntent = new Intent(getBaseContext(), AddItem.class);
+                Intent addItemIntent = new Intent(getBaseContext(), AddItemActivity.class);
                 startActivity(addItemIntent);
             }
         });
@@ -102,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         ((ImageButton)findViewById(R.id.createsTagsButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Helpers.NotImplementedToast(v.getContext());
+                Helpers.notImplementedToast(v.getContext());
                 DialogFragment createTags = new CreateTagsFragment();
                 createTags.show(getSupportFragmentManager(), "createTags");
             }
@@ -115,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 signInActivity.putExtra("logout", true);
                 startActivity(signInActivity);
 
-                Helpers.Toast(view.getContext(),"You have been signed out.");
+                Helpers.toast(view.getContext(),"You have been signed out.");
             }
         });
 
@@ -170,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(!removedAtLeastOne){
-            Helpers.Toast(getBaseContext(),"Select item(s) to delete first.");
+            Helpers.toast(getBaseContext(),"Select item(s) to delete first.");
         }
     }
 
@@ -217,10 +226,10 @@ public class MainActivity extends AppCompatActivity {
         Item item = itemList.get(position);
         // Create a Bundle and put the Item object into it
         Bundle args = new Bundle();
-        args.putParcelable(ViewItem_Fragment.ARG_ITEM, item);
+        args.putParcelable(ViewItemFragment.ARG_ITEM, item);
 
         // Create an instance of the ViewItem_Fragment fragment and set the Bundle as its arguments
-        ViewItem_Fragment fragment = ViewItem_Fragment.newInstance(item,position);
+        ViewItemFragment fragment = ViewItemFragment.newInstance(item,position);
 
         // Use a FragmentManager to display the ViewItem_Fragment fragment as a dialog
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -250,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
         String chipText = sortType.describe();
 
         if (sortType != SortFragment.SortType.NONE) {
-            Chip sortChip = InitializeChip(sortType.describe());
+            Chip sortChip = initializeChip(sortType.describe());
             sortChip.setOnCloseIconClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -298,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
         if (filterKeywords != null) {
             String filterKeywordsString = String.join(", ", filterSettings.getKeywords());
             String filterKeywordsChipText = String.format("keywords: %s", filterKeywordsString);
-            Chip filterKeywordsChip = InitializeChip(filterKeywordsChipText);
+            Chip filterKeywordsChip = initializeChip(filterKeywordsChipText);
 
             filterKeywordsChip.setOnCloseIconClickListener(new View.OnClickListener() {
                 @Override
@@ -319,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
         LocalDate filterFrom = filterSettings.getFrom();
         String filterFromChipText = String.format("from: %s", filterFrom);
         if (filterFrom != null) {
-            Chip filterFromChip = InitializeChip(filterFromChipText);
+            Chip filterFromChip = initializeChip(filterFromChipText);
             filterFromChip.setOnCloseIconClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -339,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
         LocalDate filterTo = filterSettings.getTo();
         String filterToChipText = String.format("to: %s", filterTo);
         if (filterTo != null) {
-            Chip filterToChip = InitializeChip(filterToChipText);
+            Chip filterToChip = initializeChip(filterToChipText);
             filterToChip.setOnCloseIconClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -373,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
      * @param description The text for the chip.
      * @return
      */
-    private Chip InitializeChip(String description) {
+    private Chip initializeChip(String description) {
         Chip chip = new Chip(this);
         chip.setText(description);
         chip.setCloseIcon(getDrawable(R.drawable.baseline_cancel_24));

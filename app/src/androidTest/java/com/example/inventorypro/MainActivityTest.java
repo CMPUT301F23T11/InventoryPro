@@ -13,6 +13,8 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.example.inventorypro.Activities.MainActivity;
+
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;

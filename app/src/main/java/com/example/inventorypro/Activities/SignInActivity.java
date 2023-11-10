@@ -1,4 +1,4 @@
-package com.example.inventorypro;
+package com.example.inventorypro.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,6 +16,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.inventorypro.ItemList;
+import com.example.inventorypro.R;
+import com.example.inventorypro.UserPreferences;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.BeginSignInResult;
 import com.google.android.gms.auth.api.identity.Identity;
@@ -31,8 +34,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-
-import androidx.annotation.Nullable;
 
 /**
  * The initial activity where the user must login using their Google account to launch the MainActivity.
@@ -53,7 +54,7 @@ public class SignInActivity extends AppCompatActivity {
 
         if (getIntent().hasExtra(getString(R.string.logout_token)) &&
                 getIntent().getExtras().getBoolean(getString(R.string.logout_token))) {
-            logOut();
+            logout();
         }
 
         signInRequest = BeginSignInRequest.builder()
@@ -85,7 +86,7 @@ public class SignInActivity extends AppCompatActivity {
                                                     if (task.isSuccessful()) {
                                                         // Sign in success
                                                         FirebaseUser user = mAuth.getCurrentUser();
-                                                        logIn(user);
+                                                        login(user);
                                                     } else {
                                                         // If sign in fails, display a message to the user.
                                                         Log.w("TAG", "signInWithCredential:failure", task.getException());
@@ -130,7 +131,7 @@ public class SignInActivity extends AppCompatActivity {
         // check if already logged in
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            logIn(currentUser);
+            login(currentUser);
         }
     }
 
@@ -139,7 +140,7 @@ public class SignInActivity extends AppCompatActivity {
      * Initializes UserPreferences and passed to the MainActivity to complete intitialization using the userID.
      * @param user The firebase user.
      */
-    private void logIn(FirebaseUser user) {
+    private void login(FirebaseUser user) {
         Intent mainActivityIntent = new Intent(getBaseContext(), MainActivity.class);
 
         // Now construct user preferences.
@@ -153,7 +154,7 @@ public class SignInActivity extends AppCompatActivity {
     /**
      * Logs the user out.
      */
-    private void logOut() {
+    private void logout() {
         mAuth.signOut();
         mAuth = FirebaseAuth.getInstance();
     }

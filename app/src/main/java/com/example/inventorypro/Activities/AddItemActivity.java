@@ -1,4 +1,4 @@
-package com.example.inventorypro;
+package com.example.inventorypro.Activities;
 
 import static java.lang.Integer.parseInt;
 
@@ -11,22 +11,20 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.inventorypro.Helpers;
+import com.example.inventorypro.Item;
+import com.example.inventorypro.R;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-
-// TODO: Preserve filter settings and sort settings of the MainActivity
-// This might justify putting these into some user preferences static object.
 
 /**
  * AddItem Activity is responsible for gathering user input and re-creating the MainActivity with the parsed Item.
  */
-public class AddItem extends AppCompatActivity {
+public class AddItemActivity extends AppCompatActivity {
     private TextView header;
     private TextInputLayout name;
     private TextInputLayout date;
@@ -69,9 +67,9 @@ public class AddItem extends AppCompatActivity {
         addImageButton = findViewById(R.id.addImageButton);
         addCodeButton = findViewById(R.id.addcode_button);
 
-        addTagButton.setOnClickListener(Helpers.NotImplementedClickListener);
-        addImageButton.setOnClickListener(Helpers.NotImplementedClickListener);
-        addCodeButton.setOnClickListener(Helpers.NotImplementedClickListener);
+        addTagButton.setOnClickListener(Helpers.notImplementedClickListener);
+        addImageButton.setOnClickListener(Helpers.notImplementedClickListener);
+        addCodeButton.setOnClickListener(Helpers.notImplementedClickListener);
 
         //calls sendItem if all inputs are valid
         confirmButton.setOnClickListener(new View.OnClickListener() {

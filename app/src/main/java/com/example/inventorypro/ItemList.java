@@ -5,6 +5,8 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.inventorypro.Activities.MainActivity;
+
 import java.util.ArrayList;
 import java.util.Collections;
 

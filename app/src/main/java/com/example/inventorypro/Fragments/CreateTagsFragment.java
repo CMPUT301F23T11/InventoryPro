@@ -1,4 +1,4 @@
-package com.example.inventorypro;
+package com.example.inventorypro.Fragments;
 
 import android.app.Dialog;
 import android.graphics.Color;
@@ -20,6 +20,8 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.example.inventorypro.R;
 
 import java.util.ArrayList;
 

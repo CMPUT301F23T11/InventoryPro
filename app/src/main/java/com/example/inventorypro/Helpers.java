@@ -21,10 +21,10 @@ public class Helpers {
     /**
      * OnClickListener which displays a toast notifying the user of an incomplete feature.
      */
-    public static View.OnClickListener NotImplementedClickListener = new View.OnClickListener() {
+    public static View.OnClickListener notImplementedClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            NotImplementedToast(v.getContext());
+            notImplementedToast(v.getContext());
         }
     };
 
@@ -32,8 +32,8 @@ public class Helpers {
      * Displays a toast notifying the user of an incomplete feature.
      * @param context
      */
-    public static void NotImplementedToast(Context context){
-        Helpers.Toast(context, "This feature is not implemented yet.");
+    public static void notImplementedToast(Context context){
+        Helpers.toast(context, "This feature is not implemented yet.");
     }
 
     /**
@@ -41,7 +41,7 @@ public class Helpers {
      * @param context
      * @param string The message to use.
      */
-    public static void Toast(Context context, String string){
+    public static void toast(Context context, String string){
         Toast.makeText(context, string, Toast.LENGTH_SHORT).show();
     }
 

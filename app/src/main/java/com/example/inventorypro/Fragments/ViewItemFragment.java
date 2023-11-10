@@ -1,4 +1,4 @@
-package com.example.inventorypro;
+package com.example.inventorypro.Fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,12 +13,15 @@ import android.widget.ScrollView;
 
 import androidx.fragment.app.DialogFragment;
 
+import com.example.inventorypro.Activities.AddItemActivity;
+import com.example.inventorypro.Item;
+import com.example.inventorypro.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 /**
  * Displays a read-only view for the item from which the user can edit the item if they choose.
  */
-public class ViewItem_Fragment extends DialogFragment {
+public class ViewItemFragment extends DialogFragment {
 
     private Item selectedItem;
     private int selectedPosition;
@@ -130,13 +133,13 @@ public class ViewItem_Fragment extends DialogFragment {
      * Starts AddItem Activity prepopulated with the item parameters in edit mode.
      */
     private void editItem(){
-        Intent sendItemIntent = new Intent(getContext(), AddItem.class);
+        Intent sendItemIntent = new Intent(getContext(), AddItemActivity.class);
         //sends the item back to main activity
         sendItemIntent.putExtra("edit", selectedItem);
         sendItemIntent.putExtra("editPositon", selectedPosition);
         startActivity(sendItemIntent);
     }
-    public ViewItem_Fragment() {
+    public ViewItemFragment() {
         // Required empty public constructor
     }
 
@@ -146,9 +149,9 @@ public class ViewItem_Fragment extends DialogFragment {
      * @param position The position of the item to view.
      * @return new instance of ViewItem_Fragment with the provided item
      */
-    public static ViewItem_Fragment newInstance(Item item, int position) {
+    public static ViewItemFragment newInstance(Item item, int position) {
         // Create a new instance of the ViewItem_Fragment.
-        ViewItem_Fragment fragment = new ViewItem_Fragment();
+        ViewItemFragment fragment = new ViewItemFragment();
         // Bundle the item and position into the fragment's arguments.
         Bundle args = new Bundle();
         args.putInt(ARG_POSITION, position);

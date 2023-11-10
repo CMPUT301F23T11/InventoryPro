@@ -1,4 +1,4 @@
-package com.example.inventorypro;
+package com.example.inventorypro.Fragments;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,6 +12,11 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.example.inventorypro.FilterSettings;
+import com.example.inventorypro.Helpers;
+import com.example.inventorypro.R;
+import com.example.inventorypro.UserPreferences;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -115,8 +120,8 @@ public class FilterFragment extends Fragment {
             }
         });
 
-        ((Button)view.findViewById(R.id.select_make_button)).setOnClickListener(Helpers.NotImplementedClickListener);
-        ((Button)view.findViewById(R.id.select_tags_button)).setOnClickListener(Helpers.NotImplementedClickListener);
+        ((Button)view.findViewById(R.id.select_make_button)).setOnClickListener(Helpers.notImplementedClickListener);
+        ((Button)view.findViewById(R.id.select_tags_button)).setOnClickListener(Helpers.notImplementedClickListener);
     }
 
     @Nullable

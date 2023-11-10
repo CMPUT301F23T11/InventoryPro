@@ -1,27 +1,25 @@
-package com.example.inventorypro;
+package com.example.inventorypro.Fragments;
 
 import android.app.Dialog;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import java.util.ArrayList;
+import com.example.inventorypro.ItemList;
+import com.example.inventorypro.R;
+import com.example.inventorypro.SortFragment;
+import com.example.inventorypro.UserPreferences;
 
 /**
  * Hosts the SortFragment and FilterFragment.
