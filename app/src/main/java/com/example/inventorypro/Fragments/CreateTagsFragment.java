@@ -21,7 +21,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.inventorypro.Activities.MainActivity;
 import com.example.inventorypro.R;
+import com.example.inventorypro.TagList;
 
 import java.util.ArrayList;
 
@@ -41,16 +43,11 @@ public class CreateTagsFragment extends DialogFragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
-        // close button
-        /*Button closeButton = view.findViewById(R.id.closeButton);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });*/
-        ListView listView=view.findViewById(R.id.tags_list);
-
+        // get the tag list
+        TagList tagList = TagList.getInstance();
+        // initialize list
+        ListView listView = view.findViewById(R.id.tags_list);
+        listView.setAdapter(tagList.getCreateTagsArrayAdapter(getActivity().getApplicationContext()));
     }
 
     @Override

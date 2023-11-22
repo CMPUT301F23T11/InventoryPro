@@ -26,6 +26,7 @@ import com.example.inventorypro.R;
 import com.example.inventorypro.Fragments.SortFilterDialogFragment;
 import com.example.inventorypro.SortFragment;
 import com.example.inventorypro.SortSettings;
+import com.example.inventorypro.TagList;
 import com.example.inventorypro.UserPreferences;
 import com.example.inventorypro.Fragments.ViewItemFragment;
 import com.google.android.material.chip.Chip;
@@ -81,6 +82,16 @@ public class MainActivity extends AppCompatActivity {
         } else{
             // Need to re-hook instance variables from MainActivity.
             ItemList.getInstance().resetup(this,listView);
+        }
+        // Only create a single instance of TagList
+        if (TagList.getInstance() == null) {
+            TagList tagList = new TagList();
+            TagList.setInstance(tagList);
+
+            // TODO - Delete these test tags
+            tagList.add("My Tag 1");
+            tagList.add("My Tag 2");
+            tagList.add("My Tag 3");
         }
 
         //Redirect to add Item activity
