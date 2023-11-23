@@ -2,18 +2,22 @@ package com.example.inventorypro.Activities;
 
 import static java.lang.Integer.parseInt;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.inventorypro.Helpers;
 import com.example.inventorypro.Item;
 import com.example.inventorypro.R;
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.LocalDate;
@@ -25,6 +29,8 @@ import java.util.List;
  * AddItem Activity is responsible for gathering user input and re-creating the MainActivity with the parsed Item.
  */
 public class AddItemActivity extends AppCompatActivity {
+    private ImageView image;
+    Uri uri;
     private TextView header;
     private TextInputLayout name;
     private TextInputLayout date;
@@ -59,6 +65,7 @@ public class AddItemActivity extends AppCompatActivity {
         confirmButton = findViewById(R.id.confirm_button);
         cancelButton = findViewById(R.id.cancel_button);
         header = findViewById(R.id.add_header);
+        image = findViewById(R.id.imageView);
 
         // Set the default date to the current date
         date.getEditText().setText(LocalDate.now().toString());
@@ -71,6 +78,16 @@ public class AddItemActivity extends AppCompatActivity {
         addImageButton.setOnClickListener(Helpers.notImplementedClickListener);
         addCodeButton.setOnClickListener(Helpers.notImplementedClickListener);
 
+        addImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImagePicker.with(AddItemActivity.this)
+                        .crop()	    			//Crop image(Optional), Check Customization for more option
+                        .compress(1024)			//Final image size will be less than 1 MB(Optional)
+                        .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
+                        .start();
+            }
+        });
         //calls sendItem if all inputs are valid
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +127,33 @@ public class AddItemActivity extends AppCompatActivity {
             // Change the header to "Edit Item"
             header.setText("Edit Item");
             editMode = true;
+        }
+    }
+
+    /**
+     * Overrides the method to receive the result from other activities started for result.
+     * This method is invoked when an image is selected using ImagePicker.
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     *
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && data != null) {
+            // Retrieves the selected image's URI from the result Intent
+            Uri uri = data.getData();
+            if (uri != null) {
+                image.setImageURI(uri);
+                // Save the URI to the global variable if needed for later use
+                this.uri = uri;
+                image.setBackground(null);
+            }
         }
     }
 
