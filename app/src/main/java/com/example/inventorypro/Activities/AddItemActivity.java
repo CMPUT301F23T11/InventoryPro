@@ -8,15 +8,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.inventorypro.Helpers;
 import com.example.inventorypro.Item;
 import com.example.inventorypro.R;
+import com.example.inventorypro.SliderAdapter;
+import com.example.inventorypro.SliderItem;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -29,7 +31,6 @@ import java.util.List;
  * AddItem Activity is responsible for gathering user input and re-creating the MainActivity with the parsed Item.
  */
 public class AddItemActivity extends AppCompatActivity {
-    private ImageView image;
     Uri uri;
     private TextView header;
     private TextInputLayout name;
@@ -44,6 +45,11 @@ public class AddItemActivity extends AppCompatActivity {
     private int selectedPosition;
     private boolean editMode = false;
     List<String> tags;
+
+    private ViewPager2 viewPager2;
+    List<SliderItem> sliderItems = new ArrayList<>();
+
+
 
     private Button confirmButton;
     private Button cancelButton;
@@ -65,7 +71,8 @@ public class AddItemActivity extends AppCompatActivity {
         confirmButton = findViewById(R.id.confirm_button);
         cancelButton = findViewById(R.id.cancel_button);
         header = findViewById(R.id.add_header);
-        image = findViewById(R.id.imageView);
+        viewPager2 = findViewById(R.id.viewPagerImageSlider);
+
 
         // Set the default date to the current date
         date.getEditText().setText(LocalDate.now().toString());
@@ -149,10 +156,11 @@ public class AddItemActivity extends AppCompatActivity {
             // Retrieves the selected image's URI from the result Intent
             Uri uri = data.getData();
             if (uri != null) {
-                image.setImageURI(uri);
+                sliderItems.add(new SliderItem(uri));
+                viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2));
                 // Save the URI to the global variable if needed for later use
                 this.uri = uri;
-                image.setBackground(null);
+                viewPager2.setBackground(null);
             }
         }
     }
