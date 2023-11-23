@@ -1,14 +1,23 @@
 package com.example.inventorypro.Fragments;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -47,7 +56,7 @@ public class CreateTagsFragment extends DialogFragment {
         TagList tagList = TagList.getInstance();
         // initialize list
         ListView listView = view.findViewById(R.id.tags_list);
-        listView.setAdapter(tagList.getCreateTagsArrayAdapter(getActivity().getApplicationContext()));
+        tagList.createTagsArrayAdapter(view.getContext(), listView);
 
         // close button functionality
         Button closeButton = view.findViewById(R.id.close_button);
@@ -55,6 +64,65 @@ public class CreateTagsFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 dismiss();
+            }
+        });
+
+        // add button functionality
+        Button addButton = view.findViewById(R.id.add_button);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // create edit text input
+                EditText input = new EditText(v.getContext());
+                // make it so the keyboard has a done button instead of enter
+                input.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                // create alert dialog for user input
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext())
+                        .setMessage("Enter New Tag:")
+                        .setView(input)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                tagList.add(input.getText().toString());
+                            }
+                        })
+                        .setNeutralButton("Cancel", null);
+                AlertDialog alertDialog = builder.create();
+                // get focus of the user input when the dialog is shown
+                alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+                        // set focus to EditText
+                        input.requestFocus();
+                        // open up the keyboard for the user, but there need to be a delay while
+                        // the AlertDialog is being opened
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // show keyboard
+                                InputMethodManager inputMethodManager = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                if (inputMethodManager != null) {
+                                    inputMethodManager.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+                                }
+                            }
+                        }, 100);
+                    }
+                });
+
+                // make clicking done on the keyboard trigger the ok of the alert dialog
+                input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                alertDialog.show();
             }
         });
     }

@@ -1,8 +1,10 @@
 package com.example.inventorypro;
 
 import android.content.Context;
+import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class TagList {
     // Singleton pattern for tag list. Don't need a reference to main activity.
@@ -25,15 +27,17 @@ public class TagList {
     }
 
     private ArrayList<String> tagList = new ArrayList<String>();
+    private CreateTagsArrayAdapter createTagsArrayAdapter;
 
     /**
      * Adds a tag String to the tag list.
      * @param tag
      */
     public void add(String tag) {
-        // make sure that the tag doesn't exists before adding
-        if (!tagList.contains(tag)) {
+        // make sure that tag is not empty and doesn't already exist in list before adding
+        if (tag != null && !tag.trim().isEmpty() && !tagList.contains(tag)) {
             tagList.add(tag);
+            refreshList();
         }
     }
 
@@ -45,6 +49,7 @@ public class TagList {
         // make sure that the tag exists before removing
         if (tagList.contains(tag)) {
             tagList.remove(tag);
+            refreshList();
         }
     }
 
@@ -66,6 +71,7 @@ public class TagList {
         // make sure that tag being edited exists
         if (tagList.contains(oldTag)) {
             tagList.set(tagList.indexOf(oldTag), newTag);
+            refreshList();
         }
     }
 
@@ -79,12 +85,22 @@ public class TagList {
     }
 
     /**
-     * Gets a new CreateTagsArrayAdapter. Since there will be more than one type of array adapter
-     * for tags, it is not stored in this object.
-     * @param context the MainActivity context
-     * @return a new CreateTagsArrayAdapter for this tag list
+     * Create a new CreateTagsArrayAdapter.
+     * @param context the context
+     * @param listView the listView to set the adapter
      */
-    public CreateTagsArrayAdapter getCreateTagsArrayAdapter(Context context) {
-        return new CreateTagsArrayAdapter(context, this, tagList);
+    public void createTagsArrayAdapter(Context context, ListView listView) {
+        createTagsArrayAdapter = new CreateTagsArrayAdapter(context, this, tagList);
+        listView.setAdapter(createTagsArrayAdapter);
+    }
+
+    /**
+     * Resorts the list and notifies the array adapter
+     */
+    private void refreshList() {
+        Collections.sort(tagList, String.CASE_INSENSITIVE_ORDER);
+        if (createTagsArrayAdapter != null) {
+            createTagsArrayAdapter.notifyDataSetChanged();
+        }
     }
 }

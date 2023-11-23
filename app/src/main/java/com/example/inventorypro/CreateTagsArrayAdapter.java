@@ -1,8 +1,11 @@
 package com.example.inventorypro;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.hardware.input.InputManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,6 +96,27 @@ public class CreateTagsArrayAdapter extends ArrayAdapter<String> {
                     return true;
                 }
                 return false;
+            }
+        });
+
+        // delete button functionality
+        ImageButton deleteButton = view.findViewById(R.id.delete_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // show alert dialog to warn before deleting
+                new AlertDialog.Builder(v.getContext())
+                        .setTitle("Confirm")
+                        .setMessage("Are you sure you want to delete \"" + tagName + "\" tag? " +
+                                "This tag will be removed from all items.")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                tagList.remove(tagName);
+                            }
+                        })
+                        .setNeutralButton("No", null)
+                        .show();
             }
         });
 
