@@ -31,7 +31,10 @@ public class TagList {
      * @param tag
      */
     public void add(String tag) {
-        tagList.add(tag);
+        // make sure that the tag doesn't exists before adding
+        if (!tagList.contains(tag)) {
+            tagList.add(tag);
+        }
     }
 
     /**
@@ -45,8 +48,34 @@ public class TagList {
         }
     }
 
+    /**
+     * Gets the tag at an index.
+     * @param index the index of the tag.
+     * @return the String of the tag
+     */
     public String getTag(int index) {
         return tagList.get(index);
+    }
+
+    /**
+     * Change an existing tag
+     * @param oldTag the String tag that is being replaced
+     * @param newTag the String to replace the old tag
+     */
+    public void editTag(String oldTag, String newTag) {
+        // make sure that tag being edited exists
+        if (tagList.contains(oldTag)) {
+            tagList.set(tagList.indexOf(oldTag), newTag);
+        }
+    }
+
+    /**
+     * Check if a tag is contained within the tag list
+     * @param tag the tag to check
+     * @return true if the tag is in the list, false otherwise
+     */
+    public boolean contains(String tag) {
+        return tagList.contains(tag);
     }
 
     /**

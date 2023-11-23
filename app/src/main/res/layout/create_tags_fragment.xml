@@ -21,7 +21,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:paddingStart="24dp"
-            android:text="Creates Tags"
+            android:text="Create Tags"
             android:textSize="@dimen/large_text_size" />
     </LinearLayout>
 
@@ -38,32 +38,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/footer"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:background="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/close_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="Close"
+            android:textSize="18sp"
+            android:textColor="@color/primary"
+            android:background="@drawable/button_outline"
+            android:layout_weight="1"/>
 
-            <ImageButton
-                android:id="@+id/addButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:backgroundTint="#00FFFFFF"
-                android:src="@android:drawable/ic_input_add" />
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/add_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="Add"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:background="@drawable/button_filled"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

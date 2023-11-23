@@ -122,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
         ((ImageButton)findViewById(R.id.createsTagsButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Helpers.notImplementedToast(v.getContext());
                 DialogFragment createTags = new CreateTagsFragment();
                 createTags.show(getSupportFragmentManager(), "createTags");
             }

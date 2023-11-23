@@ -21,7 +21,7 @@
         android:background="@drawable/input_field_round"
         android:drawablePadding="8dp"
         android:ems="10"
-        android:inputType="date"
+        android:inputType="text"
         android:text="Tag Name"
         />
 

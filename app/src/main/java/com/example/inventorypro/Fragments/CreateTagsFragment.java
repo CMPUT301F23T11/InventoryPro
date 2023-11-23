@@ -48,6 +48,15 @@ public class CreateTagsFragment extends DialogFragment {
         // initialize list
         ListView listView = view.findViewById(R.id.tags_list);
         listView.setAdapter(tagList.getCreateTagsArrayAdapter(getActivity().getApplicationContext()));
+
+        // close button functionality
+        Button closeButton = view.findViewById(R.id.close_button);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
     }
 
     @Override
