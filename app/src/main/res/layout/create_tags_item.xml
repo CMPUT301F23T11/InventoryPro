@@ -3,39 +3,44 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="40dp">
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:layout_gravity="center_vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        app:srcCompat="@drawable/addtag" />
+        android:src="@drawable/addtag" />
 
     <EditText
-        android:id="@+id/date_from_input3"
+        android:id="@+id/tag_text"
+        android:layout_gravity="center_vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@drawable/input_field_round"
         android:drawablePadding="8dp"
         android:ems="10"
-        android:inputType="date"
-        android:text="2023/11/02"
+        android:inputType="text"
+        android:text="Tag Name"
         />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/delete_button"
+        android:layout_gravity="center_vertical"
         android:layout_width="24dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:src="@android:drawable/btn_dialog" />
+        android:background="@null"
+        android:src="@drawable/baseline_cancel_24" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/edit_button"
+        android:layout_gravity="center_vertical"
         android:layout_width="24dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:src="@android:drawable/ic_menu_edit" />
+        android:background="@null"
+        android:src="@drawable/baseline_edit_24" />
 
 </LinearLayout>
