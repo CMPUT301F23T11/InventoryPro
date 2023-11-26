@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.example.inventorypro.FilterSettings;
 import com.example.inventorypro.Helpers;
 import com.example.inventorypro.R;
-import com.example.inventorypro.UserPreferences;
+import com.example.inventorypro.User;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class FilterFragment extends Fragment {
     }
 
     private FilterSettings filterSettings(){
-        return UserPreferences.getInstance().getFilterSettings();
+        return User.getInstance().getFilterSettings();
     }
 
     @Override

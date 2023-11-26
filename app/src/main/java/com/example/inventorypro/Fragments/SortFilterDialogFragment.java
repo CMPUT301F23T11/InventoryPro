@@ -18,8 +18,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.inventorypro.ItemList;
 import com.example.inventorypro.R;
-import com.example.inventorypro.SortFragment;
-import com.example.inventorypro.UserPreferences;
+import com.example.inventorypro.User;
 
 /**
  * Hosts the SortFragment and FilterFragment.
@@ -82,8 +81,8 @@ public class SortFilterDialogFragment extends DialogFragment {
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UserPreferences.getInstance().getFilterSettings().clear();
-                UserPreferences.getInstance().getSortSettings().clear();
+                User.getInstance().getFilterSettings().clear();
+                User.getInstance().getSortSettings().clear();
                 ItemList.getInstance().refresh();
                 dismiss();
             }

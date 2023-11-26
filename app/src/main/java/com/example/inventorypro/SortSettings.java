@@ -1,6 +1,8 @@
 package com.example.inventorypro;
 
 
+import com.example.inventorypro.Fragments.SortFragment;
+
 /**
  * The SortSettings contain all of the settings data required to perform sorting on the item list.
  */

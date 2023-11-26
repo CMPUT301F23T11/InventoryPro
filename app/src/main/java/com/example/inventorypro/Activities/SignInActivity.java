@@ -18,7 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.inventorypro.ItemList;
 import com.example.inventorypro.R;
-import com.example.inventorypro.UserPreferences;
+import com.example.inventorypro.TagList;
+import com.example.inventorypro.User;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.BeginSignInResult;
 import com.google.android.gms.auth.api.identity.Identity;
@@ -143,10 +144,8 @@ public class SignInActivity extends AppCompatActivity {
     private void login(FirebaseUser user) {
         Intent mainActivityIntent = new Intent(getBaseContext(), MainActivity.class);
 
-        // Now construct user preferences.
-        UserPreferences.createInstance(user.getUid());
-        // Invalidate any active item list (re-created in main activity).
-        ItemList.setInstance(null);
+        // Now construct user.
+        User.createInstance(user.getUid());
 
         startActivity(mainActivityIntent);
     }

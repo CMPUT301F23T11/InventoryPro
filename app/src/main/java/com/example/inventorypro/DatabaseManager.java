@@ -12,6 +12,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Responsible for communication with Firestore as well as invoking updates to the application in relation to this data.
@@ -31,7 +33,7 @@ public class DatabaseManager {
      * @param userID Unique identifier for each user.
      * @param itemList The itemList to synchronize with.
      */
-    public void connect(@NonNull String userID, @NonNull ItemList itemList){
+    public void connect(@NonNull String userID, @NonNull ItemList itemList, @NonNull TagList tagList){
         this.userUID = userID;
 
         // Create various snapshot listeners depending on what we want to listen to.
@@ -39,6 +41,12 @@ public class DatabaseManager {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 onItemsSnapshot(itemList,value,error);
+            }
+        });
+        db.collection(getDBTagsCollectionPath()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                onTagsSnapshot(tagList,value,error);
             }
         });
 
@@ -58,7 +66,19 @@ public class DatabaseManager {
         }
 
         db.document(getDBItemPath(item.getUID())).set(item);
+
         Log.d(TAG,"Adding Item: "+item.getUID());
+    }
+    public void addTag(String item){
+        if(!isConnected){
+            throw new RuntimeException("Database is not connected.");
+        }
+        if(item==null){
+            throw new IllegalArgumentException("Item was null.");
+        }
+
+        db.document(getDBTagPath(item)).set(new HashMap<String,Object>());
+        Log.d(TAG,"Adding Item: "+item);
     }
     public void replaceItem(Item oldItem, Item newItem){
         if (!isConnected) {
@@ -88,6 +108,52 @@ public class DatabaseManager {
 
         db.document(getDBItemPath(item.getUID())).delete();
         Log.d(TAG,"Deleting Item: "+item.getUID());
+    }
+    public void removeTag(String item){
+        if(!isConnected){
+            throw new RuntimeException("Database is not connected.");
+        }
+        if(item==null){
+            throw new IllegalArgumentException("Item was null.");
+        }
+
+        db.document(getDBTagPath(item)).delete();
+        Log.d(TAG,"Deleting Item: "+item);
+    }
+
+    /**
+     * Called whenever the users Tags collection is updated.
+     * @param tagList The tag list to synchronize with (hooked in the connect() method).
+     * @param querySnapshots The real-time snapshot for the Tags.
+     * @param error Any error associated with fetching the snapshots.
+     */
+    private void onTagsSnapshot(TagList tagList, @Nullable QuerySnapshot querySnapshots,
+                                 @Nullable FirebaseFirestoreException error){
+        if (error != null) {
+            Log.e(TAG, error.toString());
+            return;
+        }
+        if(querySnapshots==null){
+            return;
+        }
+
+        // Each document fetched from the collection here is an Tag.
+        // Regenerate the tags list.
+        Log.d(TAG,"Processing Snapshots Tags "+querySnapshots.getMetadata().toString());
+        ArrayList<String> tags = new ArrayList<>();
+        for(DocumentSnapshot s : querySnapshots.getDocuments()){
+            Log.d(TAG,"Found Tag: "+s.getId());
+            String tag = s.getId();
+            if(tag == null){
+                Log.e(TAG,"Failed to parse tag from database: "+s.getId());
+                continue;
+            }
+            Log.d(TAG,"Parsed Tag: "+tag);
+            tags.add(tag);
+        }
+
+        // Synchronize the itemList with the items.
+        tagList.onSynchronize(tags);
     }
 
     /**
@@ -126,6 +192,13 @@ public class DatabaseManager {
     }
 
     /**
+     * Fetch the database path for a users defined tags.
+     * @return The path considering the user ID.
+     */
+    private String getDBTagsCollectionPath(){
+        return String.format("Users/%s/Tags", userUID);
+    }
+    /**
      * Fetch the database path for a users Items.
      * @return The path considering the userID.
      */
@@ -139,6 +212,10 @@ public class DatabaseManager {
      */
     private String getDBItemPath(String itemUID){
         return String.format("Users/%s/Items/%s", userUID, itemUID);
+    }
+
+    private String getDBTagPath(String itemUID){
+        return String.format("Users/%s/Tags/%s", userUID, itemUID);
     }
 
     /**
