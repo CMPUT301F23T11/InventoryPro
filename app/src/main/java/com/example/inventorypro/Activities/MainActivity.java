@@ -31,6 +31,8 @@ import com.example.inventorypro.UserPreferences;
 import com.example.inventorypro.Fragments.ViewItemFragment;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -69,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         createsTagsButton = findViewById(R.id.createsTagsButton);
         scanButton = findViewById(R.id.scanButton);
         createsTagsButton.setOnClickListener(Helpers.notImplementedClickListener);
-        scanButton.setOnClickListener(Helpers.notImplementedClickListener);
 
         // Only create a single instance of ItemList.
         if(ItemList.getInstance() == null){
@@ -141,7 +142,26 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onItemClicked(position);
+                openViewItemDialog(position);
+            }
+        });
+
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                GmsBarcodeScanning.getClient(getBaseContext())
+                    .startScan()
+                    .addOnSuccessListener(barcode -> {
+                        OnBarcodeScanSuccessListener(barcode);
+                    })
+                    .addOnCanceledListener(() -> {
+                        Helpers.toast(getBaseContext(), getString(R.string.barcode_scan_cancelled_message));
+                    })
+                    .addOnFailureListener(e -> {
+                        String failureMessage = getString(R.string.barcode_scan_failed_message) + e.getMessage();
+                        Helpers.toast(getBaseContext(), failureMessage);
+                    });
+
             }
         });
 
@@ -230,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
      * Called when a item is clicked in the list of items. Launches ViewItem window.
      * @param position The position of the item that's clicked in the list.
      */
-    private void onItemClicked(int position) {
+    private void openViewItemDialog(int position) {
         // Retrieve the item based on the position
         ItemList itemList = ItemList.getInstance();
         Item item = itemList.get(position);
@@ -398,5 +418,29 @@ public class MainActivity extends AppCompatActivity {
         chip.setCloseIcon(getDrawable(R.drawable.baseline_cancel_24));
         chip.setCloseIconVisible(true);
         return chip;
+    }
+
+    /**
+     * Opens edit item view for existing item if barcode already exists. Otherwise, opens edit
+     * item view with only serial number field populated
+     * @param barcode resultant barcode upon successful completion of scan.
+     * @return
+     */
+    private void OnBarcodeScanSuccessListener(Barcode barcode) {
+        String serialNumber = barcode.getRawValue();
+        int scannedItemPosition = ItemList.getInstance().getPositionFromSerialNumber(serialNumber);
+
+        Intent editItemIntent = new Intent(getBaseContext(), AddItemActivity.class);
+        if (scannedItemPosition < 0) {
+            // open edit view for new item with only serial number populated
+            editItemIntent.putExtra(getString(R.string.serial_number_intent), serialNumber);
+        } else {
+            // open edit view for existing item
+            Item scannedItem = ItemList.getInstance().get(scannedItemPosition);
+            editItemIntent.putExtra(getString(R.string.edit_item_intent), scannedItem);
+            editItemIntent.putExtra(getString(R.string.edit_item_position_intent), scannedItemPosition);
+        }
+
+        startActivity(editItemIntent);
     }
 }
