@@ -15,6 +15,9 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+/**
+ * Specifies how to display an Item in the ListView.
+ */
 public class ItemArrayAdapter extends ArrayAdapter<Item> {
     private Context context;
     ItemList itemList;
@@ -46,7 +49,7 @@ public class ItemArrayAdapter extends ArrayAdapter<Item> {
         // Set TextView objects text
         name.setText(item.getName());
         checkbox.setChecked(item.isSelected());
-        value.setText(String.format("$%.0f", item.getValue()));
+        value.setText(String.format("$%.2f", item.getValue()));
         date.setText(item.getLocalDate().toString());
         make.setText(item.getMake());
         model.setText(item.getModel());

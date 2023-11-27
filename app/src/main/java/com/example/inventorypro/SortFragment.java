@@ -2,7 +2,6 @@ package com.example.inventorypro;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,26 +13,43 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.firestore.auth.User;
-
-import java.util.ArrayList;
-import java.util.Collections;
-
+/**
+ * Allows the user to adjust their UserPreferences FilterSettings.
+ */
 public class SortFragment extends Fragment {
 
-    // Store settings for ascending or descending
+    /**
+     * Store settings for ascending or descending.
+     */
     public enum SortOrder {
         ASCENDING,
         DESCENDING
     }
-    // Store settings for sort type
+
+    /**
+     * Store settings for sort type.
+     */
     public enum SortType {
-        NONE,
-        DATE,
-        MAKE,
-        VALUE,
-        DESCRIPTION,
-        TAG
+        NONE("None"),
+        DATE("Date"),
+        MAKE("Make"),
+        VALUE("Value"),
+        DESCRIPTION("Description"),
+        TAG("Tag");
+
+        private String description;
+
+        private SortType(String description) {
+            this.description = description;
+        }
+
+        /**
+         * Get the user friendly representation for this enum.
+         * @return The user friendly description.
+         */
+        public String describe() {
+            return description;
+        }
     }
 
     @Nullable
@@ -65,6 +81,7 @@ public class SortFragment extends Fragment {
                     sortSettings().setSortType(SortType.DESCRIPTION);
                 } else if (checkedID == R.id.sortTag) {
                     sortSettings().setSortType(SortType.TAG);
+                    Helpers.notImplementedToast(getContext());
                 }
             }
         });

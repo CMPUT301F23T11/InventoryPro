@@ -5,18 +5,32 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import androidx.annotation.NonNull;
+import com.example.inventorypro.Activities.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * The list of items for the user automatically synchronized using a DatabaseManager.
+ * Uses Singleton pattern.
+ */
 public class ItemList {
 
     // Singleton pattern for item list. Don't need a reference to main activity anymore.
     private static ItemList instance = null;
+
+    /**
+     * Fetch the static instance of this item list.
+     * @return
+     */
     public static ItemList getInstance(){
         return instance;
     }
+
+    /**
+     * Set the static instance of this item list (usually after user authentication).
+     * @param itemList The initialized ItemList.
+     */
     public static void setInstance(ItemList itemList){
         instance = itemList;
     }
@@ -37,16 +51,26 @@ public class ItemList {
 
     public ItemList(Context context, ListView itemListView, DatabaseManager database) {
         // save context and itemListView for later use
+        resetup(context, itemListView);
+
+        this.database = database;
+    }
+
+    /**
+     * Used to update references when the MainActivity is created and destroyed.
+     * @param context From MainActivity
+     * @param itemListView The updated list view object.
+     */
+    public void resetup(Context context, ListView itemListView){
         this.context = context;
         this.itemListView = itemListView;
 
         // setup list view
         if (context != null && itemListView != null) {
+
             itemArrayAdapter = new ItemArrayAdapter(context, this, itemList);
             itemListView.setAdapter(itemArrayAdapter);
         }
-
-        this.database = database;
     }
 
     /**
@@ -55,6 +79,7 @@ public class ItemList {
      */
     public void onSynchronize(ArrayList<Item> items){
         // NOTE: this is called almost immediately after any add/remove (could be a performance problem later).
+        Log.e("GAN", "Database sync occuring " + items.size() + " items.");
         itemList.clear();
         itemList.addAll(items);
 
@@ -64,6 +89,9 @@ public class ItemList {
         refresh();
     }
 
+    public void update(){
+        itemArrayAdapter.notifyDataSetChanged();
+    }
     /**
      * Resorts and filters items then notifies the UI to update.
      */
@@ -80,6 +108,7 @@ public class ItemList {
 
         if(context != null){
             ((MainActivity)context).refreshTotalText();
+            ((MainActivity)context).showSortAndFilterChips();
         }
     }
 
@@ -100,6 +129,7 @@ public class ItemList {
         refresh(); //inefficient
     }
 
+
     /**
      * Removes an item from the list of items and calls the database manager.
      * @param item The item to remove.
@@ -118,6 +148,23 @@ public class ItemList {
     }
 
     /**
+     * Replaces the old item at position with a new item.
+     * @param item The new item.
+     * @param position The position of the old item to replace.
+     */
+    public void replace(Item item, int position){
+        Item oldItem = originalItemList.get(position);
+        originalItemList.set(position,item);
+
+        if(database != null){
+            database.removeItem(oldItem);
+            database.addItem(item);
+        }
+
+        refresh();
+    }
+
+    /**
      * Gets the item list of an ItemList object
      * @return
      * Returns the item list for a specific ItemList object
@@ -129,7 +176,7 @@ public class ItemList {
     /**
      * Sorts the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.
      */
-    private void sort(){
+    protected void sort(){
         if(UserPreferences.getInstance().getSortSettings() == null){
             Log.e("ITEMLIST", "Sort settings is null.");
             return;
@@ -166,9 +213,9 @@ public class ItemList {
             case VALUE:
                 // sort ascending or descending
                 if (sortOrder == SortFragment.SortOrder.ASCENDING) {
-                    Collections.sort(itemList, (item1, item2) -> (int) (item1.getValue() - item2.getValue()));
+                    Collections.sort(itemList, (item1, item2) -> (int) Math.signum(item1.getValue() - item2.getValue()));
                 } else {
-                    Collections.sort(itemList, (item2, item1) -> (int) (item1.getValue() - item2.getValue()));
+                    Collections.sort(itemList, (item2, item1) -> (int) Math.signum(item1.getValue() - item2.getValue()));
                 }
                 break;
             case DESCRIPTION:
@@ -187,7 +234,7 @@ public class ItemList {
     /**
      * Filters the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.
      */
-    private void filter(){
+    protected void filter(){
         if(UserPreferences.getInstance().getFilterSettings() == null){
             Log.e("ITEMLIST", "Filter settings is null.");
             return;

@@ -13,6 +13,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * Responsible for communication with Firestore as well as invoking updates to the application in relation to this data.
+ */
 public class DatabaseManager {
     private FirebaseFirestore db;
 
@@ -24,7 +27,7 @@ public class DatabaseManager {
     }
 
     /**
-     * Connect to firebase using the user ID (probably ID from Google authentication).
+     * Connect to firebase using the user ID (usually ID from Google authentication).
      * @param userID Unique identifier for each user.
      * @param itemList The itemList to synchronize with.
      */
@@ -57,7 +60,20 @@ public class DatabaseManager {
         db.document(getDBItemPath(item.getUID())).set(item);
         Log.d(TAG,"Adding Item: "+item.getUID());
     }
+    public void replaceItem(Item oldItem, Item newItem){
+        if (!isConnected) {
+            throw new RuntimeException("Database is not connected.");
+        }
 
+        if (oldItem == null || newItem == null) {
+            throw new IllegalArgumentException("Both oldItem and newItem must be non-null.");
+        }
+
+        // Check if the oldItem exists in the database and replace it with newItem
+        db.document(getDBItemPath(oldItem.getUID())).set(newItem);
+        Log.d(TAG, "Replacing Item: " + oldItem.getUID() + " with " + newItem.getUID());
+
+    }
     /**
      * Removes an item from the database.
      * @param item The item to remove.
@@ -109,18 +125,26 @@ public class DatabaseManager {
         itemList.onSynchronize(items);
     }
 
+    /**
+     * Fetch the database path for a users Items.
+     * @return The path considering the userID.
+     */
     private String getDBItemsCollectionPath(){
         return String.format("Users/%s/Items", userUID);
     }
     /**
      * Fetch the database path for a user's item.
      * @param itemUID The item uid.
-     * @return
+     * @return The path considering the userID + itemID.
      */
     private String getDBItemPath(String itemUID){
         return String.format("Users/%s/Items/%s", userUID, itemUID);
     }
 
+    /**
+     * Returns true if this database manager has been properly configured to be used.
+     * @return
+     */
     public Boolean getConnected() {
         return isConnected;
     }

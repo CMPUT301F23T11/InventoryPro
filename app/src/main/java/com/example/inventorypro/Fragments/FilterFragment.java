@@ -1,4 +1,4 @@
-package com.example.inventorypro;
+package com.example.inventorypro.Fragments;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -6,17 +6,24 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.inventorypro.FilterSettings;
+import com.example.inventorypro.Helpers;
+import com.example.inventorypro.R;
+import com.example.inventorypro.UserPreferences;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-//TODO: some inheritance in settings and the fragments would be appropriate.
-
+/**
+ * Fragment which updates the UserPreferences FilterSettings.
+ */
 public class FilterFragment extends Fragment {
 
     private EditText from,to,keywords;
@@ -112,6 +119,9 @@ public class FilterFragment extends Fragment {
                 filterSettings().setKeywords(t);
             }
         });
+
+        ((Button)view.findViewById(R.id.select_make_button)).setOnClickListener(Helpers.notImplementedClickListener);
+        ((Button)view.findViewById(R.id.select_tags_button)).setOnClickListener(Helpers.notImplementedClickListener);
     }
 
     @Nullable
