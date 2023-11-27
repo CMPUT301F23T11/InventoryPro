@@ -172,6 +172,9 @@ public class ItemList {
     public ArrayList<Item> getItemList() {
         return itemList;
     }
+    public ArrayList<Item> getOriginalItemList() {
+        return originalItemList;
+    }
 
     /**
      * Sorts the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.

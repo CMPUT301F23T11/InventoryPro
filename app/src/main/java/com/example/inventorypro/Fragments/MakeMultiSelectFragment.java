@@ -88,7 +88,7 @@ public class MakeMultiSelectFragment extends DialogFragment {
 
         ItemList itemList = ItemList.getInstance();
         if (itemList != null) {
-            for (Item item : itemList.getItemList()) {
+            for (Item item : itemList.getOriginalItemList()) {
                 String make = item.getMake();
                 if (make != null && !allMakes.contains(make)) {
                     allMakes.add(make);
