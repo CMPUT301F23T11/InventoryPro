@@ -3,6 +3,7 @@ package com.example.inventorypro;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,13 +46,25 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
     class SliderViewHolder extends RecyclerView.ViewHolder{
 
         private RoundedImageView imageView;
+        private ImageButton deleteImageButton;
 
-         SliderViewHolder(@NonNull View itemView) {
+        SliderViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageSlide);
+            deleteImageButton = itemView.findViewById(R.id.deleteImageButton);
 
+            deleteImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION && position < sliderItems.size()) {
+                        sliderItems.remove(position);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(position, sliderItems.size());
+                    }
+                }
+            });
         }
-        //TODO Might have to change to setImageURI
         void setImage(SliderItem sliderItem){
             imageView.setImageURI(sliderItem.getImage());
         }
