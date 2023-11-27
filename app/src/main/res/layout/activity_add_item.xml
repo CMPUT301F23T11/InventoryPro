@@ -294,6 +294,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
+            android:id="@+id/linearLayout7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="2dp"
@@ -305,25 +306,34 @@
                 android:id="@+id/cancel_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="4dp"
                 android:layout_weight="1"
                 android:clickable="true"
-                android:text="Cancel"
-                android:layout_marginRight="4dp"
-                android:layout_marginTop="8dp"/>
+                android:text="Cancel" />
 
             <Button
                 android:id="@+id/confirm_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="8dp"
                 android:layout_weight="1"
                 android:clickable="true"
-                android:text="Confirm"
-                android:layout_marginLeft="4dp"
-                android:layout_marginTop="8dp"/>
+                android:text="Confirm" />
+
 
         </LinearLayout>
 
-
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:layout_constraintBottom_toBottomOf="@+id/comments"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
 

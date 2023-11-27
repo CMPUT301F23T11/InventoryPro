@@ -33,6 +33,10 @@ android {
         animationsDisabled = true
     }
 
+    buildFeatures{
+        dataBinding = true
+        viewBinding = true
+    }
 }
 
 dependencies {
