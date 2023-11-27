@@ -259,6 +259,22 @@ public class ItemList {
         return itemList.get(position);
     }
 
+
+    /**
+     * Gets position of the first item for a given serial number
+     * @param serialNumber The serial number of interest.
+     * @return position of item if such an item exists, otherwise -1
+     */
+    public int getPositionFromSerialNumber(String serialNumber) {
+        for (int i = 0; i < itemList.size(); i++) {
+            if (serialNumber.equals(itemList.get(i).getSerialNumber())) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     /**
      * Gets the total value of all items in the list.
      * @return the total value of all items in the list.

@@ -240,7 +240,7 @@
                     android:textColor="@color/purple" />
             </com.google.android.material.textfield.TextInputLayout>
             <ImageButton
-                android:id="@+id/addcode_button"
+                android:id="@+id/serialNumberScanButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:background="@color/white"
