@@ -27,6 +27,7 @@ import java.util.ArrayList;
 public class FilterFragment extends Fragment {
 
     private EditText from,to,keywords;
+    private ArrayList<String> selectedMakes = new ArrayList<>();
 
     @Nullable
     @Override
@@ -120,8 +121,24 @@ public class FilterFragment extends Fragment {
             }
         });
 
-        ((Button)view.findViewById(R.id.select_make_button)).setOnClickListener(Helpers.notImplementedClickListener);
+        ((Button)view.findViewById(R.id.select_make_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMakeMultiSelectDialog();
+            }
+        });
         ((Button)view.findViewById(R.id.select_tags_button)).setOnClickListener(Helpers.notImplementedClickListener);
+    }
+    private void showMakeMultiSelectDialog() {
+        MakeMultiSelectFragment makeMultiSelectFragment = MakeMultiSelectFragment.newInstance(selectedMakes);
+        makeMultiSelectFragment.setOnCompleteListener(new MakeMultiSelectFragment.OnCompleteListener() {
+            @Override
+            public void onComplete(ArrayList<String> makes) {
+                selectedMakes = makes;
+                filterSettings().setMakes(selectedMakes);
+            }
+        });
+        makeMultiSelectFragment.show(getParentFragmentManager(), "MakeMultiSelectFragment");
     }
 
     @Nullable
