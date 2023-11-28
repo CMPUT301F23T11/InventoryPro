@@ -60,6 +60,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(User.getInstance()==null){
+            Intent addItemIntent = new Intent(getBaseContext(), SignInActivity.class);
+            startActivity(addItemIntent);
+            return;
+        }
+
         // Initialize UI objects
         listView = findViewById(R.id.itemsListView);
         deleteButton = findViewById(R.id.deleteButton);

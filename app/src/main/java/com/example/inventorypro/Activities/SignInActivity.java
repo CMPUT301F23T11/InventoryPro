@@ -142,6 +142,8 @@ public class SignInActivity extends AppCompatActivity {
      * @param user The firebase user.
      */
     private void login(FirebaseUser user) {
+        Toast.makeText(this,"Logging in...",Toast.LENGTH_SHORT).show();
+
         Intent mainActivityIntent = new Intent(getBaseContext(), MainActivity.class);
 
         // Now construct user.
