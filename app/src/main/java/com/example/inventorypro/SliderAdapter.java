@@ -1,5 +1,6 @@
 package com.example.inventorypro;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,20 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
         this.viewPager2 = viewPager2;
     }
 
+    // Method to convert URIs to Strings
+    public String[] convertUrisToStringArray() {
+        String[] stringArray = new String[sliderItems.size()];
+
+        for (int i = 0; i < sliderItems.size(); i++) {
+            Uri uri = sliderItems.get(i).getImage();
+            if (uri != null) {
+                stringArray[i] = uri.toString();
+            }
+        }
+
+        return stringArray;
+    }
+
     @NonNull
     @Override
     public SliderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,6 +57,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
     public int getItemCount() {
         return sliderItems.size();
     }
+
 
     class SliderViewHolder extends RecyclerView.ViewHolder{
 

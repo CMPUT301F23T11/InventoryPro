@@ -368,7 +368,7 @@ public class AddItemActivity extends AppCompatActivity {
 
         // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
-
+        String[] stringUris = new SliderAdapter(sliderItems,viewPager2).convertUrisToStringArray();
         // Create a new input
         Item editItem = new Item(
                 name.getEditText().getText().toString(),
@@ -378,7 +378,8 @@ public class AddItemActivity extends AppCompatActivity {
                 model.getEditText().getText().toString(),
                 serialNumber.getEditText().getText().toString(),
                 description.getEditText().getText().toString(),
-                comments.getEditText().getText().toString(), tags);
+                comments.getEditText().getText().toString(), tags,
+                stringUris);
 
         // Send the edited item back to the main activity
         sendEditIntent.putExtra("edit Item", editItem);
@@ -392,6 +393,7 @@ public class AddItemActivity extends AppCompatActivity {
     private void sendItem() {
         // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
+        String[] stringUris = new SliderAdapter(sliderItems,viewPager2).convertUrisToStringArray();
 
         // Create a new input
         Item newItem = new Item(
@@ -403,7 +405,8 @@ public class AddItemActivity extends AppCompatActivity {
                 serialNumber.getEditText().getText().toString(),
                 description.getEditText().getText().toString(),
                 comments.getEditText().getText().toString(),
-                null);
+                null,
+                stringUris);
 
         // Intent to return to the main activity
         Intent sendItemIntent = new Intent(this, MainActivity.class);
