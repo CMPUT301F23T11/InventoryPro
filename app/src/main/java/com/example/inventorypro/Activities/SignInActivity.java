@@ -147,7 +147,8 @@ public class SignInActivity extends AppCompatActivity {
         Intent mainActivityIntent = new Intent(getBaseContext(), MainActivity.class);
 
         // Now construct user.
-        User.createInstance(user.getUid());
+//         User.createInstance(user.getUid());
+        User.createInstance("GAN77");
 
         startActivity(mainActivityIntent);
     }

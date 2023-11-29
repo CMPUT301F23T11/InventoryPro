@@ -31,10 +31,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.inventorypro.Activities.MainActivity;
+import com.example.inventorypro.Item;
+import com.example.inventorypro.ItemList;
 import com.example.inventorypro.R;
 import com.example.inventorypro.TagList;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This DialogFragment is the screen used to define/create/edit tags.
@@ -128,6 +131,26 @@ public class CreateTagsFragment extends DialogFragment {
                 alertDialog.show();
             }
         });
+
+        rectifyTags();
+    }
+
+    /**
+     * Looks up pre-existing tags in items and ensures that tag list contains them.
+     */
+    private void rectifyTags(){
+        // Iterate over all items in existence, check if there is a tag that we don't already have.
+        // If so then add it formally.
+        TagList tg = TagList.getInstance();
+        ArrayList<Item> items = ItemList.getInstance().getOriginalItemList();
+        List<String> tags;
+        for(Item i : items){
+            tags = i.getTags();
+            for(String s : tags){
+                if(tg.contains(s)) continue;
+                tg.add(s);
+            }
+        }
     }
 
     @Override

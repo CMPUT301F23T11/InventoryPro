@@ -48,8 +48,6 @@ public class TagList extends SynchronizedList<String> {
     public void add(String tag) {
         // make sure that tag is not empty and doesn't already exist in list before adding
         if (tag != null && !tag.trim().isEmpty() && !itemList.contains(tag)) {
-            /*tagList.add(tag);
-            refreshList();*/
             super.add(tag);
         }
     }
@@ -66,9 +64,18 @@ public class TagList extends SynchronizedList<String> {
     public void remove(String tag) {
         // make sure that the tag exists before removing
         if (itemList.contains(tag)) {
-            /*tagList.remove(tag);
-            refreshList();*/
             super.remove(tag);
+
+            // Recursively delete on items.
+            ItemList itemList = ItemList.getInstance();
+            if(itemList != null){
+                ArrayList<Item> items = itemList.getOriginalItemList();
+                for (Item i : items){
+                    if(!i.hasTag(tag)) continue;
+                    i.removeTag(tag);
+                    itemList.replace(i,i);
+                }
+            }
         }
     }
 
@@ -86,10 +93,20 @@ public class TagList extends SynchronizedList<String> {
     public void editTag(String oldTag, String newTag) {
         // make sure that tag being edited exists
         if (itemList.contains(oldTag)) {
-            /*tagList.set(tagList.indexOf(oldTag), newTag);
-            // refreshList();*/
-            int i = itemList.indexOf(oldTag);
-            super.replace(newTag,i);
+            int ii = itemList.indexOf(oldTag);
+            super.replace(newTag,ii);
+
+            // Recursively edit on items.
+            ItemList itemList = ItemList.getInstance();
+            if(itemList != null){
+                ArrayList<Item> items = itemList.getOriginalItemList();
+                for (Item i : items){
+                    if(!i.hasTag(oldTag)) continue;
+                    i.removeTag(oldTag);
+                    i.addTag(newTag);
+                    itemList.replace(i,i);
+                }
+            }
         }
     }
 

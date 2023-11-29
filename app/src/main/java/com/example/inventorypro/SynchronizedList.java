@@ -115,6 +115,9 @@ public abstract class SynchronizedList<T1> {
     }
     protected abstract void removeFromDatabase(T1 item);
 
+    public void replace(T1 item, T1 old){
+        replace(item,originalItemList.indexOf(old));
+    }
     /**
      * Replaces the old item at position with a new item.
      * @param item The new item.
@@ -142,6 +145,9 @@ public abstract class SynchronizedList<T1> {
      */
     public ArrayList<T1> getItemList() {
         return itemList;
+    }
+    public ArrayList<T1> getOriginalItemList() {
+        return originalItemList;
     }
 
     /**

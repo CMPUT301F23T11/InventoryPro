@@ -234,6 +234,23 @@ public class Item implements Parcelable {
     }
 
     /**
+     * Removes the tag locally on this item.
+     * @param tag
+     */
+    public void removeTag(String tag){
+        tags.remove(tag);
+    }
+
+    /**
+     * Adds a tag locally on this item if it is not added already.
+     * @param tag
+     */
+    public void addTag(String tag){
+        if(hasTag(tag)) return;
+        tags.add(tag);
+    }
+
+    /**
      * Returns true if the tag exists in this item (WIP).
      * @param tag
      * @return
