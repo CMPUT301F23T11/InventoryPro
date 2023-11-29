@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.example.inventorypro.Helpers;
 import com.example.inventorypro.Item;
 import com.example.inventorypro.R;
+import com.example.inventorypro.User;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 
@@ -47,6 +48,12 @@ public class AddItemActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
+
+        if(User.getInstance()==null){
+            Intent addItemIntent = new Intent(getBaseContext(), SignInActivity.class);
+            startActivity(addItemIntent);
+            return;
+        }
 
         // Gets values from the EditText
         name = findViewById(R.id.inputItemName);

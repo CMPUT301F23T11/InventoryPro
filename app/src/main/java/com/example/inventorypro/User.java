@@ -5,27 +5,40 @@ package com.example.inventorypro;
  * Created at the point that the user is logged in.
  * Uses Singleton pattern.
  */
-public class UserPreferences {
-    private static UserPreferences instance = null;
-    public static UserPreferences getInstance(){
+public class User {
+    private static User instance = null;
+    public static User getInstance(){
         return instance;
     }
+    public static Boolean hasUser(){return instance != null;}
 
     /**
      * Create UserPreferences instance using the user ID (google auth id).
      * @param userID The user ID to use.
      */
     public static void createInstance(String userID){
-        instance = new UserPreferences(userID,new SortSettings(),new FilterSettings());
+        instance = new User(userID,new SortSettings(),new FilterSettings());
+        setupUser();
+    }
+    public static void setupUser(){
+        DatabaseManager database = new DatabaseManager();
+
+        ItemList itemList = new ItemList(database);
+        ItemList.setInstance(itemList);
+
+        TagList tagList = new TagList(database);
+        TagList.setInstance(tagList);
+
+        database.connect(User.getInstance().getUserID(), itemList,tagList);
     }
 
-    private UserPreferences(String userID, SortSettings ss, FilterSettings fs){
+    private User(String userID, SortSettings ss, FilterSettings fs){
         this.userID = userID;
         sortSettings = ss;
         filterSettings = fs;
     }
 
-    private String userID;
+    private String userID = null;
     private SortSettings sortSettings;
     private FilterSettings filterSettings;
 

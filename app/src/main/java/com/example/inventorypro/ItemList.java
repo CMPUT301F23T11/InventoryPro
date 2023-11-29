@@ -6,105 +6,21 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.inventorypro.Activities.MainActivity;
+import com.example.inventorypro.Fragments.SortFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import kotlin.jvm.Synchronized;
 
 /**
  * The list of items for the user automatically synchronized using a DatabaseManager.
  * Uses Singleton pattern.
  */
-public class ItemList {
-
-    // Singleton pattern for item list. Don't need a reference to main activity anymore.
-    private static ItemList instance = null;
-
-    /**
-     * Fetch the static instance of this item list.
-     * @return
-     */
-    public static ItemList getInstance(){
-        return instance;
-    }
-
-    /**
-     * Set the static instance of this item list (usually after user authentication).
-     * @param itemList The initialized ItemList.
-     */
-    public static void setInstance(ItemList itemList){
-        instance = itemList;
-    }
-
-    Context context;
-    ListView itemListView;
-    private ArrayList<Item> itemList = new ArrayList<Item>();
-    private ArrayAdapter<Item> itemArrayAdapter;
-    private DatabaseManager database;
-
-    //TODO: make this approach cleaner. Currently, itemList is the list of items as filtered/sorted. Store a copy of original.
-    private ArrayList<Item> originalItemList = new ArrayList<Item>();
-
-    // TODO: Find by barcode
-    // TODO: Find by tag
-    // TODO: Apply tags to items
-    // TODO: Call database management
-
-    public ItemList(Context context, ListView itemListView, DatabaseManager database) {
-        // save context and itemListView for later use
-        resetup(context, itemListView);
-
-        this.database = database;
-    }
-
-    /**
-     * Used to update references when the MainActivity is created and destroyed.
-     * @param context From MainActivity
-     * @param itemListView The updated list view object.
-     */
-    public void resetup(Context context, ListView itemListView){
-        this.context = context;
-        this.itemListView = itemListView;
-
-        // setup list view
-        if (context != null && itemListView != null) {
-
-            itemArrayAdapter = new ItemArrayAdapter(context, this, itemList);
-            itemListView.setAdapter(itemArrayAdapter);
-        }
-    }
-
-    /**
-     * Called when the database wants to synchronize with the real-time update (from the database).
-     * @param items The most up-to-date items.
-     */
-    public void onSynchronize(ArrayList<Item> items){
-        // NOTE: this is called almost immediately after any add/remove (could be a performance problem later).
-        Log.e("GAN", "Database sync occuring " + items.size() + " items.");
-        itemList.clear();
-        itemList.addAll(items);
-
-        originalItemList.clear();
-        originalItemList.addAll(items);
-
-        refresh();
-    }
-
-    public void update(){
-        itemArrayAdapter.notifyDataSetChanged();
-    }
-    /**
-     * Resorts and filters items then notifies the UI to update.
-     */
-    public void refresh(){
-        if(itemArrayAdapter == null) return;
-
-        // Must re-add the original items (this should be cleaner later)
-        itemList.clear();
-        itemList.addAll(originalItemList);
-
-        filter();
-        sort();
-        itemArrayAdapter.notifyDataSetChanged();
+public class ItemList extends SynchronizedList<Item> {
+    @Override
+    public void refresh() {
+        super.refresh();
 
         if(context != null){
             ((MainActivity)context).refreshTotalText();
@@ -112,78 +28,63 @@ public class ItemList {
         }
     }
 
-    /**
-     * Adds an item to the list of items and calls the database manager.
-     * @param item The item to add.
-     */
-    public void add(Item item) {
-        itemList.add(item);
-        if (itemArrayAdapter != null) {
-            itemArrayAdapter.notifyDataSetChanged();
-        }
-
-        if (database != null){
-            database.addItem(item);
-        }
-
-        refresh(); //inefficient
+    private static ItemList instance = null;
+    public static ItemList getInstance(){
+        return instance;
+    }
+    public static void setInstance(ItemList itemList){
+        instance = itemList;
     }
 
+    // TODO: Find by barcode
+    // TODO: Find by tag
+    // TODO: Apply tags to items
+    // TODO: Call database management
 
-    /**
-     * Removes an item from the list of items and calls the database manager.
-     * @param item The item to remove.
-     */
-    public void remove(Item item) {
-        itemList.remove(item);
-        if (itemArrayAdapter != null) {
-            itemArrayAdapter.notifyDataSetChanged();
-        }
-
-        if (database != null){
-            database.removeItem(item);
-        }
-
-        refresh(); //inefficient
+    public ItemList(DatabaseManager database) {
+        super(database);
     }
 
-    /**
-     * Replaces the old item at position with a new item.
-     * @param item The new item.
-     * @param position The position of the old item to replace.
-     */
-    public void replace(Item item, int position){
-        Item oldItem = originalItemList.get(position);
-        originalItemList.set(position,item);
+    @Override
+    public void hook(Context context, ListView itemListView) {
+        super.hook(context, itemListView);
 
-        if(database != null){
-            database.removeItem(oldItem);
-            database.addItem(item);
+        // setup list view
+        if (context != null && itemListView != null) {
+            itemArrayAdapter = new ItemArrayAdapter(context, this, itemList);
+            itemListView.setAdapter(itemArrayAdapter);
         }
-
-        refresh();
     }
 
-    /**
-     * Gets the item list of an ItemList object
-     * @return
-     * Returns the item list for a specific ItemList object
-     */
-    public ArrayList<Item> getItemList() {
-        return itemList;
+    @Override
+    public void postProcess() {
+        super.postProcess();
+
+        filter();
+        sort();
+    }
+
+    @Override
+    protected void addToDatabase(Item item) {
+        database.addItem(item);
+    }
+
+    @Override
+    protected void removeFromDatabase(Item item) {
+        database.removeItem(item);
     }
 
     /**
      * Sorts the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.
      */
     protected void sort(){
-        if(UserPreferences.getInstance().getSortSettings() == null){
+        if(User.getInstance().getSortSettings() == null){
             Log.e("ITEMLIST", "Sort settings is null.");
             return;
         }
 
-        SortFragment.SortType sortType = UserPreferences.getInstance().getSortSettings().getSortType();
-        SortFragment.SortOrder sortOrder = UserPreferences.getInstance().getSortSettings().getSortOrder();
+        SortFragment.SortType sortType = User.getInstance().getSortSettings().getSortType();
+        SortFragment.SortOrder sortOrder = User.getInstance().getSortSettings().getSortOrder();
 
         switch (sortType) {
             case NONE:
@@ -235,30 +136,20 @@ public class ItemList {
      * Filters the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.
      */
     protected void filter(){
-        if(UserPreferences.getInstance().getFilterSettings() == null){
+        if(User.getInstance().getFilterSettings() == null){
             Log.e("ITEMLIST", "Filter settings is null.");
             return;
         }
 
         ArrayList<Item> filteredItems = new ArrayList<>();
         for (Item i : itemList){
-            if(UserPreferences.getInstance().getFilterSettings().itemSatisfiesFilter(i)){
+            if(User.getInstance().getFilterSettings().itemSatisfiesFilter(i)){
                 filteredItems.add(i);
             }
         }
         itemList.clear();
         itemList.addAll(filteredItems);
     }
-
-    /**
-     * Gets an item at a position.
-     * @param position The position to get the item.
-     * @return The item at the position.
-     */
-    public Item get(int position) {
-        return itemList.get(position);
-    }
-
 
     /**
      * Gets position of the first item for a given serial number

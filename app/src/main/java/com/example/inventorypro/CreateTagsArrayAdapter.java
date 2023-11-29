@@ -46,7 +46,7 @@ public class CreateTagsArrayAdapter extends ArrayAdapter<String> {
         }
 
         // edit text
-        String tagName = tagList.getTag(position);
+        String tagName = tagList.get(position);
         EditText editText = view.findViewById(R.id.tag_text);
         // set edit text
         editText.setText(tagName);

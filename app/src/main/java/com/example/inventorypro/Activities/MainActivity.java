@@ -15,19 +15,21 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.inventorypro.Fragments.CreateTagsFragment;
 import com.example.inventorypro.DatabaseManager;
 import com.example.inventorypro.FilterSettings;
 import com.example.inventorypro.Helpers;
 import com.example.inventorypro.Item;
+import com.example.inventorypro.ItemArrayAdapter;
 import com.example.inventorypro.ItemList;
 import com.example.inventorypro.R;
 import com.example.inventorypro.Fragments.SortFilterDialogFragment;
-import com.example.inventorypro.SortFragment;
+import com.example.inventorypro.Fragments.SortFragment;
 import com.example.inventorypro.SortSettings;
 import com.example.inventorypro.TagList;
-import com.example.inventorypro.UserPreferences;
+import com.example.inventorypro.User;
 import com.example.inventorypro.Fragments.ViewItemFragment;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -58,6 +60,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(User.getInstance()==null){
+            Intent addItemIntent = new Intent(getBaseContext(), SignInActivity.class);
+            startActivity(addItemIntent);
+            return;
+        }
+
         // Initialize UI objects
         listView = findViewById(R.id.itemsListView);
         deleteButton = findViewById(R.id.deleteButton);
@@ -72,28 +80,11 @@ public class MainActivity extends AppCompatActivity {
         scanButton = findViewById(R.id.scanButton);
         createsTagsButton.setOnClickListener(Helpers.notImplementedClickListener);
 
-        // Only create a single instance of ItemList.
-        if(ItemList.getInstance() == null){
-            // creates test database
-            DatabaseManager database = new DatabaseManager();
-            // create database connected test list
-            ItemList itemList = new ItemList(this, listView, database);
-            database.connect(UserPreferences.getInstance().getUserID(), itemList);
-            ItemList.setInstance(itemList);
-        } else{
-            // Need to re-hook instance variables from MainActivity.
-            ItemList.getInstance().resetup(this,listView);
-        }
-        // Only create a single instance of TagList
-        if (TagList.getInstance() == null) {
-            TagList tagList = new TagList();
-            TagList.setInstance(tagList);
+        //TODO: might experience bugs related to static instances being destroyed if you leave and reopen app.
+        // solution might be to resend the user to re-login if static vars are null.
 
-            // TODO - Delete these test tags
-            tagList.add("My Tag 1");
-            tagList.add("My Tag 2");
-            tagList.add("My Tag 3");
-        }
+        // Need to re-hook instance variables from MainActivity (since this activity can be destroyed).
+        ItemList.getInstance().hook(this,listView);
 
         //Redirect to add Item activity
         ((ImageButton)findViewById(R.id.addButton)).setOnClickListener(new View.OnClickListener() {
@@ -275,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
      * @return None
      */
     public void showSortAndFilterChips() {
-        UserPreferences userPreferences = UserPreferences.getInstance();
+        User userPreferences = User.getInstance();
 
         // reset all previous chips and hide bars
         sortChipGroup.removeAllViews();

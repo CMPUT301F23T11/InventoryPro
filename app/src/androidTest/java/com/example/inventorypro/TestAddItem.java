@@ -30,7 +30,7 @@ public class TestAddItem {
 
     @BeforeClass
     public static void setup() {
-        UserPreferences.createInstance("DEBUG_TEST_USER");
+        User.createInstance("DEBUG_TEST_USER");
     }
 
     private String safeString(String s) {
