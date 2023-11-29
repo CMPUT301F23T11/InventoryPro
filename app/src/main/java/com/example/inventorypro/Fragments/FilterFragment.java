@@ -62,6 +62,7 @@ public class FilterFragment extends Fragment {
         }
         keywords.setText(keyword);
 
+
         // Add listeners to parse the UI when in changes.
         from.addTextChangedListener(new TextWatcher() {
             @Override
