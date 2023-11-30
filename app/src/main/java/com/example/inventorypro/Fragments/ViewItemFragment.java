@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ScrollView;
 
 import androidx.fragment.app.DialogFragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.inventorypro.Activities.AddItemActivity;
 import com.example.inventorypro.Item;
@@ -35,8 +36,11 @@ public class ViewItemFragment extends DialogFragment {
     private TextInputLayout comments;
     private TextInputLayout value;
 
-    private Button confirmButton;
-    private Button cancelButton;
+
+
+    private ViewPager2 viewPager2;
+
+
 
     /**
      * The key to access the item object this fragment is viewing.
@@ -112,6 +116,7 @@ public class ViewItemFragment extends DialogFragment {
         serialNumber = view.findViewById(R.id.viewSerialNumber);
         description = view.findViewById(R.id.viewDescription);
         comments = view.findViewById(R.id.viewComments);
+        viewPager2 = view.findViewById(R.id.itemImage);
 
         if (selectedItem != null) {
             //Setting Item values to the EditText to view
