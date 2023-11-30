@@ -8,4 +8,9 @@
     <string name="logout_token">logout</string>
     <string name="sort_bar_heading">Sort:</string>
     <string name="filter_bar_heading">Filters:</string>
+    <string name="barcode_scan_cancelled_message">Barcode scanning was cancelled</string>
+    <string name="barcode_scan_failed_message">Barcode scanning was failed due to: </string>
+    <string name="serial_number_intent">serialnumber</string>
+    <string name="edit_item_intent">edit</string>
+    <string name="edit_item_position_intent">editPosition</string>
 </resources>

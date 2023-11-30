@@ -32,7 +32,7 @@ public class ViewItemTester {
 
     @BeforeClass
     public static void setup() {
-        UserPreferences.createInstance("DEBUG_VIEW");
+        User.createInstance("DEBUG_VIEW");
     }
 
     private static Matcher<View> childAtPosition(

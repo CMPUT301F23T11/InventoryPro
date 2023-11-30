@@ -33,7 +33,9 @@ import com.example.inventorypro.Item;
 import com.example.inventorypro.R;
 import com.example.inventorypro.SliderAdapter;
 import com.example.inventorypro.SliderItem;
+import com.example.inventorypro.User;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -55,7 +57,7 @@ public class AddItemActivity extends AppCompatActivity {
     private TextInputLayout description;
     private TextInputLayout comments;
     private TextInputLayout value;
-    private ImageButton addTagButton, addImageButton, addCodeButton;
+    private ImageButton addTagButton, addImageButton, serialNumberScanButton;
     private int selectedPosition;
     private boolean editMode = false;
     List<String> tags;
@@ -158,6 +160,12 @@ public class AddItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
+        if(User.getInstance()==null){
+            Intent addItemIntent = new Intent(getBaseContext(), SignInActivity.class);
+            startActivity(addItemIntent);
+            return;
+        }
+
         // Gets values from the EditText
         name = findViewById(R.id.inputItemName);
         value = findViewById(R.id.inputValue);
@@ -200,11 +208,10 @@ public class AddItemActivity extends AppCompatActivity {
 
         addTagButton = findViewById(R.id.addTagButton);
         addImageButton = findViewById(R.id.addImageButton);
-        addCodeButton = findViewById(R.id.addcode_button);
+        serialNumberScanButton = findViewById(R.id.serialNumberScanButton);
 
         addTagButton.setOnClickListener(Helpers.notImplementedClickListener);
         addImageButton.setOnClickListener(Helpers.notImplementedClickListener);
-        addCodeButton.setOnClickListener(Helpers.notImplementedClickListener);
 
         addImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,6 +222,24 @@ public class AddItemActivity extends AppCompatActivity {
 
             }
         });
+        serialNumberScanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                GmsBarcodeScanning.getClient(getBaseContext())
+                    .startScan()
+                    .addOnSuccessListener(barcode -> {
+                        serialNumber.getEditText().setText(barcode.getRawValue());
+                    })
+                    .addOnCanceledListener(() -> {
+                        Helpers.toast(getBaseContext(), getString(R.string.barcode_scan_cancelled_message));
+                    })
+                    .addOnFailureListener(e -> {
+                        String failureMessage = getString(R.string.barcode_scan_failed_message) + e.getMessage();
+                        Helpers.toast(getBaseContext(), failureMessage);
+                    });
+            }
+        });
+
         //calls sendItem if all inputs are valid
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -238,7 +263,9 @@ public class AddItemActivity extends AppCompatActivity {
         });
 
         // Try to get a new item from the intent.
-        Item potentialItem = parseItemFromAddItemActivity();
+        Item potentialItem = tryGetItemFromIntent();
+        String potentialSerialNumber = tryGetSerialNumberFromIntent();
+
         if (potentialItem != null) {
             // Set EditText values to the values of the selected Item
             name.getEditText().setText(potentialItem.getName());
@@ -254,6 +281,8 @@ public class AddItemActivity extends AppCompatActivity {
             // Change the header to "Edit Item"
             header.setText("Edit Item");
             editMode = true;
+        } else if (potentialSerialNumber != null) {
+            serialNumber.getEditText().setText(potentialSerialNumber);
         }
     }
     private void showOptionDialog() {
@@ -482,15 +511,20 @@ public class AddItemActivity extends AppCompatActivity {
      *
      * @return New Item if created; otherwise, returns null.
      */
-    private Item parseItemFromAddItemActivity() {
+    private Item tryGetItemFromIntent() {
         Intent receiverIntent = getIntent();
-        Item receivedItem = receiverIntent.getParcelableExtra("edit");
-        selectedPosition = getIntent().getIntExtra("editPositon", -1);
+        Item receivedItem = receiverIntent.getParcelableExtra(getString(R.string.edit_item_intent));
+        selectedPosition = getIntent().getIntExtra(getString(R.string.edit_item_position_intent), -1);
 
         if (receivedItem == null) {
             return null;
         }
 
         return receivedItem;
+    }
+
+    private String tryGetSerialNumberFromIntent() {
+        Intent receiverIntent = getIntent();
+        return receiverIntent.getStringExtra(getString(R.string.serial_number_intent));
     }
 }

@@ -58,5 +58,7 @@ dependencies {
     implementation("androidx.viewpager2:viewpager2:1.0.0")
     implementation("com.makeramen:roundedimageview:2.3.0")
 
+    implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
+
     compileOnly(files("${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"))
 }

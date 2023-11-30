@@ -5,9 +5,10 @@ import static org.junit.Assert.assertEquals;
 import android.content.Context;
 import android.widget.ListView;
 
+import com.example.inventorypro.Fragments.SortFragment;
+
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -67,8 +68,8 @@ public class ItemListTest {
         ItemList mockList = mockItemList();
 
         // create new user preferences object
-        UserPreferences.createInstance(null);
-        UserPreferences userPreferences = UserPreferences.getInstance();
+        User.createInstance(null);
+        User userPreferences = User.getInstance();
 
         SortSettings sortSettings = userPreferences.getSortSettings();
         sortSettings.setSortOrder(SortFragment.SortOrder.ASCENDING);
@@ -87,8 +88,8 @@ public class ItemListTest {
         ItemList mockList = mockItemList();
 
         // create new user preferences object
-        UserPreferences.createInstance(null);
-        UserPreferences userPreferences = UserPreferences.getInstance();
+        User.createInstance(null);
+        User userPreferences = User.getInstance();
 
         SortSettings sortSettings = userPreferences.getSortSettings();
         sortSettings.setSortOrder(SortFragment.SortOrder.DESCENDING);
@@ -107,8 +108,8 @@ public class ItemListTest {
         ItemList mockList = mockItemList();
 
         // create new user preferences object
-        UserPreferences.createInstance(null);
-        UserPreferences userPreferences = UserPreferences.getInstance();
+        User.createInstance(null);
+        User userPreferences = User.getInstance();
 
         SortSettings sortSettings = userPreferences.getSortSettings();
         sortSettings.setSortOrder(SortFragment.SortOrder.DESCENDING);
@@ -127,8 +128,8 @@ public class ItemListTest {
         ItemList mockList = mockItemList();
 
         // create new user preferences object
-        UserPreferences.createInstance(null);
-        UserPreferences userPreferences = UserPreferences.getInstance();
+        User.createInstance(null);
+        User userPreferences = User.getInstance();
 
         SortSettings sortSettings = userPreferences.getSortSettings();
         sortSettings.setSortOrder(SortFragment.SortOrder.ASCENDING);

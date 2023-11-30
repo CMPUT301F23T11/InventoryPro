@@ -1,4 +1,4 @@
-package com.example.inventorypro;
+package com.example.inventorypro.Fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,6 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
+import com.example.inventorypro.Helpers;
+import com.example.inventorypro.R;
+import com.example.inventorypro.SortSettings;
+import com.example.inventorypro.User;
 
 /**
  * Allows the user to adjust their UserPreferences FilterSettings.
@@ -59,7 +64,7 @@ public class SortFragment extends Fragment {
     }
 
     private SortSettings sortSettings(){
-        return UserPreferences.getInstance().getSortSettings();
+        return User.getInstance().getSortSettings();
     }
 
     @Override
