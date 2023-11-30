@@ -156,6 +156,7 @@ public class FilterFragment extends Fragment {
                 filterSettings().setTags(selectedTags);
             }
         });
+        tagMultiSelectFragment.show(getParentFragmentManager(), "TagMultiSelectFragment");
     }
 
 
