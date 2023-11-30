@@ -7,12 +7,9 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.firestore.Exclude;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.temporal.ChronoField;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,6 +30,7 @@ public class Item implements Parcelable {
     private String comment;
 
     private List<String> tags; // uid reference to tag
+    private String[] stringUris;
 
     private boolean selected; // TODO: this shouldn't be here ideally.
 
@@ -63,7 +61,8 @@ public class Item implements Parcelable {
                 String serialNumber,
                 String description,
                 String comment,
-                List<String> tags) {
+                List<String> tags,
+                String[] stringUris) {
         this.name = name;
         this.value = value;
         setLocalDate(date);
@@ -77,6 +76,7 @@ public class Item implements Parcelable {
         }else{
             this.tags= tags;
         }
+        this.stringUris = stringUris;
     }
 
     protected Item(Parcel in) {
@@ -304,5 +304,9 @@ public class Item implements Parcelable {
         dest.writeString(description);
         dest.writeString(comment);
         dest.writeStringList(this.tags);
+    }
+
+    public String[] getStringUris() {
+        return stringUris;
     }
 }
