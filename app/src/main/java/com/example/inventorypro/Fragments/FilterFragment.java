@@ -28,6 +28,7 @@ public class FilterFragment extends Fragment {
 
     private EditText from,to,keywords;
     private ArrayList<String> selectedMakes = new ArrayList<>();
+    private ArrayList<String> selectedTags = new ArrayList<>();
 
     @Nullable
     @Override
@@ -128,7 +129,12 @@ public class FilterFragment extends Fragment {
                 showMakeMultiSelectDialog();
             }
         });
-        ((Button)view.findViewById(R.id.select_tags_button)).setOnClickListener(Helpers.notImplementedClickListener);
+        ((Button)view.findViewById(R.id.select_tags_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTagMultiSelectDialog();
+            }
+        });
     }
     private void showMakeMultiSelectDialog() {
         MakeMultiSelectFragment makeMultiSelectFragment = MakeMultiSelectFragment.newInstance(selectedMakes);
@@ -141,6 +147,17 @@ public class FilterFragment extends Fragment {
         });
         makeMultiSelectFragment.show(getParentFragmentManager(), "MakeMultiSelectFragment");
     }
+    private void showTagMultiSelectDialog() {
+        TagMultiSelectFragment tagMultiSelectFragment = TagMultiSelectFragment.newInstance(selectedTags);
+        tagMultiSelectFragment.setOnCompleteListener(new TagMultiSelectFragment.OnCompleteListener() {
+            @Override
+            public void onComplete(ArrayList<String> tags) {
+                selectedTags = tags;
+                filterSettings().setTags(selectedTags);
+            }
+        });
+    }
+
 
     @Nullable
     private LocalDate tryParseDate(String s){

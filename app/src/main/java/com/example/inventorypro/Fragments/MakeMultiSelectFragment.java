@@ -10,9 +10,11 @@ import android.widget.ListView;
 
 import androidx.fragment.app.DialogFragment;
 
+import com.example.inventorypro.FilterSettings;
 import com.example.inventorypro.Item;
 import com.example.inventorypro.ItemList;
 import com.example.inventorypro.R;
+import com.example.inventorypro.UserPreferences;
 
 import java.util.ArrayList;
 
@@ -44,6 +46,9 @@ public class MakeMultiSelectFragment extends DialogFragment {
         if (getArguments() != null) {
             selectedMakes = getArguments().getStringArrayList("selectedMakes");
         }
+        if (selectedMakes == null) {
+            selectedMakes = UserPreferences.getInstance().getFilterSettings().getMakes();
+        }
     }
 
     @Override
@@ -72,6 +77,8 @@ public class MakeMultiSelectFragment extends DialogFragment {
                     selectedMakes.add(allMakes.get(i));
                 }
             }
+//            FilterSettings filterSettings = UserPreferences.getInstance().getFilterSettings();
+//            filterSettings.setMakes(selectedMakes);
             mListener.onComplete(selectedMakes);
             dismiss();
         });
