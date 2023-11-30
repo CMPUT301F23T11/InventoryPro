@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Your RoundedImageView -->
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/imageSlide"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:riv_corner_radius="12dp"
+        android:adjustViewBounds="true" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="8dp">
+
+        <ImageButton
+            android:id="@+id/deleteImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/delete_image"
+            android:padding="12dp"
+            android:background="@android:color/transparent"/>
+
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>
+
