@@ -78,6 +78,11 @@ public class ItemList extends SynchronizedList<Item> {
         return originalItemList;
     }
 
+    public void updateItem(Item item) {
+        database.removeItem(item, false);
+        database.addItem(item);
+    }
+
     /**
      * Sorts the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.
      */
@@ -197,5 +202,19 @@ public class ItemList extends SynchronizedList<Item> {
             total+=item.getValue();
         }
         return total;
+    }
+
+    /**
+     * Gets a list of all selected items
+     * @return an ArrayList of all selected items
+     */
+    public ArrayList<Item> getSelectedItems() {
+        ArrayList<Item> items = new ArrayList<Item>();
+        for (Item item : itemList) {
+            if (item.isSelected()) {
+                items.add(item);
+            }
+        }
+        return items;
     }
 }

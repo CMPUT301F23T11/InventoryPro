@@ -123,7 +123,7 @@ public class DatabaseManager {
             throw new IllegalArgumentException("Item was null.");
         }
 
-        for(String s : item.getStringUris()){
+        for(String s : item.getImageUris()){
             Uri uri = Uri.parse(s);
             if(uri==null)continue;
             Log.e(TAG, "consider to upload "+uri.toString() );
@@ -162,7 +162,7 @@ public class DatabaseManager {
 
         db.document(getDBItemPath(item.getUID())).delete();
         if (deepDelete){
-            for(String s : item.getStringUris()){
+            for(String s : item.getImageUris()){
                 Uri uri = Uri.parse(s);
                 if(uri==null)continue;
                 deleteImage(item,uri);

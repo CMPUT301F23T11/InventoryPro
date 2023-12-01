@@ -124,8 +124,8 @@ public class ViewItemFragment extends DialogFragment {
             description.getEditText().setText(selectedItem.getDescription());
             comments.getEditText().setText(selectedItem.getComment());
 
-            if (selectedItem.getStringUris().size()>0)
-                DatabaseManager.downloadAndDisplayImageAsync(getContext(),itemImage, selectedItem.getStringUris().get(0));
+            if (selectedItem.getImageUris().size()>0)
+                DatabaseManager.downloadAndDisplayImageAsync(getContext(),itemImage, selectedItem.getImageUris().get(0));
 
         }
 

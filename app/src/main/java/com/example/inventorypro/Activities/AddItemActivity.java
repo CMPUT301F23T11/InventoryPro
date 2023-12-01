@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,11 +25,13 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.inventorypro.Fragments.SelectTagsFragment;
 import com.example.inventorypro.Helpers;
 import com.example.inventorypro.Item;
 import com.example.inventorypro.R;
@@ -65,9 +66,10 @@ public class AddItemActivity extends AppCompatActivity {
     private TextInputLayout comments;
     private TextInputLayout value;
     private ImageButton addTagButton, addImageButton, serialNumberScanButton;
+    private String uid;
     private int selectedPosition;
     private boolean editMode = false;
-    List<String> tags;
+    List<String> tags = new ArrayList<>();
 
     private ViewPager2 viewPager2;
     List<SliderItem> sliderItems = new ArrayList<>();
@@ -135,7 +137,13 @@ public class AddItemActivity extends AppCompatActivity {
         addImageButton = findViewById(R.id.addImageButton);
         serialNumberScanButton = findViewById(R.id.serialNumberScanButton);
 
-        addTagButton.setOnClickListener(Helpers.notImplementedClickListener);
+        addTagButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment selectTags = new SelectTagsFragment(null, tags);
+                selectTags.show(getSupportFragmentManager(), "selectTags");
+            }
+        });
         addImageButton.setOnClickListener(Helpers.notImplementedClickListener);
 
         addImageButton.setOnClickListener(new View.OnClickListener() {
@@ -229,10 +237,12 @@ public class AddItemActivity extends AppCompatActivity {
             serialNumber.getEditText().setText(potentialItem.getSerialNumber());
             description.getEditText().setText(potentialItem.getDescription());
             comments.getEditText().setText(potentialItem.getComment());
+            tags.addAll(potentialItem.getTags());
+            uid = potentialItem.getUID();
 
             //TODO: load in images
             ArrayList<Uri> imageUris = new ArrayList<>();
-            for (String s : potentialItem.getStringUris()){
+            for (String s : potentialItem.getImageUris()){
                 Uri i = Uri.parse(s);
                 if (s==null)continue;
                 imageUris.add(i);
@@ -451,14 +461,11 @@ public class AddItemActivity extends AppCompatActivity {
         return imageUri;
     }
 
-    private Item parseItem(){
+    private Item parseItem() {
         // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
-        String[] stringUris = new SliderAdapter(sliderItems,viewPager2).convertUrisToStringArray();
+        String[] stringUris = new SliderAdapter(sliderItems, viewPager2).convertUrisToStringArray();
 
-        Log.e("GAN", ""+stringUris.length);
-
-        // Create a new input
         Item editItem = new Item(
                 name.getEditText().getText().toString(),
                 Double.parseDouble(value.getEditText().getText().toString()),
@@ -467,11 +474,12 @@ public class AddItemActivity extends AppCompatActivity {
                 model.getEditText().getText().toString(),
                 serialNumber.getEditText().getText().toString(),
                 description.getEditText().getText().toString(),
-                comments.getEditText().getText().toString(), tags,
-                Arrays.asList(stringUris));
+                comments.getEditText().getText().toString(),
+                tags,
+                Arrays.asList(stringUris),
+                uid);
         return editItem;
     }
-
     /**
      * Parses the item if this activity is in edit mode and starts MainActivity
      */

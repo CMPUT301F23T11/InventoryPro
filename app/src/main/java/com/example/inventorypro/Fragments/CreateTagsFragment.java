@@ -59,7 +59,6 @@ public class CreateTagsFragment extends DialogFragment {
         TagList tagList = TagList.getInstance();
         // initialize list
         ListView listView = view.findViewById(R.id.tags_list);
-        // tagList.createTagsArrayAdapter(view.getContext(), listView);
 
         // Need to re-hook instance variables from here (since this window can be destroyed).
         TagList.getInstance().hook(getContext(),listView);
