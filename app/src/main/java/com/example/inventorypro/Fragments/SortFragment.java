@@ -86,7 +86,6 @@ public class SortFragment extends Fragment {
                     sortSettings().setSortType(SortType.DESCRIPTION);
                 } else if (checkedID == R.id.sortTag) {
                     sortSettings().setSortType(SortType.TAG);
-                    Helpers.notImplementedToast(getContext());
                 }
             }
         });

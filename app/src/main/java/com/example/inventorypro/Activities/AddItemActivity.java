@@ -50,7 +50,6 @@ import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -82,88 +81,6 @@ public class AddItemActivity extends AppCompatActivity {
     private int PICK_IMAGES_REQUEST = 1;
 
     private ActivityResultLauncher<Intent> imagePickerLauncher;
-
-    private void clickImage(){
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(getPackageManager())!=null){
-            imagePickerLauncher.launch(cameraIntent);
-        } else {
-            Toast.makeText(AddItemActivity.this, "App does not support this action",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-    private void openImagePicker() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/*");
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        imagePickerLauncher.launch(intent);
-    }
-    private void handleSelectedImages(Intent data) {
-        if (data.getClipData() != null) {
-            // Handle multiple selected images here using the imageUris ArrayList
-
-            int count = data.getClipData().getItemCount();
-            ArrayList<Uri> imageUris = new ArrayList<>();
-            for (int i = 0; i < count; i++) {
-                Uri uri = data.getClipData().getItemAt(i).getUri();
-                sliderItems.add(new SliderItem(uri));
-            }
-            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2));
-            // Save the URI to the global variable if needed for later use
-            // this.uri = uri;
-            viewPager2.setBackground(null);
-
-            viewPager2.setClipToPadding(false);
-            viewPager2.setClipChildren(false);
-            viewPager2.setOffscreenPageLimit(3);
-            viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
-
-
-            CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
-            compositePageTransformer.addTransformer(new MarginPageTransformer(5));
-            compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
-                @Override
-                public void transformPage(@NonNull View page, float position) {
-                    float r = 1 - Math.abs(position);
-                    page.setScaleY(0.85f + r * 0.15f);
-                }
-            });
-
-            viewPager2.setPageTransformer(compositePageTransformer);
-
-
-        } else if (data.getData() != null) {
-            // Handle single selected image here using the imageUri
-
-            Uri uri = data.getData();
-            sliderItems.add(new SliderItem(uri));
-            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2));
-            // Save the URI to the global variable if needed for later use
-            // this.uri = uri;
-            viewPager2.setBackground(null);
-
-            viewPager2.setClipToPadding(false);
-            viewPager2.setClipChildren(false);
-            viewPager2.setOffscreenPageLimit(3);
-            viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
-
-
-            CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
-            compositePageTransformer.addTransformer(new MarginPageTransformer(5));
-            compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
-                @Override
-                public void transformPage(@NonNull View page, float position) {
-                    float r = 1 - Math.abs(position);
-                    page.setScaleY(0.85f + r * 0.15f);
-                }
-            });
-
-            viewPager2.setPageTransformer(compositePageTransformer);
-
-
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,7 +114,7 @@ public class AddItemActivity extends AppCompatActivity {
                         if (PICK_IMAGES_REQUEST == 1){
                             if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                                 Intent data = result.getData();
-                                handleSelectedImages(data);
+                                handleReceivedGalleryImages(data);
                             }
                         } else if (PICK_IMAGES_REQUEST == 2) {
                             if (result.getResultCode() == RESULT_OK && result.getData() != null) {
@@ -205,7 +122,7 @@ public class AddItemActivity extends AppCompatActivity {
                                 Bundle bundle = result.getData().getExtras();
                                 Bitmap bitmap = (Bitmap) bundle.get("data");
 
-                                handleClickedImage(bitmap);
+                                handleReceivedCameraImages(bitmap);
 
                             }
                         }
@@ -232,7 +149,7 @@ public class AddItemActivity extends AppCompatActivity {
         addImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showOptionDialog();
+                showAddImageDialogue();
                 //openImagePicker();
                // clickImage();
 
@@ -323,6 +240,34 @@ public class AddItemActivity extends AppCompatActivity {
             tags.addAll(potentialItem.getTags());
             uid = potentialItem.getUID();
 
+            //TODO: load in images
+            ArrayList<Uri> imageUris = new ArrayList<>();
+            for (String s : potentialItem.getImageUris()){
+                Uri i = Uri.parse(s);
+                if (s==null)continue;
+                imageUris.add(i);
+            }
+            for (int i = 0; i < imageUris.size(); i++) {
+                Uri uri = imageUris.get(i);
+                sliderItems.add(new SliderItem(uri));
+            }
+            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2));
+            viewPager2.setBackground(null);
+            viewPager2.setClipToPadding(false);
+            viewPager2.setClipChildren(false);
+            viewPager2.setOffscreenPageLimit(3);
+            viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
+            CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
+            compositePageTransformer.addTransformer(new MarginPageTransformer(5));
+            compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
+                @Override
+                public void transformPage(@NonNull View page, float position) {
+                    float r = 1 - Math.abs(position);
+                    page.setScaleY(0.85f + r * 0.15f);
+                }
+            });
+            viewPager2.setPageTransformer(compositePageTransformer);
+
             // Change the header to "Edit Item"
             header.setText("Edit Item");
             editMode = true;
@@ -330,7 +275,10 @@ public class AddItemActivity extends AppCompatActivity {
             serialNumber.getEditText().setText(potentialSerialNumber);
         }
     }
-    private void showOptionDialog() {
+
+
+
+    private void showAddImageDialogue() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
 
@@ -346,7 +294,7 @@ public class AddItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 PICK_IMAGES_REQUEST = 1;
-                openImagePicker(); // Call your function to open the gallery here
+                onGalleryButtonClick(); // Call your function to open the gallery here
                 dialog.dismiss();
             }
         });
@@ -355,7 +303,7 @@ public class AddItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 PICK_IMAGES_REQUEST = 2;
-                clickImage(); // Call your function to open the camera here
+                onCameraButtonClick(); // Call your function to open the camera here
                 dialog.dismiss();
             }
         });
@@ -370,7 +318,90 @@ public class AddItemActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void handleClickedImage(Bitmap bitmap){
+
+    private void onCameraButtonClick(){
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager())!=null){
+            imagePickerLauncher.launch(cameraIntent);
+        } else {
+            Toast.makeText(AddItemActivity.this, "App does not support this action",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void onGalleryButtonClick() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        imagePickerLauncher.launch(intent);
+    }
+
+    private void handleReceivedGalleryImages(Intent data) {
+        if (data.getClipData() != null) {
+            // Handle multiple selected images here using the imageUris ArrayList
+
+            int count = data.getClipData().getItemCount();
+            ArrayList<Uri> imageUris = new ArrayList<>();
+            for (int i = 0; i < count; i++) {
+                Uri uri = data.getClipData().getItemAt(i).getUri();
+                sliderItems.add(new SliderItem(uri));
+            }
+            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2));
+            // Save the URI to the global variable if needed for later use
+            // this.uri = uri;
+            viewPager2.setBackground(null);
+
+            viewPager2.setClipToPadding(false);
+            viewPager2.setClipChildren(false);
+            viewPager2.setOffscreenPageLimit(3);
+            viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
+
+
+            CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
+            compositePageTransformer.addTransformer(new MarginPageTransformer(5));
+            compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
+                @Override
+                public void transformPage(@NonNull View page, float position) {
+                    float r = 1 - Math.abs(position);
+                    page.setScaleY(0.85f + r * 0.15f);
+                }
+            });
+
+            viewPager2.setPageTransformer(compositePageTransformer);
+
+
+        } else if (data.getData() != null) {
+            // Handle single selected image here using the imageUri
+
+            Uri uri = data.getData();
+            sliderItems.add(new SliderItem(uri));
+            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2));
+            // Save the URI to the global variable if needed for later use
+            // this.uri = uri;
+            viewPager2.setBackground(null);
+
+            viewPager2.setClipToPadding(false);
+            viewPager2.setClipChildren(false);
+            viewPager2.setOffscreenPageLimit(3);
+            viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
+
+
+            CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
+            compositePageTransformer.addTransformer(new MarginPageTransformer(5));
+            compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
+                @Override
+                public void transformPage(@NonNull View page, float position) {
+                    float r = 1 - Math.abs(position);
+                    page.setScaleY(0.85f + r * 0.15f);
+                }
+            });
+
+            viewPager2.setPageTransformer(compositePageTransformer);
+
+
+        }
+    }
+    private void handleReceivedCameraImages(Bitmap bitmap){
         // Save the bitmap to a file
         Uri imageUri = saveBitmapToFile(bitmap);
 
@@ -381,13 +412,10 @@ public class AddItemActivity extends AppCompatActivity {
         // Save the URI to the global variable if needed for later use
         // this.uri = uri;
         viewPager2.setBackground(null);
-
         viewPager2.setClipToPadding(false);
         viewPager2.setClipChildren(false);
         viewPager2.setOffscreenPageLimit(3);
         viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
-
-
         CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
         compositePageTransformer.addTransformer(new MarginPageTransformer(5));
         compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
@@ -401,6 +429,7 @@ public class AddItemActivity extends AppCompatActivity {
         viewPager2.setPageTransformer(compositePageTransformer);
 
     }
+
     private Uri saveBitmapToFile(Bitmap bitmap) {
         // Get the content resolver
         ContentResolver resolver = getContentResolver();
@@ -432,19 +461,11 @@ public class AddItemActivity extends AppCompatActivity {
         return imageUri;
     }
 
-
-    /**
-     * Parses the item if this activity is in edit mode and starts MainActivity
-     */
-    private void sendEditItem() {
-        // Intent to return to the main activity
-        Intent sendEditIntent = new Intent(this, MainActivity.class);
-
+    private Item parseItem() {
         // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
-        String[] stringUris = new SliderAdapter(sliderItems,viewPager2).convertUrisToStringArray();
-        // Create a new input
-        Log.d("test", uid);
+        String[] stringUris = new SliderAdapter(sliderItems, viewPager2).convertUrisToStringArray();
+
         Item editItem = new Item(
                 name.getEditText().getText().toString(),
                 Double.parseDouble(value.getEditText().getText().toString()),
@@ -456,7 +477,17 @@ public class AddItemActivity extends AppCompatActivity {
                 comments.getEditText().getText().toString(),
                 tags,
                 Arrays.asList(stringUris),
-                uid);
+                Item.generateNewUID());
+        return editItem;
+    }
+    /**
+     * Parses the item if this activity is in edit mode and starts MainActivity
+     */
+    private void sendEditItem() {
+        // Intent to return to the main activity
+        Intent sendEditIntent = new Intent(this, MainActivity.class);
+
+        Item editItem = parseItem();
 
         // Send the edited item back to the main activity
         sendEditIntent.putExtra("edit Item", editItem);
@@ -471,20 +502,10 @@ public class AddItemActivity extends AppCompatActivity {
         // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
         String[] stringUris = new SliderAdapter(sliderItems,viewPager2).convertUrisToStringArray();
+        Log.e("GAN", ""+stringUris.length);
 
         // Create a new input
-        Item newItem = new Item(
-                name.getEditText().getText().toString(),
-                Double.parseDouble(value.getEditText().getText().toString()),
-                itemDate,
-                make.getEditText().getText().toString(),
-                model.getEditText().getText().toString(),
-                serialNumber.getEditText().getText().toString(),
-                description.getEditText().getText().toString(),
-                comments.getEditText().getText().toString(),
-                tags,
-                Arrays.asList(stringUris),
-                Item.generateNewUID());
+        Item newItem =  parseItem();
 
         // Intent to return to the main activity
         Intent sendItemIntent = new Intent(this, MainActivity.class);

@@ -2,7 +2,6 @@ package com.example.inventorypro;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -11,6 +10,7 @@ import com.google.firebase.firestore.Exclude;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +32,7 @@ public class Item implements Parcelable {
     private String comment;
 
     private List<String> tags; // uid reference to tag
-    private List<String> stringUris;
+    private List<String> imageUris;
     private String uid;
 
     private boolean selected; // TODO: this shouldn't be here ideally.
@@ -66,7 +66,7 @@ public class Item implements Parcelable {
                 String description,
                 String comment,
                 List<String> tags,
-                List<String> stringUris,
+                List<String> imageUris,
                 String uid) {
         this.name = name;
         this.value = value;
@@ -81,7 +81,7 @@ public class Item implements Parcelable {
         }else{
             this.tags= tags;
         }
-        this.stringUris = stringUris;
+        this.imageUris = imageUris;
         this.uid = uid;
     }
 
@@ -103,9 +103,8 @@ public class Item implements Parcelable {
         description = in.readString();
         comment = in.readString();
 
-        // rebuild array
-        // this.tags = new String[in.readInt()];
         this.tags = in.createStringArrayList();
+        this.imageUris = in.createStringArrayList();
         this.uid = in.readString();
     }
 
@@ -239,6 +238,13 @@ public class Item implements Parcelable {
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
+    public String tagRepresentation(){
+        String ss = "";
+        for(String s : tags){
+            ss+=s;
+        }
+        return ss;
+    }
     public void addTag(String tag) {
         if (!tags.contains(tag)) {
             tags.add(tag);
@@ -315,10 +321,22 @@ public class Item implements Parcelable {
         dest.writeString(description);
         dest.writeString(comment);
         dest.writeStringList(this.tags);
+        dest.writeStringList(this.imageUris);
         dest.writeString(uid);
     }
 
-    public List<String> getStringUris() {
-        return stringUris;
+    public List<String> getImageUris() {
+        if(imageUris ==null){
+            return new ArrayList<>();
+        }
+        return imageUris;
+    }
+    public void replaceUri(String old, String newUri){
+        int i = imageUris.indexOf(old);
+        if(i==-1)return;
+        imageUris.set(i, newUri);
+    }
+    public void deleteUri(String uri){
+        imageUris.remove(uri);
     }
 }

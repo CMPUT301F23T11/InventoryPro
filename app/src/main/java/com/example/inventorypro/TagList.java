@@ -84,11 +84,22 @@ public class TagList extends SynchronizedList<String> {
         // make sure that the tag exists before removing
         if (itemList.contains(tag)) {
             super.remove(tag);
+
+            // Recursively delete on items.
+            ItemList itemList = ItemList.getInstance();
+            if(itemList != null){
+                ArrayList<Item> items = itemList.getOriginalItemList();
+                for (Item i : items){
+                    if(!i.hasTag(tag)) continue;
+                    i.removeTag(tag);
+                    itemList.replace(i,i);
+                }
+            }
         }
     }
 
     @Override
-    protected void removeFromDatabase(String item) {
+    protected void removeFromDatabase(String item, boolean deepDelete) {
         database.removeTag(item);
     }
 
@@ -101,8 +112,20 @@ public class TagList extends SynchronizedList<String> {
     public void editTag(String oldTag, String newTag) {
         // make sure that tag being edited exists
         if (itemList.contains(oldTag)) {
-            int i = itemList.indexOf(oldTag);
-            super.replace(newTag,i);
+            int ii = itemList.indexOf(oldTag);
+            super.replace(newTag,ii);
+
+            // Recursively edit on items.
+            ItemList itemList = ItemList.getInstance();
+            if(itemList != null){
+                ArrayList<Item> items = itemList.getOriginalItemList();
+                for (Item i : items){
+                    if(!i.hasTag(oldTag)) continue;
+                    i.removeTag(oldTag);
+                    i.addTag(newTag);
+                    itemList.replace(i,i);
+                }
+            }
         }
     }
 

@@ -10,6 +10,7 @@ import com.example.inventorypro.Fragments.SortFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import kotlin.jvm.Synchronized;
 
@@ -70,15 +71,15 @@ public class ItemList extends SynchronizedList<Item> {
     }
 
     @Override
-    protected void removeFromDatabase(Item item) {
-        database.removeItem(item);
+    protected void removeFromDatabase(Item item, boolean deepDelete) {
+        database.removeItem(item, deepDelete);
     }
     public ArrayList<Item> getOriginalItemList() {
         return originalItemList;
     }
 
     public void updateItem(Item item) {
-        database.removeItem(item);
+        database.removeItem(item, false);
         database.addItem(item);
     }
 
@@ -136,6 +137,23 @@ public class ItemList extends SynchronizedList<Item> {
                 }
                 break;
             case TAG:
+                // sort the tags of every item (this might be really really performance heavy), optimize here if needed
+                for (Item i : itemList){
+                    List<String> tags = i.getTags();
+                    if (sortOrder == SortFragment.SortOrder.ASCENDING) {
+                        Collections.sort(tags, (item1, item2) -> item1.compareTo(item2));
+                    } else {
+                        Collections.sort(tags, (item2, item1) -> item1.compareTo(item2));
+                    }
+                    i.setTags(tags); // Updating the database is not necessary since the set is the same.
+                }
+
+                // sort ascending or descending
+                if (sortOrder == SortFragment.SortOrder.ASCENDING) {
+                    Collections.sort(itemList, (item1, item2) -> item1.tagRepresentation().compareTo(item2.tagRepresentation()));
+                } else {
+                    Collections.sort(itemList, (item2, item1) -> item1.tagRepresentation().compareTo(item2.tagRepresentation()));
+                }
                 break;
         }
     }

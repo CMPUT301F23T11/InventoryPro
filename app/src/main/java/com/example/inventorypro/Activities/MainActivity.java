@@ -48,6 +48,7 @@ import java.security.cert.PKIXRevocationChecker;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.Arrays;
 
 /**
  * The MainActivity is effectively the "main screen" which launches various dialogues and other activities based on user input.
@@ -211,6 +212,13 @@ public class MainActivity extends AppCompatActivity {
 
         showSortAndFilterChips();
         refreshTotalText();
+
+        // Debugging
+/*
+        Item test = new Item("test",10d,LocalDate.of(2023,11,28),
+                "m1","model","112","","",
+                Arrays.asList("t1", "t2"));
+        ItemList.getInstance().add(test);*/
     }
 
     /**
