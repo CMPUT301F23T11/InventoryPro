@@ -70,8 +70,8 @@ public class ItemList extends SynchronizedList<Item> {
     }
 
     @Override
-    protected void removeFromDatabase(Item item) {
-        database.removeItem(item);
+    protected void removeFromDatabase(Item item, boolean deepDelete) {
+        database.removeItem(item, deepDelete);
     }
 
     /**

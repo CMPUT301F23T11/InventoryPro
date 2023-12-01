@@ -1,31 +1,43 @@
 package com.example.inventorypro;
 
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
 
 /**
  * Responsible for communication with Firestore as well as invoking updates to the application in relation to this data.
  */
 public class DatabaseManager {
     private FirebaseFirestore db;
+    private FirebaseStorage storage;
+    private StorageReference userImagesStorageReference;
 
     private Boolean isConnected;
     private String userUID;
 
     public DatabaseManager(){
         db = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
     }
 
     /**
@@ -50,7 +62,53 @@ public class DatabaseManager {
             }
         });
 
+        // Create a storage reference from our app
+        userImagesStorageReference = storage.getReference().child(getStorageImagesPath());
+
         isConnected = Boolean.TRUE;
+    }
+
+    public String uploadImage(@NonNull Item item, @NonNull Uri image){
+        Log.e(TAG, "uploadImage: "+ image.toString());
+
+        StorageReference ref = userImagesStorageReference.child(image.getLastPathSegment()+
+                UUID.randomUUID().toString().replace("-",""));
+        UploadTask uploadTask = ref.putFile(image);
+
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.e("GAN",exception.toString());
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                Log.e("GAN",ref.getPath());
+            }
+        });
+
+        return ref.getPath();
+    }
+    public void deleteImage(@NonNull Item item, @NonNull Uri image){
+        // Create a reference to the file to delete
+        StorageReference desertRef = storage.getReference(image.toString());
+
+        // Delete the file
+        desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // File deleted successfully
+                Log.d(TAG, "Successfully deleted image " +image);
+                item.deleteUri(image.toString());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e(TAG, "Failed to delete image " +image);
+            }
+        });
     }
 
     /**
@@ -63,6 +121,16 @@ public class DatabaseManager {
         }
         if(item==null){
             throw new IllegalArgumentException("Item was null.");
+        }
+
+        for(String s : item.getStringUris()){
+            Uri uri = Uri.parse(s);
+            if(uri==null)continue;
+            Log.e(TAG, "consider to upload "+uri.toString() );
+            if(uri.toString().startsWith("/Users/")) continue;
+            String newUri = uploadImage(item,uri);
+            Log.e(TAG, "replaced with "+newUri );
+            item.replaceUri(s,newUri);
         }
 
         db.document(getDBItemPath(item.getUID())).set(item);
@@ -80,25 +148,11 @@ public class DatabaseManager {
         db.document(getDBTagPath(item)).set(new HashMap<String,Object>());
         Log.d(TAG,"Adding Item: "+item);
     }
-    public void replaceItem(Item oldItem, Item newItem){
-        if (!isConnected) {
-            throw new RuntimeException("Database is not connected.");
-        }
-
-        if (oldItem == null || newItem == null) {
-            throw new IllegalArgumentException("Both oldItem and newItem must be non-null.");
-        }
-
-        // Check if the oldItem exists in the database and replace it with newItem
-        db.document(getDBItemPath(oldItem.getUID())).set(newItem);
-        Log.d(TAG, "Replacing Item: " + oldItem.getUID() + " with " + newItem.getUID());
-
-    }
     /**
      * Removes an item from the database.
      * @param item The item to remove.
      */
-    public void removeItem(Item item){
+    public void removeItem(Item item, boolean deepDelete){
         if(!isConnected){
             throw new RuntimeException("Database is not connected.");
         }
@@ -107,6 +161,14 @@ public class DatabaseManager {
         }
 
         db.document(getDBItemPath(item.getUID())).delete();
+        if (deepDelete){
+            for(String s : item.getStringUris()){
+                Uri uri = Uri.parse(s);
+                if(uri==null)continue;
+                deleteImage(item,uri);
+            }
+        }
+
         Log.d(TAG,"Deleting Item: "+item.getUID());
     }
     public void removeTag(String item){
@@ -191,6 +253,10 @@ public class DatabaseManager {
         itemList.onSynchronize(items);
     }
 
+    private String getStorageImagesPath(){
+        return String.format("Users/%s/Images",userUID);
+    }
+
     /**
      * Fetch the database path for a users defined tags.
      * @return The path considering the user ID.
@@ -224,6 +290,28 @@ public class DatabaseManager {
      */
     public Boolean getConnected() {
         return isConnected;
+    }
+
+    /**
+     * Downloads the image from firebase and displays it async into an image view.
+     * @param context The context.
+     * @param imageView The image view to display into.
+     * @param uri The image URI (on item).
+     */
+    public static void downloadAndDisplayImageAsync(Context context, ImageView imageView, @NonNull String uri){
+        final StorageReference ref = FirebaseStorage.getInstance().getReference(uri);
+
+        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // Download directly from StorageReference using Glide
+                Glide.with(context)
+                        .load(uri)
+                        .placeholder(R.drawable.baseline_downloading)
+                        .into(imageView);
+                imageView.setBackground(null);
+            }
+        });
     }
 
     final static String TAG = "Firestore";

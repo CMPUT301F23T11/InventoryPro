@@ -10,10 +10,12 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,7 +75,209 @@ public class AddItemActivity extends AppCompatActivity {
 
     private ActivityResultLauncher<Intent> imagePickerLauncher;
 
-    private void clickImage(){
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_item);
+
+        if(User.getInstance()==null){
+            Intent addItemIntent = new Intent(getBaseContext(), SignInActivity.class);
+            startActivity(addItemIntent);
+            return;
+        }
+
+        // Gets values from the EditText
+        name = findViewById(R.id.inputItemName);
+        value = findViewById(R.id.inputValue);
+        date = findViewById(R.id.inputDate);
+        make = findViewById(R.id.inputMake);
+        model= findViewById(R.id.inputModel);
+        serialNumber = findViewById(R.id.inputSerialNumber);
+        description = findViewById(R.id.inputDescription);
+        comments = findViewById(R.id.comments);
+        confirmButton = findViewById(R.id.confirm_button);
+        cancelButton = findViewById(R.id.cancel_button);
+        header = findViewById(R.id.add_header);
+        viewPager2 = findViewById(R.id.viewPagerImageSlider);
+
+        imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (PICK_IMAGES_REQUEST == 1){
+                            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                                Intent data = result.getData();
+                                handleReceivedGalleryImages(data);
+                            }
+                        } else if (PICK_IMAGES_REQUEST == 2) {
+                            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                                Intent data = result.getData();
+                                Bundle bundle = result.getData().getExtras();
+                                Bitmap bitmap = (Bitmap) bundle.get("data");
+
+                                handleReceivedCameraImages(bitmap);
+
+                            }
+                        }
+                    }
+                });
+
+
+        // Set the default date to the current date
+        date.getEditText().setText(LocalDate.now().toString());
+
+        addTagButton = findViewById(R.id.addTagButton);
+        addImageButton = findViewById(R.id.addImageButton);
+        serialNumberScanButton = findViewById(R.id.serialNumberScanButton);
+
+        addTagButton.setOnClickListener(Helpers.notImplementedClickListener);
+        addImageButton.setOnClickListener(Helpers.notImplementedClickListener);
+
+        addImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAddImageDialogue();
+                //openImagePicker();
+               // clickImage();
+
+            }
+        });
+        serialNumberScanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                GmsBarcodeScanning.getClient(getBaseContext())
+                    .startScan()
+                    .addOnSuccessListener(barcode -> {
+                        serialNumber.getEditText().setText(barcode.getRawValue());
+                    })
+                    .addOnCanceledListener(() -> {
+                        Helpers.toast(getBaseContext(), getString(R.string.barcode_scan_cancelled_message));
+                    })
+                    .addOnFailureListener(e -> {
+                        String failureMessage = getString(R.string.barcode_scan_failed_message) + e.getMessage();
+                        Helpers.toast(getBaseContext(), failureMessage);
+                    });
+            }
+        });
+
+        //calls sendItem if all inputs are valid
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validateInput()) {
+                    if (editMode) {
+                        sendEditItem();
+                    } else {
+                        sendItem();
+                    }
+                }
+            }
+        });
+
+        // Calls cancel if the user wants to return to the main activity
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancel();
+            }
+        });
+
+        // Try to get a new item from the intent.
+        Item potentialItem = tryGetItemFromIntent();
+        String potentialSerialNumber = tryGetSerialNumberFromIntent();
+
+        if (potentialItem != null) {
+            // Set EditText values to the values of the selected Item
+            name.getEditText().setText(potentialItem.getName());
+            name.setHelperText("");
+            value.getEditText().setText(String.valueOf(potentialItem.getValue()));
+            date.getEditText().setText(potentialItem.getLocalDate().toString());
+            make.getEditText().setText(potentialItem.getMake());
+            model.getEditText().setText(potentialItem.getModel());
+            serialNumber.getEditText().setText(potentialItem.getSerialNumber());
+            description.getEditText().setText(potentialItem.getDescription());
+            comments.getEditText().setText(potentialItem.getComment());
+
+            //TODO: load in images
+            ArrayList<Uri> imageUris = new ArrayList<>();
+            for (String s : potentialItem.getStringUris()){
+                Uri i = Uri.parse(s);
+                if (s==null)continue;
+                imageUris.add(i);
+            }
+            for (int i = 0; i < imageUris.size(); i++) {
+                Uri uri = imageUris.get(i);
+                sliderItems.add(new SliderItem(uri));
+            }
+            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2));
+            viewPager2.setBackground(null);
+            viewPager2.setClipToPadding(false);
+            viewPager2.setClipChildren(false);
+            viewPager2.setOffscreenPageLimit(3);
+            viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
+            CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
+            compositePageTransformer.addTransformer(new MarginPageTransformer(5));
+            compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
+                @Override
+                public void transformPage(@NonNull View page, float position) {
+                    float r = 1 - Math.abs(position);
+                    page.setScaleY(0.85f + r * 0.15f);
+                }
+            });
+            viewPager2.setPageTransformer(compositePageTransformer);
+
+            // Change the header to "Edit Item"
+            header.setText("Edit Item");
+            editMode = true;
+        } else if (potentialSerialNumber != null) {
+            serialNumber.getEditText().setText(potentialSerialNumber);
+        }
+    }
+
+
+
+    private void showAddImageDialogue() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+
+        View dialogView = inflater.inflate(R.layout.dialog_options, null);
+        Button galleryButton = dialogView.findViewById(R.id.galleryButton);
+        Button cameraButton = dialogView.findViewById(R.id.cameraButton);
+        Button cancelButton = dialogView.findViewById(R.id.cancelButton);
+
+        builder.setView(dialogView);
+        final AlertDialog dialog = builder.create();
+
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PICK_IMAGES_REQUEST = 1;
+                onGalleryButtonClick(); // Call your function to open the gallery here
+                dialog.dismiss();
+            }
+        });
+
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PICK_IMAGES_REQUEST = 2;
+                onCameraButtonClick(); // Call your function to open the camera here
+                dialog.dismiss();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss(); // Dismiss the dialog when cancel is clicked
+            }
+        });
+
+        dialog.show();
+    }
+
+
+    private void onCameraButtonClick(){
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(getPackageManager())!=null){
             imagePickerLauncher.launch(cameraIntent);
@@ -82,14 +286,15 @@ public class AddItemActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
-    private void openImagePicker() {
+    private void onGalleryButtonClick() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         imagePickerLauncher.launch(intent);
     }
-    private void handleSelectedImages(Intent data) {
+
+    private void handleReceivedGalleryImages(Intent data) {
         if (data.getClipData() != null) {
             // Handle multiple selected images here using the imageUris ArrayList
 
@@ -154,178 +359,7 @@ public class AddItemActivity extends AppCompatActivity {
 
         }
     }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_item);
-
-        if(User.getInstance()==null){
-            Intent addItemIntent = new Intent(getBaseContext(), SignInActivity.class);
-            startActivity(addItemIntent);
-            return;
-        }
-
-        // Gets values from the EditText
-        name = findViewById(R.id.inputItemName);
-        value = findViewById(R.id.inputValue);
-        date = findViewById(R.id.inputDate);
-        make = findViewById(R.id.inputMake);
-        model= findViewById(R.id.inputModel);
-        serialNumber = findViewById(R.id.inputSerialNumber);
-        description = findViewById(R.id.inputDescription);
-        comments = findViewById(R.id.comments);
-        confirmButton = findViewById(R.id.confirm_button);
-        cancelButton = findViewById(R.id.cancel_button);
-        header = findViewById(R.id.add_header);
-        viewPager2 = findViewById(R.id.viewPagerImageSlider);
-
-        imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (PICK_IMAGES_REQUEST == 1){
-                            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                                Intent data = result.getData();
-                                handleSelectedImages(data);
-                            }
-                        } else if (PICK_IMAGES_REQUEST == 2) {
-                            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                                Intent data = result.getData();
-                                Bundle bundle = result.getData().getExtras();
-                                Bitmap bitmap = (Bitmap) bundle.get("data");
-
-                                handleClickedImage(bitmap);
-
-                            }
-                        }
-                    }
-                });
-
-
-        // Set the default date to the current date
-        date.getEditText().setText(LocalDate.now().toString());
-
-        addTagButton = findViewById(R.id.addTagButton);
-        addImageButton = findViewById(R.id.addImageButton);
-        serialNumberScanButton = findViewById(R.id.serialNumberScanButton);
-
-        addTagButton.setOnClickListener(Helpers.notImplementedClickListener);
-        addImageButton.setOnClickListener(Helpers.notImplementedClickListener);
-
-        addImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showOptionDialog();
-                //openImagePicker();
-               // clickImage();
-
-            }
-        });
-        serialNumberScanButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                GmsBarcodeScanning.getClient(getBaseContext())
-                    .startScan()
-                    .addOnSuccessListener(barcode -> {
-                        serialNumber.getEditText().setText(barcode.getRawValue());
-                    })
-                    .addOnCanceledListener(() -> {
-                        Helpers.toast(getBaseContext(), getString(R.string.barcode_scan_cancelled_message));
-                    })
-                    .addOnFailureListener(e -> {
-                        String failureMessage = getString(R.string.barcode_scan_failed_message) + e.getMessage();
-                        Helpers.toast(getBaseContext(), failureMessage);
-                    });
-            }
-        });
-
-        //calls sendItem if all inputs are valid
-        confirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validateInput()) {
-                    if (editMode) {
-                        sendEditItem();
-                    } else {
-                        sendItem();
-                    }
-                }
-            }
-        });
-
-        // Calls cancel if the user wants to return to the main activity
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancel();
-            }
-        });
-
-        // Try to get a new item from the intent.
-        Item potentialItem = tryGetItemFromIntent();
-        String potentialSerialNumber = tryGetSerialNumberFromIntent();
-
-        if (potentialItem != null) {
-            // Set EditText values to the values of the selected Item
-            name.getEditText().setText(potentialItem.getName());
-            name.setHelperText("");
-            value.getEditText().setText(String.valueOf(potentialItem.getValue()));
-            date.getEditText().setText(potentialItem.getLocalDate().toString());
-            make.getEditText().setText(potentialItem.getMake());
-            model.getEditText().setText(potentialItem.getModel());
-            serialNumber.getEditText().setText(potentialItem.getSerialNumber());
-            description.getEditText().setText(potentialItem.getDescription());
-            comments.getEditText().setText(potentialItem.getComment());
-
-            // Change the header to "Edit Item"
-            header.setText("Edit Item");
-            editMode = true;
-        } else if (potentialSerialNumber != null) {
-            serialNumber.getEditText().setText(potentialSerialNumber);
-        }
-    }
-    private void showOptionDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = getLayoutInflater();
-
-        View dialogView = inflater.inflate(R.layout.dialog_options, null);
-        Button galleryButton = dialogView.findViewById(R.id.galleryButton);
-        Button cameraButton = dialogView.findViewById(R.id.cameraButton);
-        Button cancelButton = dialogView.findViewById(R.id.cancelButton);
-
-        builder.setView(dialogView);
-        final AlertDialog dialog = builder.create();
-
-        galleryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PICK_IMAGES_REQUEST = 1;
-                openImagePicker(); // Call your function to open the gallery here
-                dialog.dismiss();
-            }
-        });
-
-        cameraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PICK_IMAGES_REQUEST = 2;
-                clickImage(); // Call your function to open the camera here
-                dialog.dismiss();
-            }
-        });
-
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss(); // Dismiss the dialog when cancel is clicked
-            }
-        });
-
-        dialog.show();
-    }
-
-    private void handleClickedImage(Bitmap bitmap){
+    private void handleReceivedCameraImages(Bitmap bitmap){
         // Save the bitmap to a file
         Uri imageUri = saveBitmapToFile(bitmap);
 
@@ -336,13 +370,10 @@ public class AddItemActivity extends AppCompatActivity {
         // Save the URI to the global variable if needed for later use
         // this.uri = uri;
         viewPager2.setBackground(null);
-
         viewPager2.setClipToPadding(false);
         viewPager2.setClipChildren(false);
         viewPager2.setOffscreenPageLimit(3);
         viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
-
-
         CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
         compositePageTransformer.addTransformer(new MarginPageTransformer(5));
         compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
@@ -356,6 +387,7 @@ public class AddItemActivity extends AppCompatActivity {
         viewPager2.setPageTransformer(compositePageTransformer);
 
     }
+
     private Uri saveBitmapToFile(Bitmap bitmap) {
         // Get the content resolver
         ContentResolver resolver = getContentResolver();
@@ -387,17 +419,13 @@ public class AddItemActivity extends AppCompatActivity {
         return imageUri;
     }
 
-
-    /**
-     * Parses the item if this activity is in edit mode and starts MainActivity
-     */
-    private void sendEditItem() {
-        // Intent to return to the main activity
-        Intent sendEditIntent = new Intent(this, MainActivity.class);
-
+    private Item parseItem(){
         // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
         String[] stringUris = new SliderAdapter(sliderItems,viewPager2).convertUrisToStringArray();
+
+        Log.e("GAN", ""+stringUris.length);
+
         // Create a new input
         Item editItem = new Item(
                 name.getEditText().getText().toString(),
@@ -408,7 +436,18 @@ public class AddItemActivity extends AppCompatActivity {
                 serialNumber.getEditText().getText().toString(),
                 description.getEditText().getText().toString(),
                 comments.getEditText().getText().toString(), tags,
-                stringUris);
+                Arrays.asList(stringUris));
+        return editItem;
+    }
+
+    /**
+     * Parses the item if this activity is in edit mode and starts MainActivity
+     */
+    private void sendEditItem() {
+        // Intent to return to the main activity
+        Intent sendEditIntent = new Intent(this, MainActivity.class);
+
+        Item editItem = parseItem();
 
         // Send the edited item back to the main activity
         sendEditIntent.putExtra("edit Item", editItem);
@@ -423,19 +462,10 @@ public class AddItemActivity extends AppCompatActivity {
         // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
         String[] stringUris = new SliderAdapter(sliderItems,viewPager2).convertUrisToStringArray();
+        Log.e("GAN", ""+stringUris.length);
 
         // Create a new input
-        Item newItem = new Item(
-                name.getEditText().getText().toString(),
-                Double.parseDouble(value.getEditText().getText().toString()),
-                itemDate,
-                make.getEditText().getText().toString(),
-                model.getEditText().getText().toString(),
-                serialNumber.getEditText().getText().toString(),
-                description.getEditText().getText().toString(),
-                comments.getEditText().getText().toString(),
-                null,
-                stringUris);
+        Item newItem =  parseItem();
 
         // Intent to return to the main activity
         Intent sendItemIntent = new Intent(this, MainActivity.class);

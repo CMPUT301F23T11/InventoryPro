@@ -60,5 +60,11 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
 
+        implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
+        // Add the dependency for the Cloud Storage library
+        // When using the BoM, you don't specify versions in Firebase library dependencies
+        implementation("com.google.firebase:firebase-storage")
+    implementation("com.firebaseui:firebase-ui-storage:7.2.0")
+
     compileOnly(files("${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"))
 }

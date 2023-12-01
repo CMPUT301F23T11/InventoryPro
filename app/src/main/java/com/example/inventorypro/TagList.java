@@ -80,7 +80,7 @@ public class TagList extends SynchronizedList<String> {
     }
 
     @Override
-    protected void removeFromDatabase(String item) {
+    protected void removeFromDatabase(String item, boolean deepDelete) {
         database.removeTag(item);
     }
 

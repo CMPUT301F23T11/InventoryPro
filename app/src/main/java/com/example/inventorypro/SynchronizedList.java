@@ -108,12 +108,12 @@ public abstract class SynchronizedList<T1> {
         }
 
         if (database != null){
-            removeFromDatabase(item);
+            removeFromDatabase(item, true);
         }
 
         refresh(); //inefficient
     }
-    protected abstract void removeFromDatabase(T1 item);
+    protected abstract void removeFromDatabase(T1 item, boolean deepDelete);
 
     public void replace(T1 item, T1 old){
         replace(item,originalItemList.indexOf(old));
@@ -134,7 +134,7 @@ public abstract class SynchronizedList<T1> {
         refresh();
     }
     protected void replaceInDatabase(T1 oldItem, T1 item){
-        removeFromDatabase(oldItem);
+        removeFromDatabase(oldItem, false);
         addToDatabase(item);
     }
 

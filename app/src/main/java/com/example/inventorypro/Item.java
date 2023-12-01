@@ -1,5 +1,6 @@
 package com.example.inventorypro;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -7,9 +8,11 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.firestore.Exclude;
 
+import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,7 +33,7 @@ public class Item implements Parcelable {
     private String comment;
 
     private List<String> tags; // uid reference to tag
-    private String[] stringUris;
+    private List<String> stringUris;
 
     private boolean selected; // TODO: this shouldn't be here ideally.
 
@@ -62,7 +65,7 @@ public class Item implements Parcelable {
                 String description,
                 String comment,
                 List<String> tags,
-                String[] stringUris) {
+                List<String> imageURIs) {
         this.name = name;
         this.value = value;
         setLocalDate(date);
@@ -76,7 +79,7 @@ public class Item implements Parcelable {
         }else{
             this.tags= tags;
         }
-        this.stringUris = stringUris;
+        this.stringUris = imageURIs;
     }
 
     protected Item(Parcel in) {
@@ -100,6 +103,7 @@ public class Item implements Parcelable {
         // rebuild array
         // this.tags = new String[in.readInt()];
         this.tags = in.createStringArrayList();
+        this.stringUris = in.createStringArrayList();
     }
 
     /**
@@ -304,9 +308,21 @@ public class Item implements Parcelable {
         dest.writeString(description);
         dest.writeString(comment);
         dest.writeStringList(this.tags);
+        dest.writeStringList(this.stringUris);
     }
 
-    public String[] getStringUris() {
+    public List<String> getStringUris() {
+        if(stringUris==null){
+            return new ArrayList<>();
+        }
         return stringUris;
+    }
+    public void replaceUri(String old, String newUri){
+        int i = stringUris.indexOf(old);
+        if(i==-1)return;
+        stringUris.set(i, newUri);
+    }
+    public void deleteUri(String uri){
+        stringUris.remove(uri);
     }
 }
