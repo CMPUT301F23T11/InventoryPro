@@ -441,7 +441,7 @@ public class AddItemActivity extends AppCompatActivity {
                 serialNumber.getEditText().getText().toString(),
                 description.getEditText().getText().toString(),
                 comments.getEditText().getText().toString(), tags,
-                stringUris);
+                Arrays.asList(stringUris));
 
         // Send the edited item back to the main activity
         sendEditIntent.putExtra("edit Item", editItem);
@@ -468,7 +468,7 @@ public class AddItemActivity extends AppCompatActivity {
                 description.getEditText().getText().toString(),
                 comments.getEditText().getText().toString(),
                 null,
-                stringUris);
+                Arrays.asList(stringUris));
 
         // Intent to return to the main activity
         Intent sendItemIntent = new Intent(this, MainActivity.class);
