@@ -65,6 +65,17 @@ public class FilterFragment extends Fragment {
         }
         keywords.setText(keyword);
 
+        EditText makes = view.findViewById(R.id.makes);
+        ArrayList<String> makeWords = (filterSettings().getMakes() == null) ? new ArrayList<>() : filterSettings().getMakes();
+        String makeText= "";
+        for (String k : makeWords){
+            makeText += k+", ";
+        }
+        if(makeWords.size() > 0){
+            makeText = makeText.substring(0,makeText.length()-2);
+        }
+        makes.setText(makeText);
+
 
         // Add listeners to parse the UI when in changes.
         from.addTextChangedListener(new TextWatcher() {

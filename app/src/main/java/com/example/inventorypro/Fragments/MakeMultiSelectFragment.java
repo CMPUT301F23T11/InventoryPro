@@ -34,20 +34,15 @@ public class MakeMultiSelectFragment extends DialogFragment {
     }
     public static MakeMultiSelectFragment newInstance(ArrayList<String> selectedMakes) {
         MakeMultiSelectFragment fragment = new MakeMultiSelectFragment();
-        Bundle args = new Bundle();
-        args.putStringArrayList("selectedMakes", selectedMakes);
-        fragment.setArguments(args);
         return fragment;
     }
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            selectedMakes = getArguments().getStringArrayList("selectedMakes");
-        }
-        if (selectedMakes == null) {
-            selectedMakes = User.getInstance().getFilterSettings().getMakes();
+        selectedMakes = User.getInstance().getFilterSettings().getMakes();
+        if(selectedMakes==null){
+            selectedMakes = new ArrayList<>();
         }
     }
 
