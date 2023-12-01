@@ -29,6 +29,8 @@ public class FilterFragment extends Fragment {
     private EditText from,to,keywords;
     private ArrayList<String> selectedMakes = new ArrayList<>();
     private ArrayList<String> selectedTags = new ArrayList<>();
+    private EditText makesEditText;
+    private EditText tagsEditText;
 
     @Nullable
     @Override
@@ -135,6 +137,8 @@ public class FilterFragment extends Fragment {
                 showTagMultiSelectDialog();
             }
         });
+        makesEditText = view.findViewById(R.id.makes);
+        tagsEditText = view.findViewById(R.id.tags);
     }
     private void showMakeMultiSelectDialog() {
         MakeMultiSelectFragment makeMultiSelectFragment = MakeMultiSelectFragment.newInstance(selectedMakes);
@@ -143,6 +147,9 @@ public class FilterFragment extends Fragment {
             public void onComplete(ArrayList<String> makes) {
                 selectedMakes = makes;
                 filterSettings().setMakes(selectedMakes);
+
+                // Update makesEditText with selected makes
+                updateMakesEditText();
             }
         });
         makeMultiSelectFragment.show(getParentFragmentManager(), "MakeMultiSelectFragment");
@@ -154,9 +161,31 @@ public class FilterFragment extends Fragment {
             public void onComplete(ArrayList<String> tags) {
                 selectedTags = tags;
                 filterSettings().setTags(selectedTags);
+
+                updateTagsEditText();
             }
         });
         tagMultiSelectFragment.show(getParentFragmentManager(), "TagMultiSelectFragment");
+    }
+    private void updateMakesEditText() {
+        StringBuilder makesText = new StringBuilder();
+        for (String make : selectedMakes) {
+            makesText.append(make).append(", ");
+        }
+        if (selectedMakes.size() > 0) {
+            makesText.delete(makesText.length() - 2, makesText.length());
+        }
+        makesEditText.setText(makesText.toString());
+    }
+    private void updateTagsEditText() {
+        StringBuilder tagsText = new StringBuilder();
+        for (String tag : selectedTags) {
+            tagsText.append(tag).append(", ");
+        }
+        if (selectedTags.size() > 0) {
+            tagsText.delete(tagsText.length() - 2, tagsText.length());
+        }
+        tagsEditText.setText(tagsText.toString());
     }
 
 
