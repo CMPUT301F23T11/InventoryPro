@@ -477,7 +477,7 @@ public class AddItemActivity extends AppCompatActivity {
                 comments.getEditText().getText().toString(),
                 tags,
                 Arrays.asList(stringUris),
-                uid);
+                Item.generateNewUID());
         return editItem;
     }
     /**
