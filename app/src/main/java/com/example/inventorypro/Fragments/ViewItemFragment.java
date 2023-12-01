@@ -135,8 +135,8 @@ public class ViewItemFragment extends DialogFragment {
     private void editItem(){
         Intent sendItemIntent = new Intent(getContext(), AddItemActivity.class);
         //sends the item back to main activity
-        sendItemIntent.putExtra("edit", selectedItem);
-        sendItemIntent.putExtra("editPositon", selectedPosition);
+        sendItemIntent.putExtra(getString(R.string.edit_item_intent), selectedItem);
+        sendItemIntent.putExtra(getString(R.string.edit_item_position_intent), selectedPosition);
         startActivity(sendItemIntent);
     }
     public ViewItemFragment() {

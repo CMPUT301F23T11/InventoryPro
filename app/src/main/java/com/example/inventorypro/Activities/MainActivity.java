@@ -8,30 +8,42 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.inventorypro.Fragments.CreateTagsFragment;
 import com.example.inventorypro.DatabaseManager;
 import com.example.inventorypro.FilterSettings;
+import com.example.inventorypro.Fragments.UserProfileFragment;
 import com.example.inventorypro.Helpers;
 import com.example.inventorypro.Item;
+import com.example.inventorypro.ItemArrayAdapter;
 import com.example.inventorypro.ItemList;
 import com.example.inventorypro.R;
 import com.example.inventorypro.Fragments.SortFilterDialogFragment;
-import com.example.inventorypro.SortFragment;
+import com.example.inventorypro.Fragments.SortFragment;
 import com.example.inventorypro.SortSettings;
 import com.example.inventorypro.TagList;
-import com.example.inventorypro.UserPreferences;
+import com.example.inventorypro.User;
 import com.example.inventorypro.Fragments.ViewItemFragment;
+import com.google.android.gms.common.api.OptionalModuleApi;
+import com.google.android.gms.common.moduleinstall.ModuleInstall;
+import com.google.android.gms.common.moduleinstall.ModuleInstallClient;
+import com.google.android.gms.common.moduleinstall.ModuleInstallRequest;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 
+import java.security.cert.PKIXRevocationChecker;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -56,6 +68,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(User.getInstance()==null){
+            Intent signInActivity = new Intent(getBaseContext(), SignInActivity.class);
+            startActivity(signInActivity);
+            return;
+        }
+
         // Initialize UI objects
         listView = findViewById(R.id.itemsListView);
         deleteButton = findViewById(R.id.deleteButton);
@@ -69,30 +87,12 @@ public class MainActivity extends AppCompatActivity {
         createsTagsButton = findViewById(R.id.createsTagsButton);
         scanButton = findViewById(R.id.scanButton);
         createsTagsButton.setOnClickListener(Helpers.notImplementedClickListener);
-        scanButton.setOnClickListener(Helpers.notImplementedClickListener);
 
-        // Only create a single instance of ItemList.
-        if(ItemList.getInstance() == null){
-            // creates test database
-            DatabaseManager database = new DatabaseManager();
-            // create database connected test list
-            ItemList itemList = new ItemList(this, listView, database);
-            database.connect(UserPreferences.getInstance().getUserID(), itemList);
-            ItemList.setInstance(itemList);
-        } else{
-            // Need to re-hook instance variables from MainActivity.
-            ItemList.getInstance().resetup(this,listView);
-        }
-        // Only create a single instance of TagList
-        if (TagList.getInstance() == null) {
-            TagList tagList = new TagList();
-            TagList.setInstance(tagList);
+        //TODO: might experience bugs related to static instances being destroyed if you leave and reopen app.
+        // solution might be to resend the user to re-login if static vars are null.
 
-            // TODO - Delete these test tags
-            tagList.add("My Tag 1");
-            tagList.add("My Tag 2");
-            tagList.add("My Tag 3");
-        }
+        // Need to re-hook instance variables from MainActivity (since this activity can be destroyed).
+        ItemList.getInstance().hook(this,listView);
 
         //Redirect to add Item activity
         ((ImageButton)findViewById(R.id.addButton)).setOnClickListener(new View.OnClickListener() {
@@ -130,18 +130,57 @@ public class MainActivity extends AppCompatActivity {
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent signInActivity = new Intent(getBaseContext(), SignInActivity.class);
-                signInActivity.putExtra("logout", true);
-                startActivity(signInActivity);
-
-                Helpers.toast(view.getContext(),"You have been signed out.");
+                DialogFragment userProfileFragment = new UserProfileFragment();
+                userProfileFragment.show(getSupportFragmentManager(), "userProfileFragment");
             }
         });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onItemClicked(position);
+                openViewItemDialog(position);
+            }
+        });
+
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Context context = getBaseContext();
+                ModuleInstallClient moduleInstallClient = ModuleInstall.getClient(context);
+                OptionalModuleApi barcodeScanningModule = GmsBarcodeScanning.getClient(context);
+
+                moduleInstallClient
+                        .areModulesAvailable(barcodeScanningModule)
+                        .addOnSuccessListener(
+                                response -> {
+                                    if (!response.areModulesAvailable()) {
+                                        // Install barcode scanning module as it is not installed
+                                        ModuleInstallRequest moduleInstallRequest =
+                                                ModuleInstallRequest.newBuilder()
+                                                        .addApi(barcodeScanningModule)
+                                                        .build();
+
+                                        moduleInstallClient.installModules(moduleInstallRequest);
+                                        Helpers.toast(context, getString(R.string.barcode_scan_download_message));
+                                    } else {
+                                        GmsBarcodeScanning.getClient(context)
+                                                .startScan()
+                                                .addOnSuccessListener(barcode -> {
+                                                    OnBarcodeScanSuccessListener(barcode);
+                                                })
+                                                .addOnCanceledListener(() -> {
+                                                    Helpers.toast(getBaseContext(), getString(R.string.barcode_scan_cancelled_message));
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    String failureMessage = getString(R.string.barcode_scan_failed_message) + e.getMessage();
+                                                    Helpers.toast(getBaseContext(), failureMessage);
+                                                });
+                                    }
+                                })
+                        .addOnFailureListener(
+                                e -> {
+                                    Log.e("SCANNING", getString(R.string.barcode_scan_download_check_failed_message) + e.getMessage());
+                                });
             }
         });
 
@@ -159,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        showSortAndFilterChips();
         refreshTotalText();
     }
 
@@ -230,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
      * Called when a item is clicked in the list of items. Launches ViewItem window.
      * @param position The position of the item that's clicked in the list.
      */
-    private void onItemClicked(int position) {
+    private void openViewItemDialog(int position) {
         // Retrieve the item based on the position
         ItemList itemList = ItemList.getInstance();
         Item item = itemList.get(position);
@@ -255,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
      * @return None
      */
     public void showSortAndFilterChips() {
-        UserPreferences userPreferences = UserPreferences.getInstance();
+        User userPreferences = User.getInstance();
 
         // reset all previous chips and hide bars
         sortChipGroup.removeAllViews();
@@ -436,5 +476,29 @@ public class MainActivity extends AppCompatActivity {
         chip.setCloseIcon(getDrawable(R.drawable.baseline_cancel_24));
         chip.setCloseIconVisible(true);
         return chip;
+    }
+
+    /**
+     * Opens edit item view for existing item if barcode already exists. Otherwise, opens edit
+     * item view with only serial number field populated
+     * @param barcode resultant barcode upon successful completion of scan.
+     * @return
+     */
+    private void OnBarcodeScanSuccessListener(Barcode barcode) {
+        String serialNumber = barcode.getRawValue();
+        int scannedItemPosition = ItemList.getInstance().getPositionFromSerialNumber(serialNumber);
+
+        Intent editItemIntent = new Intent(getBaseContext(), AddItemActivity.class);
+        if (scannedItemPosition < 0) {
+            // open edit view for new item with only serial number populated
+            editItemIntent.putExtra(getString(R.string.serial_number_intent), serialNumber);
+        } else {
+            // open edit view for existing item
+            Item scannedItem = ItemList.getInstance().get(scannedItemPosition);
+            editItemIntent.putExtra(getString(R.string.edit_item_intent), scannedItem);
+            editItemIntent.putExtra(getString(R.string.edit_item_position_intent), scannedItemPosition);
+        }
+
+        startActivity(editItemIntent);
     }
 }

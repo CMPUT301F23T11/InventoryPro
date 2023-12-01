@@ -1,6 +1,5 @@
 package com.example.inventorypro;
 
-import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -8,10 +7,8 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 
-import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -20,14 +17,11 @@ import androidx.test.filters.LargeTest;
 import com.example.inventorypro.Activities.AddItemActivity;
 import com.example.inventorypro.Activities.MainActivity;
 import com.example.inventorypro.Activities.SignInActivity;
-import com.example.inventorypro.Fragments.SortFilterDialogFragment;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.time.LocalDate;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -39,7 +33,7 @@ public class MainActivityTest {
 
     @BeforeClass
     public static void setup(){
-        UserPreferences.createInstance("DEBUG_TEST_USER");
+        User.createInstance("DEBUG_TEST_USER", "DEBUG_TEST_USER_EMAIL_ID", "DEBUG_TEST_USER_DISPLAY_NAME");
     }
 
     @Test

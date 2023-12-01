@@ -10,7 +10,7 @@ import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import com.example.inventorypro.R;
-import com.example.inventorypro.UserPreferences;
+import com.example.inventorypro.User;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -23,7 +23,7 @@ public class EditItemTester {
 
     @BeforeClass
     public static void setup() {
-        UserPreferences.createInstance("EDITING");
+        User.createInstance("EDITING", "DEBUG_TEST_USER_EMAIL_ID", "DEBUG_TEST_USER_DISPLAY_NAME");
     }
 
     /**

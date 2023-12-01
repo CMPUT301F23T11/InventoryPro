@@ -253,7 +253,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="#00FFFFFF"
                 android:src="@drawable/baseline_person_24"
                 android:tint="#5A5A5A" />
 
@@ -270,7 +270,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="#00FFFFFF"
                 android:src="@drawable/baseline_filter_list_24"
                 android:tint="#5A5A5A" />
         </LinearLayout>

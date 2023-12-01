@@ -14,7 +14,7 @@ import com.example.inventorypro.FilterSettings;
 import com.example.inventorypro.Item;
 import com.example.inventorypro.ItemList;
 import com.example.inventorypro.R;
-import com.example.inventorypro.UserPreferences;
+import com.example.inventorypro.User;
 
 import java.util.ArrayList;
 
@@ -47,7 +47,7 @@ public class MakeMultiSelectFragment extends DialogFragment {
             selectedMakes = getArguments().getStringArrayList("selectedMakes");
         }
         if (selectedMakes == null) {
-            selectedMakes = UserPreferences.getInstance().getFilterSettings().getMakes();
+            selectedMakes = User.getInstance().getFilterSettings().getMakes();
         }
     }
 
