@@ -416,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
 
         // filter makes chip
         ArrayList<String> filterMakes = filterSettings.getMakes();
-        if (filterMakes != null) {
+        if (filterMakes != null&&filterMakes.size()>0) {
             String filterMakesChipText = String.format("makes: %s", String.join(", ", filterMakes));
             Chip filterMakesChip = initializeChip(filterMakesChipText);
             filterMakesChip.setOnCloseIconClickListener(new View.OnClickListener() {
