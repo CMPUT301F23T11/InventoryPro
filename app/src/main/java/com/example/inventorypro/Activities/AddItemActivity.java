@@ -5,11 +5,13 @@ import static java.lang.Integer.parseInt;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -34,6 +36,10 @@ import com.example.inventorypro.R;
 import com.example.inventorypro.SliderAdapter;
 import com.example.inventorypro.SliderItem;
 import com.example.inventorypro.User;
+import com.google.android.gms.common.api.OptionalModuleApi;
+import com.google.android.gms.common.moduleinstall.ModuleInstall;
+import com.google.android.gms.common.moduleinstall.ModuleInstallClient;
+import com.google.android.gms.common.moduleinstall.ModuleInstallRequest;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 
@@ -225,18 +231,45 @@ public class AddItemActivity extends AppCompatActivity {
         serialNumberScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GmsBarcodeScanning.getClient(getBaseContext())
-                    .startScan()
-                    .addOnSuccessListener(barcode -> {
-                        serialNumber.getEditText().setText(barcode.getRawValue());
-                    })
-                    .addOnCanceledListener(() -> {
-                        Helpers.toast(getBaseContext(), getString(R.string.barcode_scan_cancelled_message));
-                    })
-                    .addOnFailureListener(e -> {
-                        String failureMessage = getString(R.string.barcode_scan_failed_message) + e.getMessage();
-                        Helpers.toast(getBaseContext(), failureMessage);
-                    });
+                Context context = getBaseContext();
+                ModuleInstallClient moduleInstallClient = ModuleInstall.getClient(context);
+                OptionalModuleApi barcodeScanningModule = GmsBarcodeScanning.getClient(context);
+
+                moduleInstallClient
+                        .areModulesAvailable(barcodeScanningModule)
+                        .addOnSuccessListener(
+                                response -> {
+                                    if (!response.areModulesAvailable()) {
+                                        // Install barcode scanning module as it is not installed
+                                        ModuleInstallRequest moduleInstallRequest =
+                                                ModuleInstallRequest.newBuilder()
+                                                        .addApi(barcodeScanningModule)
+                                                        .build();
+
+                                        moduleInstallClient.installModules(moduleInstallRequest);
+                                        Helpers.toast(context, "");
+                                    } else {
+                                        GmsBarcodeScanning.getClient(context)
+                                                .startScan()
+                                                .addOnSuccessListener(barcode -> {
+                                                    serialNumber.getEditText().setText(barcode.getRawValue());
+                                                })
+                                                .addOnCanceledListener(() -> {
+                                                    Helpers.toast(getBaseContext(), getString(R.string.barcode_scan_cancelled_message));
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    String failureMessage = getString(R.string.barcode_scan_failed_message) + e.getMessage();
+                                                    Helpers.toast(getBaseContext(), failureMessage);
+                                                });
+                                    }
+                                })
+                        .addOnFailureListener(
+                                e -> {
+                                    Log.e(
+                                            "SCANNING",
+                                            String.format("Could not check if barcode module is installed due to %s", e.getMessage())
+                                    );
+                                });
             }
         });
 

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class ItemListTest {
     private ItemList mockItemList() {
-        ItemList itemList = new ItemListTestObj(null, null,null);
+        ItemList itemList = new ItemListTestObj(null);
         Item item1 = new Item("Item1",
                 12.36,
                 LocalDate.of(2023, 10, 11),
@@ -22,6 +22,7 @@ public class ItemListTest {
                 null,
                 null,
                 "description 2",
+                null,
                 null,
                 null);
         Item item2 = new Item("Item2",
@@ -32,6 +33,7 @@ public class ItemListTest {
                 null,
                 "description 3",
                 null,
+                null,
                 null);
         Item item3 = new Item("Item3",
                 7.97,
@@ -40,6 +42,7 @@ public class ItemListTest {
                 null,
                 null,
                 "description 1",
+                null,
                 null,
                 null);
         itemList.add(item1);
@@ -68,7 +71,7 @@ public class ItemListTest {
         ItemList mockList = mockItemList();
 
         // create new user preferences object
-        User.createInstance(null);
+        User.createInstance(null, null, null);
         User userPreferences = User.getInstance();
 
         SortSettings sortSettings = userPreferences.getSortSettings();
@@ -88,7 +91,7 @@ public class ItemListTest {
         ItemList mockList = mockItemList();
 
         // create new user preferences object
-        User.createInstance(null);
+        User.createInstance(null, null, null);
         User userPreferences = User.getInstance();
 
         SortSettings sortSettings = userPreferences.getSortSettings();
@@ -108,7 +111,7 @@ public class ItemListTest {
         ItemList mockList = mockItemList();
 
         // create new user preferences object
-        User.createInstance(null);
+        User.createInstance(null, null, null);
         User userPreferences = User.getInstance();
 
         SortSettings sortSettings = userPreferences.getSortSettings();
@@ -128,7 +131,7 @@ public class ItemListTest {
         ItemList mockList = mockItemList();
 
         // create new user preferences object
-        User.createInstance(null);
+        User.createInstance(null, null, null);
         User userPreferences = User.getInstance();
 
         SortSettings sortSettings = userPreferences.getSortSettings();
@@ -160,8 +163,8 @@ public class ItemListTest {
 }
 
 class ItemListTestObj extends ItemList {
-    public ItemListTestObj(Context context, ListView itemListView, DatabaseManager database) {
-        super(context, itemListView, database);
+    public ItemListTestObj(DatabaseManager database) {
+        super(database);
     }
 
     public void sortTest() {
