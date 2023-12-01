@@ -236,6 +236,13 @@ public class Item implements Parcelable {
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
+    public String tagRepresentation(){
+        String ss = "";
+        for(String s : tags){
+            ss+=s;
+        }
+        return ss;
+    }
 
     /**
      * Removes the tag locally on this item.

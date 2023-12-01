@@ -131,6 +131,12 @@ public class ItemList extends SynchronizedList<Item> {
                 }
                 break;
             case TAG:
+                // sort ascending or descending
+                if (sortOrder == SortFragment.SortOrder.ASCENDING) {
+                    Collections.sort(itemList, (item1, item2) -> item1.tagRepresentation().compareTo(item2.tagRepresentation()));
+                } else {
+                    Collections.sort(itemList, (item2, item1) -> item1.tagRepresentation().compareTo(item2.tagRepresentation()));
+                }
                 break;
         }
     }
