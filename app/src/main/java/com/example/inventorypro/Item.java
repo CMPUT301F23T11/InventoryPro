@@ -32,7 +32,7 @@ public class Item implements Parcelable {
     private String comment;
 
     private List<String> tags; // uid reference to tag
-    private String[] stringUris;
+    private List<String> stringUris;
     private String uid;
 
     private boolean selected; // TODO: this shouldn't be here ideally.
@@ -66,7 +66,7 @@ public class Item implements Parcelable {
                 String description,
                 String comment,
                 List<String> tags,
-                String[] stringUris,
+                List<String> stringUris,
                 String uid) {
         this.name = name;
         this.value = value;
@@ -318,7 +318,7 @@ public class Item implements Parcelable {
         dest.writeString(uid);
     }
 
-    public String[] getStringUris() {
+    public List<String> getStringUris() {
         return stringUris;
     }
 }

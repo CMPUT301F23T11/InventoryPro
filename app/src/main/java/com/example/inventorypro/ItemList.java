@@ -73,6 +73,9 @@ public class ItemList extends SynchronizedList<Item> {
     protected void removeFromDatabase(Item item) {
         database.removeItem(item);
     }
+    public ArrayList<Item> getOriginalItemList() {
+        return originalItemList;
+    }
 
     public void updateItem(Item item) {
         database.removeItem(item);

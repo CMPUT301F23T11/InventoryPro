@@ -16,8 +16,9 @@ public class User {
      * Create UserPreferences instance using the user ID (google auth id).
      * @param userID The user ID to use.
      */
-    public static void createInstance(String userID){
-        instance = new User(userID,new SortSettings(),new FilterSettings());
+    public static void createInstance(String userID, String emailID, String displayName){
+        instance = new User(
+                userID, emailID, displayName, new SortSettings(), new FilterSettings());
         setupUser();
     }
     public static void setupUser(){
@@ -32,13 +33,19 @@ public class User {
         database.connect(User.getInstance().getUserID(), itemList,tagList);
     }
 
-    private User(String userID, SortSettings ss, FilterSettings fs){
+    private User(
+            String userID, String emailID, String displayName, SortSettings ss, FilterSettings fs)
+    {
         this.userID = userID;
+        this.emailID = emailID;
+        this.displayName = displayName;
         sortSettings = ss;
         filterSettings = fs;
     }
 
     private String userID = null;
+    private String emailID = null;
+    private String displayName = null;
     private SortSettings sortSettings;
     private FilterSettings filterSettings;
 
@@ -52,5 +59,13 @@ public class User {
 
     public String getUserID() {
         return userID;
+    }
+
+    public String getEmailID() {
+        return emailID;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 }

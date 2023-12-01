@@ -145,7 +145,8 @@
             android:background="@drawable/input_field_round"
             android:drawablePadding="4dp"
             android:ems="10"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:focusable="false"/>
 
         <TextView
             android:id="@+id/date_header4"
@@ -155,7 +156,7 @@
             android:paddingBottom="8dp"
             android:text="Tags:"
             android:textSize="@dimen/large_text_size"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <Button
             android:id="@+id/select_tags_button"
@@ -174,7 +175,8 @@
             android:background="@drawable/input_field_round"
             android:drawablePadding="4dp"
             android:ems="10"
-            android:inputType="text" />
+            android:inputType="text"
+            android:focusable="false"/>
 
     </LinearLayout>
 
