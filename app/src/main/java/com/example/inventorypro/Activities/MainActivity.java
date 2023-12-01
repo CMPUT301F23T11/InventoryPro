@@ -8,8 +8,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
@@ -20,6 +22,7 @@ import android.widget.Toast;
 import com.example.inventorypro.Fragments.CreateTagsFragment;
 import com.example.inventorypro.DatabaseManager;
 import com.example.inventorypro.FilterSettings;
+import com.example.inventorypro.Fragments.UserProfileFragment;
 import com.example.inventorypro.Helpers;
 import com.example.inventorypro.Item;
 import com.example.inventorypro.ItemArrayAdapter;
@@ -31,11 +34,16 @@ import com.example.inventorypro.SortSettings;
 import com.example.inventorypro.TagList;
 import com.example.inventorypro.User;
 import com.example.inventorypro.Fragments.ViewItemFragment;
+import com.google.android.gms.common.api.OptionalModuleApi;
+import com.google.android.gms.common.moduleinstall.ModuleInstall;
+import com.google.android.gms.common.moduleinstall.ModuleInstallClient;
+import com.google.android.gms.common.moduleinstall.ModuleInstallRequest;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 
+import java.security.cert.PKIXRevocationChecker;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,8 +70,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if(User.getInstance()==null){
-            Intent addItemIntent = new Intent(getBaseContext(), SignInActivity.class);
-            startActivity(addItemIntent);
+            Intent signInActivity = new Intent(getBaseContext(), SignInActivity.class);
+            startActivity(signInActivity);
             return;
         }
 
@@ -123,11 +131,8 @@ public class MainActivity extends AppCompatActivity {
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent signInActivity = new Intent(getBaseContext(), SignInActivity.class);
-                signInActivity.putExtra("logout", true);
-                startActivity(signInActivity);
-
-                Helpers.toast(view.getContext(),"You have been signed out.");
+                DialogFragment userProfileFragment = new UserProfileFragment();
+                userProfileFragment.show(getSupportFragmentManager(), "userProfileFragment");
             }
         });
 
@@ -141,19 +146,42 @@ public class MainActivity extends AppCompatActivity {
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GmsBarcodeScanning.getClient(getBaseContext())
-                    .startScan()
-                    .addOnSuccessListener(barcode -> {
-                        OnBarcodeScanSuccessListener(barcode);
-                    })
-                    .addOnCanceledListener(() -> {
-                        Helpers.toast(getBaseContext(), getString(R.string.barcode_scan_cancelled_message));
-                    })
-                    .addOnFailureListener(e -> {
-                        String failureMessage = getString(R.string.barcode_scan_failed_message) + e.getMessage();
-                        Helpers.toast(getBaseContext(), failureMessage);
-                    });
+                Context context = getBaseContext();
+                ModuleInstallClient moduleInstallClient = ModuleInstall.getClient(context);
+                OptionalModuleApi barcodeScanningModule = GmsBarcodeScanning.getClient(context);
 
+                moduleInstallClient
+                        .areModulesAvailable(barcodeScanningModule)
+                        .addOnSuccessListener(
+                                response -> {
+                                    if (!response.areModulesAvailable()) {
+                                        // Install barcode scanning module as it is not installed
+                                        ModuleInstallRequest moduleInstallRequest =
+                                                ModuleInstallRequest.newBuilder()
+                                                        .addApi(barcodeScanningModule)
+                                                        .build();
+
+                                        moduleInstallClient.installModules(moduleInstallRequest);
+                                        Helpers.toast(context, getString(R.string.barcode_scan_download_message));
+                                    } else {
+                                        GmsBarcodeScanning.getClient(context)
+                                                .startScan()
+                                                .addOnSuccessListener(barcode -> {
+                                                    OnBarcodeScanSuccessListener(barcode);
+                                                })
+                                                .addOnCanceledListener(() -> {
+                                                    Helpers.toast(getBaseContext(), getString(R.string.barcode_scan_cancelled_message));
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    String failureMessage = getString(R.string.barcode_scan_failed_message) + e.getMessage();
+                                                    Helpers.toast(getBaseContext(), failureMessage);
+                                                });
+                                    }
+                                })
+                        .addOnFailureListener(
+                                e -> {
+                                    Log.e("SCANNING", getString(R.string.barcode_scan_download_check_failed_message) + e.getMessage());
+                                });
             }
         });
 
@@ -171,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        showSortAndFilterChips();
         refreshTotalText();
 
         // Debugging
@@ -393,6 +422,48 @@ public class MainActivity extends AppCompatActivity {
             filterChipGroup.addView(filterToChip);
         }
 
+        // filter makes chip
+        ArrayList<String> filterMakes = filterSettings.getMakes();
+        if (filterMakes != null&&filterMakes.size()>0) {
+            String filterMakesChipText = String.format("makes: %s", String.join(", ", filterMakes));
+            Chip filterMakesChip = initializeChip(filterMakesChipText);
+            filterMakesChip.setOnCloseIconClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    userPreferences.getFilterSettings().setMakes(null);
+                    ItemList.getInstance().refresh();
+                    filterChipGroup.removeView(filterMakesChip);
+
+                    if (filterChipGroup.getChildCount() == 0) {
+                        filterBar.setVisibility(View.GONE);
+                    }
+                }
+            });
+
+            filterChipGroup.addView(filterMakesChip);
+        }
+
+        // filter tags chip
+        ArrayList<String> filterTags = filterSettings.getTags();
+        if (filterTags != null) {
+            String filterTagsChipText = String.format("tags: %s", String.join(", ", filterTags));
+            Chip filterTagsChip = initializeChip(filterTagsChipText);
+            filterTagsChip.setOnCloseIconClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    userPreferences.getFilterSettings().setTags(null);
+                    ItemList.getInstance().refresh();
+                    filterChipGroup.removeView(filterTagsChip);
+
+                    if (filterChipGroup.getChildCount() == 0) {
+                        filterBar.setVisibility(View.GONE);
+                    }
+                }
+            });
+
+            filterChipGroup.addView(filterTagsChip);
+        }
+
         if (sortChipGroup.getChildCount() > 0) {
             sortBar.setVisibility(View.VISIBLE);
         }
@@ -400,10 +471,6 @@ public class MainActivity extends AppCompatActivity {
         if (filterChipGroup.getChildCount() > 0) {
             filterBar.setVisibility(View.VISIBLE);
         }
-
-        // TO DO: need to implement chips for tags and makes
-        ArrayList<String> filterMakes = filterSettings.getMakes();
-        ArrayList<String> filterTags = filterSettings.getTags();
     }
 
     /**

@@ -73,6 +73,9 @@ public class ItemList extends SynchronizedList<Item> {
     protected void removeFromDatabase(Item item, boolean deepDelete) {
         database.removeItem(item, deepDelete);
     }
+    public ArrayList<Item> getOriginalItemList() {
+        return originalItemList;
+    }
 
     /**
      * Sorts the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.
