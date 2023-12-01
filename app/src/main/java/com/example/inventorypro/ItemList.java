@@ -177,4 +177,18 @@ public class ItemList extends SynchronizedList<Item> {
         }
         return total;
     }
+
+    /**
+     * Gets a list of all selected items
+     * @return an ArrayList of all selected items
+     */
+    public ArrayList<Item> getSelectedItems() {
+        ArrayList<Item> items = new ArrayList<Item>();
+        for (Item item : itemList) {
+            if (item.isSelected()) {
+                items.add(item);
+            }
+        }
+        return items;
+    }
 }

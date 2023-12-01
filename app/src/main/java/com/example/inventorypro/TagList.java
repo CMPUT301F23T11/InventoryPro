@@ -4,8 +4,11 @@ import android.content.Context;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class TagList extends SynchronizedList<String> {
     // Singleton pattern for tag list. Don't need a reference to main activity.
@@ -42,14 +45,28 @@ public class TagList extends SynchronizedList<String> {
     }
 
     /**
+     * This hook is for using the select tags array adapter rather than the create tags array adapter
+     * @param context the context
+     * @param itemListView the list view to attach the array adapter to
+     * @param items the ArrayList of items that tags are being selected for
+     * @param tags the List of tags to select (this is for adding and editing items)
+     */
+    public void hookSelectItems(Context context, ListView itemListView, @Nullable ArrayList<Item> items, @Nullable List<String> tags) {
+        super.hook(context, itemListView);
+
+        // setup list view
+        if (context != null && itemListView != null) {
+            selectTagsArrayAdapter(context, itemListView, items, tags);
+        }
+    }
+
+    /**
      * Adds a tag String to the tag list.
      * @param tag
      */
     public void add(String tag) {
         // make sure that tag is not empty and doesn't already exist in list before adding
         if (tag != null && !tag.trim().isEmpty() && !itemList.contains(tag)) {
-            /*tagList.add(tag);
-            refreshList();*/
             super.add(tag);
         }
     }
@@ -66,8 +83,6 @@ public class TagList extends SynchronizedList<String> {
     public void remove(String tag) {
         // make sure that the tag exists before removing
         if (itemList.contains(tag)) {
-            /*tagList.remove(tag);
-            refreshList();*/
             super.remove(tag);
         }
     }
@@ -86,8 +101,6 @@ public class TagList extends SynchronizedList<String> {
     public void editTag(String oldTag, String newTag) {
         // make sure that tag being edited exists
         if (itemList.contains(oldTag)) {
-            /*tagList.set(tagList.indexOf(oldTag), newTag);
-            // refreshList();*/
             int i = itemList.indexOf(oldTag);
             super.replace(newTag,i);
         }
@@ -112,9 +125,59 @@ public class TagList extends SynchronizedList<String> {
         listView.setAdapter(itemArrayAdapter);
     }
 
+    /**
+     * Create a new SelectTagsArrayAdapter.
+     * @param context the context
+     * @param listView the listView to set the adapter
+     * @param items the ArrayList of items that tags are being selected for
+     * @param tags the List of tags to select (this is for adding and editing items)
+     */
+    public void selectTagsArrayAdapter(Context context, ListView listView, @Nullable ArrayList<Item> items, @Nullable List<String> tags) {
+        itemArrayAdapter = new SelectTagsArrayAdapter(context, this, itemList, items, tags);
+        listView.setAdapter(itemArrayAdapter);
+    }
+
     @Override
     public void postProcess() {
         super.postProcess();
         Collections.sort(itemList, String.CASE_INSENSITIVE_ORDER);
+    }
+
+    // this contains a list of tags Strings that are currently selected
+    private ArrayList<String> selectedTags = new ArrayList<String>();
+
+    /**
+     * Adds a tag to selected tags
+     * @param tag the string of the tag to add
+     */
+    public void addSelectedTag(String tag) {
+        if (!selectedTags.contains(tag)) {
+            selectedTags.add(tag);
+        }
+    }
+
+    /**
+     * Removes a tag from selected tags
+     * @param tag the string of the tag to remove
+     */
+    public void removeSelectedTag(String tag) {
+        if (selectedTags.contains(tag)) {
+            selectedTags.remove(tag);
+        }
+    }
+
+    /**
+     * Gets the currently selected tags
+     * @return the ArrayList of all currently selected tags
+     */
+    public ArrayList<String> getSelectedTags() {
+        return selectedTags;
+    }
+
+    /**
+     * Remove all tags from selected tags
+     */
+    public void resetSelectedTags() {
+        selectedTags = new ArrayList<String>();
     }
 }

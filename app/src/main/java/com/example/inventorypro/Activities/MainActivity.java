@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.inventorypro.Fragments.CreateTagsFragment;
 import com.example.inventorypro.DatabaseManager;
 import com.example.inventorypro.FilterSettings;
+import com.example.inventorypro.Fragments.SelectTagsFragment;
 import com.example.inventorypro.Helpers;
 import com.example.inventorypro.Item;
 import com.example.inventorypro.ItemArrayAdapter;
@@ -114,8 +115,17 @@ public class MainActivity extends AppCompatActivity {
         ((ImageButton)findViewById(R.id.createsTagsButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment createTags = new CreateTagsFragment();
-                createTags.show(getSupportFragmentManager(), "createTags");
+                // check if any items are selected. If items are select go to select tags page, else
+                // go to create tags page
+                ItemList itemList = ItemList.getInstance();
+                ArrayList<Item> selectedItems = itemList.getSelectedItems();
+                if (!selectedItems.isEmpty()) {
+                    DialogFragment selectTags = new SelectTagsFragment(selectedItems, null);
+                    selectTags.show(getSupportFragmentManager(), "selectTags");
+                } else {
+                    DialogFragment createTags = new CreateTagsFragment();
+                    createTags.show(getSupportFragmentManager(), "createTags");
+                }
             }
         });
 

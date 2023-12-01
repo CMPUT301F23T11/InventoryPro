@@ -232,6 +232,16 @@ public class Item implements Parcelable {
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
+    public void addTag(String tag) {
+        if (!tags.contains(tag)) {
+            tags.add(tag);
+        }
+    }
+    public void removeTag(String tag) {
+        if (tags.contains(tag)) {
+            tags.remove(tag);
+        }
+    }
 
     /**
      * Returns true if the tag exists in this item (WIP).
