@@ -62,6 +62,7 @@ public class AddItemActivity extends AppCompatActivity {
     private TextInputLayout comments;
     private TextInputLayout value;
     private ImageButton addTagButton, addImageButton, serialNumberScanButton;
+    private String uid;
     private int selectedPosition;
     private boolean editMode = false;
     List<String> tags = new ArrayList<>();
@@ -288,6 +289,7 @@ public class AddItemActivity extends AppCompatActivity {
             description.getEditText().setText(potentialItem.getDescription());
             comments.getEditText().setText(potentialItem.getComment());
             tags.addAll(potentialItem.getTags());
+            uid = potentialItem.getUID();
 
             // Change the header to "Edit Item"
             header.setText("Edit Item");
@@ -410,6 +412,7 @@ public class AddItemActivity extends AppCompatActivity {
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
         String[] stringUris = new SliderAdapter(sliderItems,viewPager2).convertUrisToStringArray();
         // Create a new input
+        Log.d("test", uid);
         Item editItem = new Item(
                 name.getEditText().getText().toString(),
                 Double.parseDouble(value.getEditText().getText().toString()),
@@ -418,8 +421,10 @@ public class AddItemActivity extends AppCompatActivity {
                 model.getEditText().getText().toString(),
                 serialNumber.getEditText().getText().toString(),
                 description.getEditText().getText().toString(),
-                comments.getEditText().getText().toString(), tags,
-                stringUris);
+                comments.getEditText().getText().toString(),
+                tags,
+                stringUris,
+                uid);
 
         // Send the edited item back to the main activity
         sendEditIntent.putExtra("edit Item", editItem);
@@ -446,7 +451,8 @@ public class AddItemActivity extends AppCompatActivity {
                 description.getEditText().getText().toString(),
                 comments.getEditText().getText().toString(),
                 tags,
-                stringUris);
+                stringUris,
+                Item.generateNewUID());
 
         // Intent to return to the main activity
         Intent sendItemIntent = new Intent(this, MainActivity.class);

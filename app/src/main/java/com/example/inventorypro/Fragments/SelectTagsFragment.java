@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.inventorypro.Item;
+import com.example.inventorypro.ItemList;
 import com.example.inventorypro.R;
 import com.example.inventorypro.TagList;
 
@@ -82,6 +83,9 @@ public class SelectTagsFragment extends DialogFragment {
                         for (Item item : items) {
                             for (String tag : tagList.getSelectedTags()) {
                                 item.addTag(tag);
+                                // update item in database
+                                ItemList itemList = ItemList.getInstance();
+                                itemList.updateItem(item);
                             }
                         }
                         // close
@@ -95,6 +99,9 @@ public class SelectTagsFragment extends DialogFragment {
                     public void onClick(View v) {
                         // set all tags for item
                         items.get(0).setTags(tagList.getSelectedTags());
+                        // update item in database
+                        ItemList itemList = ItemList.getInstance();
+                        itemList.updateItem(items.get(0));
                         // close
                         dismiss();
                     }

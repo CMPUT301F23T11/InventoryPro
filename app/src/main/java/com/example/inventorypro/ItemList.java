@@ -74,6 +74,11 @@ public class ItemList extends SynchronizedList<Item> {
         database.removeItem(item);
     }
 
+    public void updateItem(Item item) {
+        database.removeItem(item);
+        database.addItem(item);
+    }
+
     /**
      * Sorts the list of items according to the sorting settings (does not update the UI). Use ItemList.refresh() instead.
      */

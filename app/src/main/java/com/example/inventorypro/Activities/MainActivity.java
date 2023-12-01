@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
@@ -39,6 +40,7 @@ import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * The MainActivity is effectively the "main screen" which launches various dialogues and other activities based on user input.
@@ -176,8 +178,8 @@ public class MainActivity extends AppCompatActivity {
         Item editedItem = parseItemFromEdit();
         if (editedItem != null){
             //itemList.add(editedItem);
-            ItemList.getInstance().replace(editedItem,editPosition);
-
+//            ItemList.getInstance().replace(editedItem,editPosition);
+            ItemList.getInstance().updateItem(editedItem);
         }
 
         refreshTotalText();
