@@ -414,6 +414,48 @@ public class MainActivity extends AppCompatActivity {
             filterChipGroup.addView(filterToChip);
         }
 
+        // filter makes chip
+        ArrayList<String> filterMakes = filterSettings.getMakes();
+        if (filterMakes != null&&filterMakes.size()>0) {
+            String filterMakesChipText = String.format("makes: %s", String.join(", ", filterMakes));
+            Chip filterMakesChip = initializeChip(filterMakesChipText);
+            filterMakesChip.setOnCloseIconClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    userPreferences.getFilterSettings().setMakes(null);
+                    ItemList.getInstance().refresh();
+                    filterChipGroup.removeView(filterMakesChip);
+
+                    if (filterChipGroup.getChildCount() == 0) {
+                        filterBar.setVisibility(View.GONE);
+                    }
+                }
+            });
+
+            filterChipGroup.addView(filterMakesChip);
+        }
+
+        // filter tags chip
+        ArrayList<String> filterTags = filterSettings.getTags();
+        if (filterTags != null) {
+            String filterTagsChipText = String.format("tags: %s", String.join(", ", filterTags));
+            Chip filterTagsChip = initializeChip(filterTagsChipText);
+            filterTagsChip.setOnCloseIconClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    userPreferences.getFilterSettings().setTags(null);
+                    ItemList.getInstance().refresh();
+                    filterChipGroup.removeView(filterTagsChip);
+
+                    if (filterChipGroup.getChildCount() == 0) {
+                        filterBar.setVisibility(View.GONE);
+                    }
+                }
+            });
+
+            filterChipGroup.addView(filterTagsChip);
+        }
+
         if (sortChipGroup.getChildCount() > 0) {
             sortBar.setVisibility(View.VISIBLE);
         }
@@ -421,10 +463,6 @@ public class MainActivity extends AppCompatActivity {
         if (filterChipGroup.getChildCount() > 0) {
             filterBar.setVisibility(View.VISIBLE);
         }
-
-        // TO DO: need to implement chips for tags and makes
-        ArrayList<String> filterMakes = filterSettings.getMakes();
-        ArrayList<String> filterTags = filterSettings.getTags();
     }
 
     /**

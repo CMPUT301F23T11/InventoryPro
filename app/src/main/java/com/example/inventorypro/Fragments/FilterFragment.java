@@ -27,6 +27,10 @@ import java.util.ArrayList;
 public class FilterFragment extends Fragment {
 
     private EditText from,to,keywords;
+    private ArrayList<String> selectedMakes = new ArrayList<>();
+    private ArrayList<String> selectedTags = new ArrayList<>();
+    private EditText makesEditText;
+    private EditText tagsEditText;
 
     @Nullable
     @Override
@@ -60,6 +64,18 @@ public class FilterFragment extends Fragment {
             keyword = keyword.substring(0,keyword.length()-2);
         }
         keywords.setText(keyword);
+
+        EditText makes = view.findViewById(R.id.makes);
+        ArrayList<String> makeWords = (filterSettings().getMakes() == null) ? new ArrayList<>() : filterSettings().getMakes();
+        String makeText= "";
+        for (String k : makeWords){
+            makeText += k+", ";
+        }
+        if(makeWords.size() > 0){
+            makeText = makeText.substring(0,makeText.length()-2);
+        }
+        makes.setText(makeText);
+
 
         // Add listeners to parse the UI when in changes.
         from.addTextChangedListener(new TextWatcher() {
@@ -120,9 +136,69 @@ public class FilterFragment extends Fragment {
             }
         });
 
-        ((Button)view.findViewById(R.id.select_make_button)).setOnClickListener(Helpers.notImplementedClickListener);
-        ((Button)view.findViewById(R.id.select_tags_button)).setOnClickListener(Helpers.notImplementedClickListener);
+        ((Button)view.findViewById(R.id.select_make_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMakeMultiSelectDialog();
+            }
+        });
+        ((Button)view.findViewById(R.id.select_tags_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTagMultiSelectDialog();
+            }
+        });
+        makesEditText = view.findViewById(R.id.makes);
+        tagsEditText = view.findViewById(R.id.tags);
     }
+    private void showMakeMultiSelectDialog() {
+        MakeMultiSelectFragment makeMultiSelectFragment = MakeMultiSelectFragment.newInstance(selectedMakes);
+        makeMultiSelectFragment.setOnCompleteListener(new MakeMultiSelectFragment.OnCompleteListener() {
+            @Override
+            public void onComplete(ArrayList<String> makes) {
+                selectedMakes = makes;
+                filterSettings().setMakes(selectedMakes);
+
+                // Update makesEditText with selected makes
+                updateMakesEditText();
+            }
+        });
+        makeMultiSelectFragment.show(getParentFragmentManager(), "MakeMultiSelectFragment");
+    }
+    private void showTagMultiSelectDialog() {
+        TagMultiSelectFragment tagMultiSelectFragment = TagMultiSelectFragment.newInstance(selectedTags);
+        tagMultiSelectFragment.setOnCompleteListener(new TagMultiSelectFragment.OnCompleteListener() {
+            @Override
+            public void onComplete(ArrayList<String> tags) {
+                selectedTags = tags;
+                filterSettings().setTags(selectedTags);
+
+                updateTagsEditText();
+            }
+        });
+        tagMultiSelectFragment.show(getParentFragmentManager(), "TagMultiSelectFragment");
+    }
+    private void updateMakesEditText() {
+        StringBuilder makesText = new StringBuilder();
+        for (String make : selectedMakes) {
+            makesText.append(make).append(", ");
+        }
+        if (selectedMakes.size() > 0) {
+            makesText.delete(makesText.length() - 2, makesText.length());
+        }
+        makesEditText.setText(makesText.toString());
+    }
+    private void updateTagsEditText() {
+        StringBuilder tagsText = new StringBuilder();
+        for (String tag : selectedTags) {
+            tagsText.append(tag).append(", ");
+        }
+        if (selectedTags.size() > 0) {
+            tagsText.delete(tagsText.length() - 2, tagsText.length());
+        }
+        tagsEditText.setText(tagsText.toString());
+    }
+
 
     @Nullable
     private LocalDate tryParseDate(String s){
