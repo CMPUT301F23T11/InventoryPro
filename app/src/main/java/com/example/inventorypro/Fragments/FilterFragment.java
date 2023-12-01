@@ -65,7 +65,7 @@ public class FilterFragment extends Fragment {
         }
         keywords.setText(keyword);
 
-        EditText makes = view.findViewById(R.id.makes);
+        makesEditText = view.findViewById(R.id.makes);
         ArrayList<String> makeWords = (filterSettings().getMakes() == null) ? new ArrayList<>() : filterSettings().getMakes();
         String makeText= "";
         for (String k : makeWords){
@@ -74,7 +74,18 @@ public class FilterFragment extends Fragment {
         if(makeWords.size() > 0){
             makeText = makeText.substring(0,makeText.length()-2);
         }
-        makes.setText(makeText);
+        makesEditText.setText(makeText);
+
+        tagsEditText = view.findViewById(R.id.tags);
+        ArrayList<String> tagWords = (filterSettings().getTags() == null) ? new ArrayList<>() : filterSettings().getTags();
+        String tagText= "";
+        for (String k : tagWords){
+            tagText += k+", ";
+        }
+        if(tagWords.size() > 0){
+            tagText = tagText.substring(0,tagText.length()-2);
+        }
+        tagsEditText.setText(tagText);
 
 
         // Add listeners to parse the UI when in changes.
@@ -148,8 +159,6 @@ public class FilterFragment extends Fragment {
                 showTagMultiSelectDialog();
             }
         });
-        makesEditText = view.findViewById(R.id.makes);
-        tagsEditText = view.findViewById(R.id.tags);
     }
     private void showMakeMultiSelectDialog() {
         MakeMultiSelectFragment makeMultiSelectFragment = MakeMultiSelectFragment.newInstance(selectedMakes);

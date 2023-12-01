@@ -15,6 +15,7 @@ import androidx.fragment.app.DialogFragment;
 import com.example.inventorypro.Item;
 import com.example.inventorypro.ItemList;
 import com.example.inventorypro.R;
+import com.example.inventorypro.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,17 +36,15 @@ public class TagMultiSelectFragment extends DialogFragment {
 
     public static TagMultiSelectFragment newInstance(ArrayList<String> selectedTags) {
         TagMultiSelectFragment fragment = new TagMultiSelectFragment();
-        Bundle args = new Bundle();
-        args.putStringArrayList("selectedTags", selectedTags);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            selectedTags = getArguments().getStringArrayList("selectedTags");
+        selectedTags = User.getInstance().getFilterSettings().getTags();
+        if(selectedTags==null){
+            selectedTags = new ArrayList<>();
         }
     }
 

@@ -72,8 +72,6 @@ public class MakeMultiSelectFragment extends DialogFragment {
                     selectedMakes.add(allMakes.get(i));
                 }
             }
-//            FilterSettings filterSettings = UserPreferences.getInstance().getFilterSettings();
-//            filterSettings.setMakes(selectedMakes);
             mListener.onComplete(selectedMakes);
             dismiss();
         });
