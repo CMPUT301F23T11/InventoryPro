@@ -1,5 +1,6 @@
 package com.example.inventorypro;
 
+import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
