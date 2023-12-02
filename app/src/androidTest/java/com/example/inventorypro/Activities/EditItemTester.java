@@ -23,7 +23,7 @@ public class EditItemTester {
 
     @BeforeClass
     public static void setup() {
-        User.createInstance("EDITING");
+        User.createInstance("EDITING", "DEBUG_TEST_USER_EMAIL_ID", "DEBUG_TEST_USER_DISPLAY_NAME");
     }
 
     /**

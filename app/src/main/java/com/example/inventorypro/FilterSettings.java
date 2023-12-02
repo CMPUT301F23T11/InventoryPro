@@ -13,7 +13,7 @@ public class FilterSettings {
     private LocalDate from, to;
     private ArrayList<String> keywords;
     private ArrayList<String> tags;
-    private ArrayList<String> makes; // TODO: this being a string doesn't make much sense (why shouldnt tag be a string)
+    private ArrayList<String> makes;
 
     public FilterSettings(LocalDate from, LocalDate to, ArrayList<String> keywords, ArrayList<String> tags, ArrayList<String> makes) {
         this.from = from;

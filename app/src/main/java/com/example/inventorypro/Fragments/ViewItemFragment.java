@@ -9,12 +9,14 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.inventorypro.Activities.AddItemActivity;
+import com.example.inventorypro.DatabaseManager;
 import com.example.inventorypro.Item;
 import com.example.inventorypro.R;
 import com.google.android.material.textfield.TextInputLayout;
@@ -116,7 +118,6 @@ public class ViewItemFragment extends DialogFragment {
         serialNumber = view.findViewById(R.id.viewSerialNumber);
         description = view.findViewById(R.id.viewDescription);
         comments = view.findViewById(R.id.viewComments);
-        viewPager2 = view.findViewById(R.id.itemImage);
 
         if (selectedItem != null) {
             //Setting Item values to the EditText to view
@@ -127,7 +128,12 @@ public class ViewItemFragment extends DialogFragment {
             model.getEditText().setText(selectedItem.getModel());
             serialNumber.getEditText().setText(selectedItem.getSerialNumber());
             description.getEditText().setText(selectedItem.getDescription());
-            comments.getEditText().setText(selectedItem.getComment());}
+            comments.getEditText().setText(selectedItem.getComment());
+
+            if (selectedItem.getImageUris().size()>0)
+                DatabaseManager.downloadAndDisplayImageAsync(getContext(),itemImage, selectedItem.getImageUris().get(0));
+
+        }
 
 
         return dialog;

@@ -10,8 +10,10 @@ import com.google.firebase.firestore.Exclude;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Primitive Item object. Automatically serializable/deserializable by Firestore and also can be passed via intent.
@@ -30,7 +32,8 @@ public class Item implements Parcelable {
     private String comment;
 
     private List<String> tags; // uid reference to tag
-    private String[] stringUris;
+    private List<String> imageUris;
+    private String uid;
 
     private boolean selected; // TODO: this shouldn't be here ideally.
 
@@ -52,6 +55,7 @@ public class Item implements Parcelable {
      * @param serialNumber the serial number of the item
      * @param description the description of the item
      * @param comment a comment for the item
+     * @param uid a unique id for the item (generate a new one with Item.generateNewUID())
      */
     public Item(String name,
                 Double value,
@@ -62,7 +66,8 @@ public class Item implements Parcelable {
                 String description,
                 String comment,
                 List<String> tags,
-                String[] stringUris) {
+                List<String> imageUris,
+                String uid) {
         this.name = name;
         this.value = value;
         setLocalDate(date);
@@ -76,7 +81,8 @@ public class Item implements Parcelable {
         }else{
             this.tags= tags;
         }
-        this.stringUris = stringUris;
+        this.imageUris = imageUris;
+        this.uid = uid;
     }
 
     protected Item(Parcel in) {
@@ -97,9 +103,9 @@ public class Item implements Parcelable {
         description = in.readString();
         comment = in.readString();
 
-        // rebuild array
-        // this.tags = new String[in.readInt()];
         this.tags = in.createStringArrayList();
+        this.imageUris = in.createStringArrayList();
+        this.uid = in.readString();
     }
 
     /**
@@ -232,6 +238,23 @@ public class Item implements Parcelable {
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
+    public String tagRepresentation(){
+        String ss = "";
+        for(String s : tags){
+            ss+=s;
+        }
+        return ss;
+    }
+    public void addTag(String tag) {
+        if (!tags.contains(tag)) {
+            tags.add(tag);
+        }
+    }
+    public void removeTag(String tag) {
+        if (tags.contains(tag)) {
+            tags.remove(tag);
+        }
+    }
 
     /**
      * Returns true if the tag exists in this item (WIP).
@@ -248,7 +271,18 @@ public class Item implements Parcelable {
      */
     @Exclude
     public String getUID(){
-        return name;
+        return uid;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public static String generateNewUID() {
+        return UUID.randomUUID().toString();
     }
 
     /**
@@ -287,9 +321,22 @@ public class Item implements Parcelable {
         dest.writeString(description);
         dest.writeString(comment);
         dest.writeStringList(this.tags);
+        dest.writeStringList(this.imageUris);
+        dest.writeString(uid);
     }
 
-    public String[] getStringUris() {
-        return stringUris;
+    public List<String> getImageUris() {
+        if(imageUris ==null){
+            return new ArrayList<>();
+        }
+        return imageUris;
+    }
+    public void replaceUri(String old, String newUri){
+        int i = imageUris.indexOf(old);
+        if(i==-1)return;
+        imageUris.set(i, newUri);
+    }
+    public void deleteUri(String uri){
+        imageUris.remove(uri);
     }
 }
