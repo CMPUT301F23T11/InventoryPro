@@ -15,6 +15,7 @@ import androidx.fragment.app.DialogFragment;
 import com.example.inventorypro.Item;
 import com.example.inventorypro.ItemList;
 import com.example.inventorypro.R;
+import com.example.inventorypro.TagList;
 import com.example.inventorypro.User;
 
 import java.util.ArrayList;
@@ -85,22 +86,7 @@ public class TagMultiSelectFragment extends DialogFragment {
     }
 
     private ArrayList<String> getAllTagsFromItems() {
-        ArrayList<String> allTags = new ArrayList<>();
-
-        ItemList itemList = ItemList.getInstance();
-        if (itemList != null) {
-            for (Item item : itemList.getOriginalItemList()) {
-                List<String> itemTags = item.getTags();
-                if (itemTags != null) {
-                    for (String tag : itemTags) {
-                        if (!allTags.contains(tag)) {
-                            allTags.add(tag);
-                        }
-                    }
-                }
-            }
-        }
-        return allTags;
+        return TagList.getInstance().getItemList();
     }
 
 
