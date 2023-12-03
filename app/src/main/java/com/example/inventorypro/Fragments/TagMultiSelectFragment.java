@@ -30,6 +30,9 @@ public class TagMultiSelectFragment extends DialogFragment {
     private ArrayList<String> allTags;
     private ArrayList<String> selectedTags;
 
+    /**
+     * Listener for when the user completes their selection of tags.
+     */
     public interface OnCompleteListener {
         void onComplete(ArrayList<String> selectedTags);
     }

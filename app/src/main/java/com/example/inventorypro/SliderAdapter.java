@@ -18,6 +18,9 @@ import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.List;
 
+/**
+ * Adapter for the displaying of images for an item.
+ */
 public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderViewHolder> {
 
     private List<SliderItem> sliderItems;
