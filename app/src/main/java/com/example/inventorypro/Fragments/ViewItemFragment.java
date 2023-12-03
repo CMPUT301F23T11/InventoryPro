@@ -3,6 +3,7 @@ package com.example.inventorypro.Fragments;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +13,24 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.CompositePageTransformer;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.inventorypro.Activities.AddItemActivity;
 import com.example.inventorypro.DatabaseManager;
 import com.example.inventorypro.Item;
 import com.example.inventorypro.R;
+import com.example.inventorypro.SliderAdapter;
+import com.example.inventorypro.SliderItem;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Displays a read-only view for the item from which the user can edit the item if they choose.
@@ -37,8 +49,14 @@ public class ViewItemFragment extends DialogFragment {
     private TextInputLayout comments;
     private TextInputLayout value;
 
-    private Button confirmButton;
-    private Button cancelButton;
+
+    List<Uri> imageUris = new ArrayList<>();
+
+    List<SliderItem> sliderItems = new ArrayList<>();
+
+    private ViewPager2 viewPager2;
+
+
 
     /**
      * The key to access the item object this fragment is viewing.
@@ -77,6 +95,9 @@ public class ViewItemFragment extends DialogFragment {
 
         builder.setView(scrollView);
 
+
+
+
         // Edit button
         Button positiveButton = view.findViewById(R.id.edit_button);
         positiveButton.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +132,7 @@ public class ViewItemFragment extends DialogFragment {
         serialNumber = view.findViewById(R.id.viewSerialNumber);
         description = view.findViewById(R.id.viewDescription);
         comments = view.findViewById(R.id.viewComments);
-        ImageView itemImage = (ImageView)view.findViewById(R.id.itemImage);
+        viewPager2 = view.findViewById(R.id.itemImage) ;
 
         if (selectedItem != null) {
             //Setting Item values to the EditText to view
@@ -124,12 +145,45 @@ public class ViewItemFragment extends DialogFragment {
             description.getEditText().setText(selectedItem.getDescription());
             comments.getEditText().setText(selectedItem.getComment());
 
-            if (selectedItem.getImageUris().size()>0)
-                DatabaseManager.downloadAndDisplayImageAsync(getContext(),itemImage, selectedItem.getImageUris().get(0));
+            if (selectedItem.getImageUris().size() > 0) {
+                DatabaseManager.getImageUris(requireContext(), selectedItem.getImageUris(), new OnSuccessListener<List<Uri>>() {
+                    @Override
+                    public void onSuccess(List<Uri> uris) {
+                        int count = selectedItem.getImageUris().size();
+                        for (int i = 0; i < count; i++) {
+                            sliderItems.add(new SliderItem(uris.get(i)));
+                        }
+                        SliderAdapter sliderAdapter = new SliderAdapter(sliderItems, viewPager2,false);
 
+                        viewPager2.setAdapter(sliderAdapter);
+                        // Save the URI to the global variable if needed for later use
+                        // this.uri = uri;
+                        sliderAdapter.notifyDataSetChanged();
+                        viewPager2.setBackground(null);
+
+                        viewPager2.setClipToPadding(false);
+                        viewPager2.setClipChildren(false);
+                        viewPager2.setOffscreenPageLimit(3);
+                        viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
+
+
+                        CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
+                        compositePageTransformer.addTransformer(new MarginPageTransformer(5));
+                        compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
+                            @Override
+                            public void transformPage(@NonNull View page, float position) {
+                                float r = 1 - Math.abs(position);
+                                page.setScaleY(0.85f + r * 0.15f);
+                            }
+                        });
+
+                        viewPager2.setPageTransformer(compositePageTransformer);
+
+
+                    }
+                });
+            }
         }
-
-
         return dialog;
     }
 

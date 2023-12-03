@@ -1,5 +1,6 @@
 package com.example.inventorypro.Activities;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
 import static java.lang.Integer.parseInt;
 
 import android.app.AlertDialog;
@@ -31,6 +32,7 @@ import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.inventorypro.DatabaseManager;
 import com.example.inventorypro.Fragments.SelectTagsFragment;
 import com.example.inventorypro.Helpers;
 import com.example.inventorypro.Item;
@@ -42,6 +44,7 @@ import com.google.android.gms.common.api.OptionalModuleApi;
 import com.google.android.gms.common.moduleinstall.ModuleInstall;
 import com.google.android.gms.common.moduleinstall.ModuleInstallClient;
 import com.google.android.gms.common.moduleinstall.ModuleInstallRequest;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 
@@ -227,6 +230,7 @@ public class AddItemActivity extends AppCompatActivity {
         String potentialSerialNumber = tryGetSerialNumberFromIntent();
 
         if (potentialItem != null) {
+            editMode = true;
             // Set EditText values to the values of the selected Item
             name.getEditText().setText(potentialItem.getName());
             name.setHelperText("");
@@ -238,39 +242,44 @@ public class AddItemActivity extends AppCompatActivity {
             description.getEditText().setText(potentialItem.getDescription());
             comments.getEditText().setText(potentialItem.getComment());
             tags.addAll(potentialItem.getTags());
-            uid = potentialItem.getUID();
+            if (potentialItem.getImageUris().size() > 0) {
+                DatabaseManager.getImageUris(this, potentialItem.getImageUris(), new OnSuccessListener<List<Uri>>() {
+                    @Override
+                    public void onSuccess(List<Uri> uris) {
+                        int count = potentialItem.getImageUris().size();
+                        for (int i = 0; i < count; i++) {
+                            sliderItems.add(new SliderItem(uris.get(i)));
+                        }
+                        SliderAdapter sliderAdapter = new SliderAdapter(sliderItems, viewPager2,true);
 
-            //TODO: load in images
-            ArrayList<Uri> imageUris = new ArrayList<>();
-            for (String s : potentialItem.getImageUris()){
-                Uri i = Uri.parse(s);
-                if (s==null)continue;
-                imageUris.add(i);
-            }
-            for (int i = 0; i < imageUris.size(); i++) {
-                Uri uri = imageUris.get(i);
-                sliderItems.add(new SliderItem(uri));
-            }
-            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2));
-            viewPager2.setBackground(null);
-            viewPager2.setClipToPadding(false);
-            viewPager2.setClipChildren(false);
-            viewPager2.setOffscreenPageLimit(3);
-            viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
-            CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
-            compositePageTransformer.addTransformer(new MarginPageTransformer(5));
-            compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
-                @Override
-                public void transformPage(@NonNull View page, float position) {
-                    float r = 1 - Math.abs(position);
-                    page.setScaleY(0.85f + r * 0.15f);
-                }
-            });
-            viewPager2.setPageTransformer(compositePageTransformer);
+                        viewPager2.setAdapter(sliderAdapter);
+                        // Save the URI to the global variable if needed for later use
+                        // this.uri = uri;
+                        sliderAdapter.notifyDataSetChanged();
+                        viewPager2.setBackground(null);
 
-            // Change the header to "Edit Item"
-            header.setText("Edit Item");
-            editMode = true;
+                        viewPager2.setClipToPadding(false);
+                        viewPager2.setClipChildren(false);
+                        viewPager2.setOffscreenPageLimit(3);
+                        viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
+
+
+                        CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
+                        compositePageTransformer.addTransformer(new MarginPageTransformer(5));
+                        compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
+                            @Override
+                            public void transformPage(@NonNull View page, float position) {
+                                float r = 1 - Math.abs(position);
+                                page.setScaleY(0.85f + r * 0.15f);
+                            }
+                        });
+
+                        viewPager2.setPageTransformer(compositePageTransformer);
+
+
+                    }
+                });
+            }
         } else if (potentialSerialNumber != null) {
             serialNumber.getEditText().setText(potentialSerialNumber);
         }
@@ -346,7 +355,7 @@ public class AddItemActivity extends AppCompatActivity {
                 Uri uri = data.getClipData().getItemAt(i).getUri();
                 sliderItems.add(new SliderItem(uri));
             }
-            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2));
+            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2,true));
             // Save the URI to the global variable if needed for later use
             // this.uri = uri;
             viewPager2.setBackground(null);
@@ -375,7 +384,7 @@ public class AddItemActivity extends AppCompatActivity {
 
             Uri uri = data.getData();
             sliderItems.add(new SliderItem(uri));
-            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2));
+            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2,true));
             // Save the URI to the global variable if needed for later use
             // this.uri = uri;
             viewPager2.setBackground(null);
@@ -408,7 +417,7 @@ public class AddItemActivity extends AppCompatActivity {
         // Use the obtained URI as needed
         // For example, set the image to an ImageView
         sliderItems.add(new SliderItem(imageUri));
-        viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2));
+        viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2,true));
         // Save the URI to the global variable if needed for later use
         // this.uri = uri;
         viewPager2.setBackground(null);
@@ -464,7 +473,7 @@ public class AddItemActivity extends AppCompatActivity {
     private Item parseItem() {
         // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
-        String[] stringUris = new SliderAdapter(sliderItems, viewPager2).convertUrisToStringArray();
+        String[] stringUris = new SliderAdapter(sliderItems, viewPager2,true).convertUrisToStringArray();
 
         Item editItem = new Item(
                 name.getEditText().getText().toString(),
@@ -501,7 +510,7 @@ public class AddItemActivity extends AppCompatActivity {
     private void sendItem() {
         // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
-        String[] stringUris = new SliderAdapter(sliderItems,viewPager2).convertUrisToStringArray();
+        String[] stringUris = new SliderAdapter(sliderItems,viewPager2,true).convertUrisToStringArray();
         Log.e("GAN", ""+stringUris.length);
 
         // Create a new input

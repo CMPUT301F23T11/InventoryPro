@@ -22,7 +22,9 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Responsible for communication with Firestore as well as invoking updates to the application in relation to this data.
@@ -313,6 +315,27 @@ public class DatabaseManager {
             }
         });
     }
+
+    public static void getImageUris(Context context, List<String> uris, final OnSuccessListener<List<Uri>> onSuccessListener) {
+        List<Uri> imageUris = new ArrayList<>();
+        AtomicInteger count = new AtomicInteger(uris.size());
+
+        for (String uri : uris) {
+            StorageReference ref = FirebaseStorage.getInstance().getReference(uri);
+
+            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    imageUris.add(uri);
+                    if (count.decrementAndGet() == 0) {
+                        // All URIs have been fetched, invoke the listener
+                        onSuccessListener.onSuccess(imageUris);
+                    }
+                }
+            });
+        }
+    }
+
 
     final static String TAG = "Firestore";
 }
