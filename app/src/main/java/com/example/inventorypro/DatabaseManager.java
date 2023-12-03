@@ -93,9 +93,9 @@ public class DatabaseManager {
 
         return ref.getPath();
     }
-    public void deleteImage(@NonNull Item item, @NonNull Uri image){
+    public static void deleteImage(@NonNull Item item, @NonNull Uri image){
         // Create a reference to the file to delete
-        StorageReference desertRef = storage.getReference(image.toString());
+        StorageReference desertRef = FirebaseStorage.getInstance().getReference(image.toString());
 
         // Delete the file
         desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -128,10 +128,17 @@ public class DatabaseManager {
         for(String s : item.getImageUris()){
             Uri uri = Uri.parse(s);
             if(uri==null)continue;
-            Log.e(TAG, "consider to upload "+uri.toString() );
-            if(uri.toString().startsWith("/Users/")) continue;
+            Log.d(TAG, "consider to upload "+uri.toString() );
+            if(Helpers.isFirestoreImageUri(uri.toString())) continue;
+            else {
+                if(Helpers.isInternetUri(uri.toString())){
+                    Log.e(TAG,"Download links should not be sent to the database? Data loss imminent."+uri.toString());
+                    continue;
+                }
+            }
+
             String newUri = uploadImage(item,uri);
-            Log.e(TAG, "replaced with "+newUri );
+            Log.d(TAG, "replaced with "+newUri );
             item.replaceUri(s,newUri);
         }
 
@@ -316,7 +323,7 @@ public class DatabaseManager {
         });
     }
 
-    public static void getImageUris(Context context, List<String> uris, final OnSuccessListener<List<Uri>> onSuccessListener) {
+    public static void getImageUris(List<String> uris, final OnSuccessListener<List<Uri>> onSuccessListener) {
         List<Uri> imageUris = new ArrayList<>();
         AtomicInteger count = new AtomicInteger(uris.size());
 
@@ -335,7 +342,9 @@ public class DatabaseManager {
             });
         }
     }
-
+    public static String downloadUriToFirestorePath(@NonNull String downloadUri){
+        return FirebaseStorage.getInstance().getReferenceFromUrl(downloadUri).getPath();
+    }
 
     final static String TAG = "Firestore";
 }

@@ -4,12 +4,16 @@ import static java.lang.Integer.parseInt;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -90,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
         createsTagsButton = findViewById(R.id.createsTagsButton);
         scanButton = findViewById(R.id.scanButton);
         createsTagsButton.setOnClickListener(Helpers.notImplementedClickListener);
+
+        requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+        requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         //TODO: might experience bugs related to static instances being destroyed if you leave and reopen app.
         // solution might be to resend the user to re-login if static vars are null.
@@ -306,6 +313,39 @@ public class MainActivity extends AppCompatActivity {
         // Begin a transaction to show the ViewItem_Fragment fragment as a dialog
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         fragment.show(transaction, "viewItemDialog");
+    }
+
+    private void requestPermission(String permission){
+        if (ContextCompat.checkSelfPermission(
+                this, permission) ==
+                PackageManager.PERMISSION_GRANTED) {
+            // You can use the API that requires the permission.
+        }
+        else {
+            // You can directly ask for the permission.
+            ActivityCompat.requestPermissions(this,
+                    new String[] { permission },
+                    1);
+        }
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+        switch (requestCode) {
+            case 0:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission is granted. Continue the action or workflow
+                    // in your app.
+
+                }  else {
+                    finishAffinity();
+                }
+        }
+
     }
 
 

@@ -18,6 +18,13 @@ import java.util.List;
  */
 public class Helpers {
 
+    public static Boolean isFirestoreImageUri(String uri){
+        return uri.startsWith("/Users/");
+    }
+    public static Boolean isInternetUri(String uri){
+        return uri.startsWith("http://")||uri.startsWith("https://");
+    }
+
     /**
      * OnClickListener which displays a toast notifying the user of an incomplete feature.
      */
