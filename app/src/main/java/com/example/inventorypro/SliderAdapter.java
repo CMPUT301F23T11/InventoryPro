@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.List;
@@ -38,13 +39,12 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
 
         return stringArray;
     }
-
     @NonNull
     @Override
     public SliderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new SliderViewHolder(
                 LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.slide_image_container,parent,false
+                        R.layout.slide_image_container, parent, false
                 )
         );
     }
@@ -59,8 +59,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
         return sliderItems.size();
     }
 
-
-    class SliderViewHolder extends RecyclerView.ViewHolder{
+    class SliderViewHolder extends RecyclerView.ViewHolder {
 
         private RoundedImageView imageView;
         private ImageButton deleteImageButton;
@@ -82,9 +81,13 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                 }
             });
         }
-        void setImage(SliderItem sliderItem){
-            imageView.setImageURI(sliderItem.getImage());
+
+        void setImage(SliderItem sliderItem) {
+            // Use Glide to load the image into the ImageView in your slider_item layout
+            Glide.with(itemView.getContext())
+                    .load(sliderItem.getImage()) // Assuming getImage() returns a Uri
+                    .placeholder(R.drawable.baseline_downloading) // Optional placeholder
+                    .into(imageView);
         }
     }
-
 }
