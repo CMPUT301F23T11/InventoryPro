@@ -135,9 +135,9 @@ public class DatabaseManager {
             item.replaceUri(s,newUri);
         }
 
-        db.document(getDBItemPath(item.getUID())).set(item);
+        db.document(getDBItemPath(item.getUid())).set(item);
 
-        Log.d(TAG,"Adding Item: "+item.getUID());
+        Log.d(TAG,"Adding Item: "+item.getUid());
     }
     public void addTag(String item){
         if(!isConnected){
@@ -162,7 +162,7 @@ public class DatabaseManager {
             throw new IllegalArgumentException("Item was null.");
         }
 
-        db.document(getDBItemPath(item.getUID())).delete();
+        db.document(getDBItemPath(item.getUid())).delete();
         if (deepDelete){
             for(String s : item.getImageUris()){
                 Uri uri = Uri.parse(s);
@@ -171,7 +171,7 @@ public class DatabaseManager {
             }
         }
 
-        Log.d(TAG,"Deleting Item: "+item.getUID());
+        Log.d(TAG,"Deleting Item: "+item.getUid());
     }
     public void removeTag(String item){
         if(!isConnected){

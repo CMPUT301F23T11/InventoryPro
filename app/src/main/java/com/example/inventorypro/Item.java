@@ -269,11 +269,6 @@ public class Item implements Parcelable {
      * Gets the unique identifier that identifies this item.
      * @return The unique identifier that identifies this item (currently the name, might be changed to UUID later).
      */
-    @Exclude
-    public String getUID(){
-        return uid;
-    }
-
     public String getUid() {
         return uid;
     }

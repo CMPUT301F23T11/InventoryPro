@@ -77,8 +77,6 @@ public class AddItemActivity extends AppCompatActivity {
     private ViewPager2 viewPager2;
     List<SliderItem> sliderItems = new ArrayList<>();
 
-
-
     private Button confirmButton;
     private Button cancelButton;
     private int PICK_IMAGES_REQUEST = 1;
@@ -231,6 +229,7 @@ public class AddItemActivity extends AppCompatActivity {
 
         if (potentialItem != null) {
             editMode = true;
+            uid = potentialItem.getUid();
             // Set EditText values to the values of the selected Item
             name.getEditText().setText(potentialItem.getName());
             name.setHelperText("");
@@ -470,7 +469,7 @@ public class AddItemActivity extends AppCompatActivity {
         return imageUri;
     }
 
-    private Item parseItem() {
+    private Item parseItem(String uuid) {
         // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
         String[] stringUris = new SliderAdapter(sliderItems, viewPager2,true).convertUrisToStringArray();
@@ -486,7 +485,7 @@ public class AddItemActivity extends AppCompatActivity {
                 comments.getEditText().getText().toString(),
                 tags,
                 Arrays.asList(stringUris),
-                Item.generateNewUID());
+                uuid);
         return editItem;
     }
     /**
@@ -496,7 +495,7 @@ public class AddItemActivity extends AppCompatActivity {
         // Intent to return to the main activity
         Intent sendEditIntent = new Intent(this, MainActivity.class);
 
-        Item editItem = parseItem();
+        Item editItem = parseItem(uid);
 
         // Send the edited item back to the main activity
         sendEditIntent.putExtra("edit Item", editItem);
@@ -514,7 +513,7 @@ public class AddItemActivity extends AppCompatActivity {
         Log.e("GAN", ""+stringUris.length);
 
         // Create a new input
-        Item newItem =  parseItem();
+        Item newItem =  parseItem(Item.generateNewUID());
 
         // Intent to return to the main activity
         Intent sendItemIntent = new Intent(this, MainActivity.class);
