@@ -15,6 +15,8 @@ import androidx.fragment.app.DialogFragment;
 import com.example.inventorypro.Item;
 import com.example.inventorypro.ItemList;
 import com.example.inventorypro.R;
+import com.example.inventorypro.TagList;
+import com.example.inventorypro.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,17 +37,15 @@ public class TagMultiSelectFragment extends DialogFragment {
 
     public static TagMultiSelectFragment newInstance(ArrayList<String> selectedTags) {
         TagMultiSelectFragment fragment = new TagMultiSelectFragment();
-        Bundle args = new Bundle();
-        args.putStringArrayList("selectedTags", selectedTags);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            selectedTags = getArguments().getStringArrayList("selectedTags");
+        selectedTags = User.getInstance().getFilterSettings().getTags();
+        if(selectedTags==null){
+            selectedTags = new ArrayList<>();
         }
     }
 
@@ -86,22 +86,7 @@ public class TagMultiSelectFragment extends DialogFragment {
     }
 
     private ArrayList<String> getAllTagsFromItems() {
-        ArrayList<String> allTags = new ArrayList<>();
-
-        ItemList itemList = ItemList.getInstance();
-        if (itemList != null) {
-            for (Item item : itemList.getOriginalItemList()) {
-                List<String> itemTags = item.getTags();
-                if (itemTags != null) {
-                    for (String tag : itemTags) {
-                        if (!allTags.contains(tag)) {
-                            allTags.add(tag);
-                        }
-                    }
-                }
-            }
-        }
-        return allTags;
+        return TagList.getInstance().getItemList();
     }
 
 

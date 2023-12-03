@@ -15,10 +15,10 @@
         android:layout_margin="8dp"
         >
 
-        <ImageView
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/itemImage"
-            android:layout_width="250dp"
-            android:layout_height="200dp"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
@@ -26,7 +26,7 @@
             app:layout_constraintHorizontal_bias="0.585"
             android:background="@drawable/baseline_image"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"></ImageView>
+            app:layout_constraintTop_toTopOf="parent"></androidx.viewpager2.widget.ViewPager2>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/viewItemName"
@@ -274,9 +274,6 @@
                 android:text="Edit" />
 
         </LinearLayout>
-
-
-
 
 
 

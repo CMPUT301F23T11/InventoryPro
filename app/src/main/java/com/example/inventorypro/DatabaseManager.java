@@ -22,7 +22,9 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Responsible for communication with Firestore as well as invoking updates to the application in relation to this data.
@@ -133,9 +135,9 @@ public class DatabaseManager {
             item.replaceUri(s,newUri);
         }
 
-        db.document(getDBItemPath(item.getUID())).set(item);
+        db.document(getDBItemPath(item.getUid())).set(item);
 
-        Log.d(TAG,"Adding Item: "+item.getUID());
+        Log.d(TAG,"Adding Item: "+item.getUid());
     }
     public void addTag(String item){
         if(!isConnected){
@@ -160,7 +162,7 @@ public class DatabaseManager {
             throw new IllegalArgumentException("Item was null.");
         }
 
-        db.document(getDBItemPath(item.getUID())).delete();
+        db.document(getDBItemPath(item.getUid())).delete();
         if (deepDelete){
             for(String s : item.getImageUris()){
                 Uri uri = Uri.parse(s);
@@ -169,7 +171,7 @@ public class DatabaseManager {
             }
         }
 
-        Log.d(TAG,"Deleting Item: "+item.getUID());
+        Log.d(TAG,"Deleting Item: "+item.getUid());
     }
     public void removeTag(String item){
         if(!isConnected){
@@ -313,6 +315,27 @@ public class DatabaseManager {
             }
         });
     }
+
+    public static void getImageUris(Context context, List<String> uris, final OnSuccessListener<List<Uri>> onSuccessListener) {
+        List<Uri> imageUris = new ArrayList<>();
+        AtomicInteger count = new AtomicInteger(uris.size());
+
+        for (String uri : uris) {
+            StorageReference ref = FirebaseStorage.getInstance().getReference(uri);
+
+            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    imageUris.add(uri);
+                    if (count.decrementAndGet() == 0) {
+                        // All URIs have been fetched, invoke the listener
+                        onSuccessListener.onSuccess(imageUris);
+                    }
+                }
+            });
+        }
+    }
+
 
     final static String TAG = "Firestore";
 }
