@@ -230,6 +230,7 @@ public class AddItemActivity extends AppCompatActivity {
         String potentialSerialNumber = tryGetSerialNumberFromIntent();
 
         if (potentialItem != null) {
+            editMode = true;
             // Set EditText values to the values of the selected Item
             name.getEditText().setText(potentialItem.getName());
             name.setHelperText("");
@@ -249,7 +250,7 @@ public class AddItemActivity extends AppCompatActivity {
                         for (int i = 0; i < count; i++) {
                             sliderItems.add(new SliderItem(uris.get(i)));
                         }
-                        SliderAdapter sliderAdapter = new SliderAdapter(sliderItems, viewPager2);
+                        SliderAdapter sliderAdapter = new SliderAdapter(sliderItems, viewPager2,true);
 
                         viewPager2.setAdapter(sliderAdapter);
                         // Save the URI to the global variable if needed for later use
@@ -354,7 +355,7 @@ public class AddItemActivity extends AppCompatActivity {
                 Uri uri = data.getClipData().getItemAt(i).getUri();
                 sliderItems.add(new SliderItem(uri));
             }
-            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2));
+            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2,true));
             // Save the URI to the global variable if needed for later use
             // this.uri = uri;
             viewPager2.setBackground(null);
@@ -383,7 +384,7 @@ public class AddItemActivity extends AppCompatActivity {
 
             Uri uri = data.getData();
             sliderItems.add(new SliderItem(uri));
-            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2));
+            viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2,true));
             // Save the URI to the global variable if needed for later use
             // this.uri = uri;
             viewPager2.setBackground(null);
@@ -416,7 +417,7 @@ public class AddItemActivity extends AppCompatActivity {
         // Use the obtained URI as needed
         // For example, set the image to an ImageView
         sliderItems.add(new SliderItem(imageUri));
-        viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2));
+        viewPager2.setAdapter(new SliderAdapter(sliderItems,viewPager2,true));
         // Save the URI to the global variable if needed for later use
         // this.uri = uri;
         viewPager2.setBackground(null);
@@ -472,7 +473,7 @@ public class AddItemActivity extends AppCompatActivity {
     private Item parseItem() {
         // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
-        String[] stringUris = new SliderAdapter(sliderItems, viewPager2).convertUrisToStringArray();
+        String[] stringUris = new SliderAdapter(sliderItems, viewPager2,true).convertUrisToStringArray();
 
         Item editItem = new Item(
                 name.getEditText().getText().toString(),
@@ -509,7 +510,7 @@ public class AddItemActivity extends AppCompatActivity {
     private void sendItem() {
         // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
-        String[] stringUris = new SliderAdapter(sliderItems,viewPager2).convertUrisToStringArray();
+        String[] stringUris = new SliderAdapter(sliderItems,viewPager2,true).convertUrisToStringArray();
         Log.e("GAN", ""+stringUris.length);
 
         // Create a new input

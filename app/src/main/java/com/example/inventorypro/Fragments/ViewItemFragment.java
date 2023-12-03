@@ -153,7 +153,7 @@ public class ViewItemFragment extends DialogFragment {
                         for (int i = 0; i < count; i++) {
                             sliderItems.add(new SliderItem(uris.get(i)));
                         }
-                        SliderAdapter sliderAdapter = new SliderAdapter(sliderItems, viewPager2);
+                        SliderAdapter sliderAdapter = new SliderAdapter(sliderItems, viewPager2,false);
 
                         viewPager2.setAdapter(sliderAdapter);
                         // Save the URI to the global variable if needed for later use
