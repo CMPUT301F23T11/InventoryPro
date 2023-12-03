@@ -31,7 +31,10 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
 
     }
 
-    // Method to convert URIs to Strings
+    /**
+     * Get the URIs that are currently being displayed.
+     * @return
+     */
     public String[] convertUrisToStringArray() {
         String[] stringArray = new String[sliderItems.size()];
 

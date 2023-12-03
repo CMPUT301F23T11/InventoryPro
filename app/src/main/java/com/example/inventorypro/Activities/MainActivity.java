@@ -315,6 +315,10 @@ public class MainActivity extends AppCompatActivity {
         fragment.show(transaction, "viewItemDialog");
     }
 
+    /**
+     * Requests the input permission from the end-user.
+     * @param permission The permission to request.
+     */
     private void requestPermission(String permission){
         if (ContextCompat.checkSelfPermission(
                 this, permission) ==
@@ -329,6 +333,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    /**
+     * The result of the permission request from the user.
+     * @param requestCode The request code
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     *
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {

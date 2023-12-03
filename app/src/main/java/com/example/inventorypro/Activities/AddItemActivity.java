@@ -72,10 +72,10 @@ public class AddItemActivity extends AppCompatActivity {
     private Item originalEditingItem;
     private int selectedPosition;
     private boolean editMode = false;
-    List<String> tags = new ArrayList<>();
+    private List<String> tags = new ArrayList<>();
 
     private ViewPager2 viewPager2;
-    List<SliderItem> sliderItems = new ArrayList<>();
+    private List<SliderItem> sliderItems = new ArrayList<>();
 
     private Button confirmButton;
     private Button cancelButton;
@@ -284,8 +284,9 @@ public class AddItemActivity extends AppCompatActivity {
         }
     }
 
-
-
+    /**
+     * Displays dialogue review for how you want to select your image.
+     */
     private void showAddImageDialogue() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -326,7 +327,9 @@ public class AddItemActivity extends AppCompatActivity {
         dialog.show();
     }
 
-
+    /**
+     * When choosing to select an image by the camera.
+     */
     private void onCameraButtonClick(){
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(getPackageManager())!=null){
@@ -336,6 +339,10 @@ public class AddItemActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
+
+    /**
+     * When choosing to select an image by the gallery.
+     */
     private void onGalleryButtonClick() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -344,6 +351,10 @@ public class AddItemActivity extends AppCompatActivity {
         imagePickerLauncher.launch(intent);
     }
 
+    /**
+     * Receiving data from the gallery.
+     * @param data
+     */
     private void handleReceivedGalleryImages(Intent data) {
         if (data.getClipData() != null) {
             // Handle multiple selected images here using the imageUris ArrayList
@@ -409,6 +420,11 @@ public class AddItemActivity extends AppCompatActivity {
 
         }
     }
+
+    /**
+     * Receiving data from the camera.
+     * @param bitmap
+     */
     private void handleReceivedCameraImages(Bitmap bitmap){
         // Save the bitmap to a file
         Uri imageUri = saveBitmapToFile(bitmap);
@@ -469,6 +485,10 @@ public class AddItemActivity extends AppCompatActivity {
         return imageUri;
     }
 
+    /**
+     * Parses an item from the currently populated fields.
+     * @return An new item.
+     */
     private Item parseItem() {
         // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());

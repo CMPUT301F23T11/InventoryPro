@@ -21,6 +21,9 @@ import com.example.inventorypro.User;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Fragment used when the user wants to select multiple tags to filter by.
+ */
 public class TagMultiSelectFragment extends DialogFragment {
     private ListView listView;
     private ArrayAdapter<String> adapter;
@@ -35,6 +38,11 @@ public class TagMultiSelectFragment extends DialogFragment {
     public TagMultiSelectFragment() {
     }
 
+    /**
+     * Create a new take multi-select fragment given the pre-selected tags.
+     * @param selectedTags The selection to create this fragment with.
+     * @return The fragment.
+     */
     public static TagMultiSelectFragment newInstance(ArrayList<String> selectedTags) {
         TagMultiSelectFragment fragment = new TagMultiSelectFragment();
         return fragment;
