@@ -25,7 +25,8 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class ViewItemTester {
+public class
+ViewItemTester {
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new
             ActivityScenarioRule<>(MainActivity.class);

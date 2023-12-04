@@ -10,6 +10,15 @@ public class User {
     public static User getInstance(){
         return instance;
     }
+
+    /**
+     * Creates empty user (disconnected from database).
+     */
+    public static void setEmptyInstance()
+    {
+        instance =  new User(
+                null, null, null, new SortSettings(), new FilterSettings());
+    }
     public static Boolean hasUser(){return instance != null;}
 
     /**

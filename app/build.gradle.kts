@@ -37,6 +37,8 @@ android {
         dataBinding = true
         viewBinding = true
     }
+
+
 }
 
 dependencies {
@@ -57,6 +59,11 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("androidx.viewpager2:viewpager2:1.0.0")
     implementation("com.makeramen:roundedimageview:2.3.0")
+    testImplementation("org.mockito:mockito-core:3.12.4")
+    testImplementation("org.mockito:mockito-core:4.0.0")
+
+    // For Android-specific tests
+    androidTestImplementation("org.mockito:mockito-android:3.12.4")
 
     implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
 
