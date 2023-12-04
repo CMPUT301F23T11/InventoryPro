@@ -19,6 +19,24 @@ import java.util.List;
 public class Helpers {
 
     /**
+     * Returns if the input path is a firestore image path.
+     * @param uri The path to check.
+     * @return True if it is a firestore image path.
+     */
+    public static Boolean isFirestoreImageUri(String uri){
+        return uri.startsWith("/Users/");
+    }
+
+    /**
+     * Returns if the input path is a download URL.
+     * @param uri The path to check.
+     * @return True if it is a web path.
+     */
+    public static Boolean isInternetUri(String uri){
+        return uri.startsWith("http://")||uri.startsWith("https://")||uri.startsWith("gs://");
+    }
+
+    /**
      * OnClickListener which displays a toast notifying the user of an incomplete feature.
      */
     public static View.OnClickListener notImplementedClickListener = new View.OnClickListener() {

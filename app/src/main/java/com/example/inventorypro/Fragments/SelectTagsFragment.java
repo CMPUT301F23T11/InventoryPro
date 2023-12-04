@@ -23,6 +23,9 @@ import com.example.inventorypro.TagList;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Fragment used when the user wants to select multiple tags (assignment).
+ */
 public class SelectTagsFragment extends DialogFragment {
     private ArrayList<Item> items;
     private List<String> tags;

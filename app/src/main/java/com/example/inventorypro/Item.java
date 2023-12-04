@@ -238,6 +238,11 @@ public class Item implements Parcelable {
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
+
+    /**
+     * Returns a string that is the concatenation of all the tags on a single line.
+     * @return
+     */
     public String tagRepresentation(){
         String ss = "";
         for(String s : tags){
@@ -326,6 +331,12 @@ public class Item implements Parcelable {
         }
         return imageUris;
     }
+
+    /**
+     * Replaces a URI (used when updating a local path to firestore path).
+     * @param old The old URI.
+     * @param newUri The new URI.
+     */
     public void replaceUri(String old, String newUri){
         int i = imageUris.indexOf(old);
         if(i==-1)return;

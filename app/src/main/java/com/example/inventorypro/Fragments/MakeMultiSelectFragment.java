@@ -18,11 +18,17 @@ import com.example.inventorypro.User;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment which is used when the user wants to select multiple makes (filtering).
+ */
 public class MakeMultiSelectFragment extends DialogFragment {
     private ListView listView;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> selectedMakes;
 
+    /**
+     * Listener which returns with the selected makes.
+     */
     public interface OnCompleteListener {
         void onComplete(ArrayList<String> selectedMakes);
     }
@@ -32,6 +38,12 @@ public class MakeMultiSelectFragment extends DialogFragment {
     public MakeMultiSelectFragment() {
 
     }
+
+    /**
+     * Constructs a new Make Multi-select Fragment using the pre-known make selection.
+     * @param selectedMakes The makes to preselect.
+     * @return The fragment.
+     */
     public static MakeMultiSelectFragment newInstance(ArrayList<String> selectedMakes) {
         MakeMultiSelectFragment fragment = new MakeMultiSelectFragment();
         return fragment;

@@ -208,7 +208,6 @@ public class FilterFragment extends Fragment {
         tagsEditText.setText(tagsText.toString());
     }
 
-
     @Nullable
     private LocalDate tryParseDate(String s){
         return Helpers.parseDate(s.toString());

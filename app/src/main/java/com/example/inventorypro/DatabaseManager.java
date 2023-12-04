@@ -70,6 +70,12 @@ public class DatabaseManager {
         isConnected = Boolean.TRUE;
     }
 
+    /**
+     * Uploads an image to firestore.
+     * @param item The item that the image belongs to.
+     * @param image The image uri (local device path) to upload.
+     * @return The firestore path of the uploaded image.
+     */
     public String uploadImage(@NonNull Item item, @NonNull Uri image){
         Log.e(TAG, "uploadImage: "+ image.toString());
 
@@ -93,9 +99,15 @@ public class DatabaseManager {
 
         return ref.getPath();
     }
-    public void deleteImage(@NonNull Item item, @NonNull Uri image){
+
+    /**
+     * Deletes an image from firestore.
+     * @param item The item that the image belongs to.
+     * @param image The firestore path of the image to delete.
+     */
+    public static void deleteImage(@NonNull Item item, @NonNull Uri image){
         // Create a reference to the file to delete
-        StorageReference desertRef = storage.getReference(image.toString());
+        StorageReference desertRef = FirebaseStorage.getInstance().getReference(image.toString());
 
         // Delete the file
         desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -128,10 +140,17 @@ public class DatabaseManager {
         for(String s : item.getImageUris()){
             Uri uri = Uri.parse(s);
             if(uri==null)continue;
-            Log.e(TAG, "consider to upload "+uri.toString() );
-            if(uri.toString().startsWith("/Users/")) continue;
+            Log.d(TAG, "consider to upload "+uri.toString() );
+            if(Helpers.isFirestoreImageUri(uri.toString())) continue;
+            else {
+                if(Helpers.isInternetUri(uri.toString())){
+                    Log.e(TAG,"Download links should not be sent to the database? Data loss imminent."+uri.toString());
+                    continue;
+                }
+            }
+
             String newUri = uploadImage(item,uri);
-            Log.e(TAG, "replaced with "+newUri );
+            Log.d(TAG, "replaced with "+newUri );
             item.replaceUri(s,newUri);
         }
 
@@ -139,6 +158,11 @@ public class DatabaseManager {
 
         Log.d(TAG,"Adding Item: "+item.getUid());
     }
+
+    /**
+     * Adds a tag to the database.
+     * @param item The name of the tag.
+     */
     public void addTag(String item){
         if(!isConnected){
             throw new RuntimeException("Database is not connected.");
@@ -173,6 +197,11 @@ public class DatabaseManager {
 
         Log.d(TAG,"Deleting Item: "+item.getUid());
     }
+
+    /**
+     * Removes the tag from the database.
+     * @param item The tag to remove.
+     */
     public void removeTag(String item){
         if(!isConnected){
             throw new RuntimeException("Database is not connected.");
@@ -255,6 +284,10 @@ public class DatabaseManager {
         itemList.onSynchronize(items);
     }
 
+    /**
+     * Fetch the database path for images for this user.
+     * @return The firestore cloud storage path.
+     */
     private String getStorageImagesPath(){
         return String.format("Users/%s/Images",userUID);
     }
@@ -282,8 +315,13 @@ public class DatabaseManager {
         return String.format("Users/%s/Items/%s", userUID, itemUID);
     }
 
-    private String getDBTagPath(String itemUID){
-        return String.format("Users/%s/Tags/%s", userUID, itemUID);
+    /**
+     * Fetch the complete path to a tag.
+     * @param tag
+     * @return The complete path to tag.
+     */
+    private String getDBTagPath(String tag){
+        return String.format("Users/%s/Tags/%s", userUID, tag);
     }
 
     /**
@@ -316,7 +354,12 @@ public class DatabaseManager {
         });
     }
 
-    public static void getImageUris(Context context, List<String> uris, final OnSuccessListener<List<Uri>> onSuccessListener) {
+    /**
+     * Get firestore download URLs from the firestore paths.
+     * @param uris The firestore paths to convert into the URLs.
+     * @param onSuccessListener The success listener to call when the download URLs are received.
+     */
+    public static void getImageUris(List<String> uris, final OnSuccessListener<List<Uri>> onSuccessListener) {
         List<Uri> imageUris = new ArrayList<>();
         AtomicInteger count = new AtomicInteger(uris.size());
 
@@ -336,6 +379,14 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Converts from firestore download URL to firestore path.
+     * @param downloadUri
+     * @return
+     */
+    public static String downloadUriToFirestorePath(@NonNull String downloadUri){
+        return FirebaseStorage.getInstance().getReferenceFromUrl(downloadUri).getPath();
+    }
 
     final static String TAG = "Firestore";
 }

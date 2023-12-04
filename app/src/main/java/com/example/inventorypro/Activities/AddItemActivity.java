@@ -1,6 +1,5 @@
 package com.example.inventorypro.Activities;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
 import static java.lang.Integer.parseInt;
 
 import android.app.AlertDialog;
@@ -53,6 +52,7 @@ import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -69,13 +69,13 @@ public class AddItemActivity extends AppCompatActivity {
     private TextInputLayout comments;
     private TextInputLayout value;
     private ImageButton addTagButton, addImageButton, serialNumberScanButton;
-    private String uid;
+    private Item originalEditingItem;
     private int selectedPosition;
     private boolean editMode = false;
-    List<String> tags = new ArrayList<>();
+    private List<String> tags = new ArrayList<>();
 
     private ViewPager2 viewPager2;
-    List<SliderItem> sliderItems = new ArrayList<>();
+    private List<SliderItem> sliderItems = new ArrayList<>();
 
     private Button confirmButton;
     private Button cancelButton;
@@ -229,7 +229,7 @@ public class AddItemActivity extends AppCompatActivity {
 
         if (potentialItem != null) {
             editMode = true;
-            uid = potentialItem.getUid();
+            originalEditingItem = potentialItem;
             // Set EditText values to the values of the selected Item
             name.getEditText().setText(potentialItem.getName());
             name.setHelperText("");
@@ -242,7 +242,7 @@ public class AddItemActivity extends AppCompatActivity {
             comments.getEditText().setText(potentialItem.getComment());
             tags.addAll(potentialItem.getTags());
             if (potentialItem.getImageUris().size() > 0) {
-                DatabaseManager.getImageUris(this, potentialItem.getImageUris(), new OnSuccessListener<List<Uri>>() {
+                DatabaseManager.getImageUris(potentialItem.getImageUris(), new OnSuccessListener<List<Uri>>() {
                     @Override
                     public void onSuccess(List<Uri> uris) {
                         int count = potentialItem.getImageUris().size();
@@ -284,8 +284,9 @@ public class AddItemActivity extends AppCompatActivity {
         }
     }
 
-
-
+    /**
+     * Displays dialogue review for how you want to select your image.
+     */
     private void showAddImageDialogue() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -326,7 +327,9 @@ public class AddItemActivity extends AppCompatActivity {
         dialog.show();
     }
 
-
+    /**
+     * When choosing to select an image by the camera.
+     */
     private void onCameraButtonClick(){
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(getPackageManager())!=null){
@@ -336,6 +339,10 @@ public class AddItemActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
+
+    /**
+     * When choosing to select an image by the gallery.
+     */
     private void onGalleryButtonClick() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -344,6 +351,10 @@ public class AddItemActivity extends AppCompatActivity {
         imagePickerLauncher.launch(intent);
     }
 
+    /**
+     * Receiving data from the gallery.
+     * @param data
+     */
     private void handleReceivedGalleryImages(Intent data) {
         if (data.getClipData() != null) {
             // Handle multiple selected images here using the imageUris ArrayList
@@ -409,6 +420,11 @@ public class AddItemActivity extends AppCompatActivity {
 
         }
     }
+
+    /**
+     * Receiving data from the camera.
+     * @param bitmap
+     */
     private void handleReceivedCameraImages(Bitmap bitmap){
         // Save the bitmap to a file
         Uri imageUri = saveBitmapToFile(bitmap);
@@ -469,10 +485,38 @@ public class AddItemActivity extends AppCompatActivity {
         return imageUri;
     }
 
-    private Item parseItem(String uuid) {
+    /**
+     * Parses an item from the currently populated fields.
+     * @return An new item.
+     */
+    private Item parseItem() {
         // Create a date in LocalDate format from the user input
         LocalDate itemDate = Helpers.parseDate(date.getEditText().getText().toString());
+
+        // These may be a mixture of download links and paths to local files in edit mode.
+        // Database expects Firestore paths OR local file paths, download links are no no.
         String[] stringUris = new SliderAdapter(sliderItems, viewPager2,true).convertUrisToStringArray();
+
+        List<String> correctUris = Arrays.asList(stringUris);
+        if(editMode){
+            // Replace download links with firestore paths.
+            List<String> originalUris = originalEditingItem.getImageUris();
+
+            for(int i = 0;i< correctUris.size();++i){
+                String s = correctUris.get(i);
+                if(Helpers.isInternetUri(s)){
+                    correctUris.set(i,DatabaseManager.downloadUriToFirestorePath(s));
+                }
+            }
+
+            // Apply any deletions.
+            if(correctUris.size()<originalUris.size()){
+                for(String s : originalUris){
+                    if (!correctUris.contains(s))
+                        DatabaseManager.deleteImage(originalEditingItem, Uri.parse(s));
+                }
+            }
+        }
 
         Item editItem = new Item(
                 name.getEditText().getText().toString(),
@@ -484,8 +528,8 @@ public class AddItemActivity extends AppCompatActivity {
                 description.getEditText().getText().toString(),
                 comments.getEditText().getText().toString(),
                 tags,
-                Arrays.asList(stringUris),
-                uuid);
+                correctUris,
+                editMode ? originalEditingItem.getUid() : Item.generateNewUID());
         return editItem;
     }
     /**
@@ -495,7 +539,7 @@ public class AddItemActivity extends AppCompatActivity {
         // Intent to return to the main activity
         Intent sendEditIntent = new Intent(this, MainActivity.class);
 
-        Item editItem = parseItem(uid);
+        Item editItem = parseItem();
 
         // Send the edited item back to the main activity
         sendEditIntent.putExtra("edit Item", editItem);
@@ -513,7 +557,7 @@ public class AddItemActivity extends AppCompatActivity {
         Log.e("GAN", ""+stringUris.length);
 
         // Create a new input
-        Item newItem =  parseItem(Item.generateNewUID());
+        Item newItem =  parseItem();
 
         // Intent to return to the main activity
         Intent sendItemIntent = new Intent(this, MainActivity.class);
