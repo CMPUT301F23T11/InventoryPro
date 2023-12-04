@@ -2,7 +2,6 @@ package com.example.inventorypro;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.inventorypro.Activities.MainActivity;
@@ -11,8 +10,6 @@ import com.example.inventorypro.Fragments.SortFragment;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import kotlin.jvm.Synchronized;
 
 /**
  * The list of items for the user automatically synchronized using a DatabaseManager.
@@ -235,13 +232,22 @@ public class ItemList extends SynchronizedList<Item> {
     }
 
     /**
-     * Deletes all selected items from the database
+     * Removes all selected items from the database
      * @return None
      */
-    public void deleteSelectedItems() {
+    public void removeSelectedItems() {
         ArrayList<Item> selectedItems = getSelectedItems();
         for (Item item : selectedItems) {
-            itemList.remove(item);
+            remove(item);
         }
+    }
+
+    /**
+     * Removes item from the database
+     * @return None
+     */
+    public void removeItem(Item item) {
+        if (item == null) { return; }
+        remove(item);
     }
 }
