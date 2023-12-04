@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
@@ -21,8 +21,10 @@ import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.inventorypro.Activities.AddItemActivity;
+import com.example.inventorypro.Activities.MainActivity;
 import com.example.inventorypro.DatabaseManager;
 import com.example.inventorypro.Item;
+import com.example.inventorypro.ItemList;
 import com.example.inventorypro.R;
 import com.example.inventorypro.SliderAdapter;
 import com.example.inventorypro.SliderItem;
@@ -48,6 +50,7 @@ public class ViewItemFragment extends DialogFragment {
     private TextInputLayout description;
     private TextInputLayout comments;
     private TextInputLayout value;
+    private Button deleteButton;
 
 
     List<Uri> imageUris = new ArrayList<>();
@@ -110,7 +113,7 @@ public class ViewItemFragment extends DialogFragment {
         });
 
         // Your custom negative button
-        Button negativeButton = view.findViewById(R.id.cancel_button);
+        ImageButton negativeButton = view.findViewById(R.id.cancel_button);
         negativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,7 +135,8 @@ public class ViewItemFragment extends DialogFragment {
         serialNumber = view.findViewById(R.id.viewSerialNumber);
         description = view.findViewById(R.id.viewDescription);
         comments = view.findViewById(R.id.viewComments);
-        viewPager2 = view.findViewById(R.id.itemImage) ;
+        viewPager2 = view.findViewById(R.id.itemImage);
+        deleteButton = view.findViewById(R.id.delete_item_button);
 
         if (selectedItem != null) {
             //Setting Item values to the EditText to view
@@ -183,6 +187,14 @@ public class ViewItemFragment extends DialogFragment {
                     }
                 });
             }
+
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DialogFragment deleteItemConfirmationDialog = new DeleteItemConfirmationDialog(ViewItemFragment.this, selectedItem);
+                    deleteItemConfirmationDialog.show(getParentFragmentManager(), "deleteItemConfirmationDialog");
+                }
+            });
         }
         return dialog;
     }
