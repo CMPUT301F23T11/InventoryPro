@@ -57,6 +57,9 @@ public abstract class SynchronizedList<T1> {
         refresh();
     }
 
+    /**
+     * Updates the item array adapter.
+     */
     public void update(){
         itemArrayAdapter.notifyDataSetChanged();
     }
@@ -73,7 +76,10 @@ public abstract class SynchronizedList<T1> {
         itemArrayAdapter.notifyDataSetChanged();
 
     }
-    // Modify the item list (sort/filter)
+
+    /**
+     * Apply any modifications to the list (applying sorting/filters/etc.)
+     */
     public void postProcess(){
 
     }
@@ -94,6 +100,11 @@ public abstract class SynchronizedList<T1> {
 
         refresh(); //inefficient
     }
+
+    /**
+     * Adds this item on the database side.
+     * @param item The item to add.
+     */
     protected abstract void addToDatabase(T1 item);
 
 
@@ -113,8 +124,19 @@ public abstract class SynchronizedList<T1> {
 
         refresh(); //inefficient
     }
+
+    /**
+     * Removes this item from the database.
+     * @param item The item to remove.
+     * @param deepDelete If true, destroys any lingering references to this item in the database.
+     */
     protected abstract void removeFromDatabase(T1 item, boolean deepDelete);
 
+    /**
+     * Replaces the old item with a new item.
+     * @param item The new item.
+     * @param old The old item to replace.
+     */
     public void replace(T1 item, T1 old){
         replace(item,originalItemList.indexOf(old));
     }
@@ -133,19 +155,30 @@ public abstract class SynchronizedList<T1> {
 
         refresh();
     }
+
+    /**
+     * Replaces the item in the database.
+     * @param oldItem The item to replace.
+     * @param item The new item.
+     */
     protected void replaceInDatabase(T1 oldItem, T1 item){
         removeFromDatabase(oldItem, false);
         addToDatabase(item);
     }
 
     /**
-     * Gets the item list of an ItemList object
+     * Gets the item list of an ItemList object modified by postprocessing.
      * @return
      * Returns the item list for a specific ItemList object
      */
     public ArrayList<T1> getItemList() {
         return itemList;
     }
+
+    /**
+     * Gets the item list as unmodified by postprocessing.
+     * @return The raw item list from the database as synchronized.
+     */
     public ArrayList<T1> getOriginalItemList() {
         return originalItemList;
     }

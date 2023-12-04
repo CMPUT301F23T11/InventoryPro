@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A type of synchronized list (uses singleton pattern).
+ * Represents the list of tags defined by the user and synced with the database.
+ */
 public class TagList extends SynchronizedList<String> {
     // Singleton pattern for tag list. Don't need a reference to main activity.
     private static TagList instance = null;

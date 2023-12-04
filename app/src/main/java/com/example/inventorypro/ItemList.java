@@ -19,15 +19,6 @@ import kotlin.jvm.Synchronized;
  * Uses Singleton pattern.
  */
 public class ItemList extends SynchronizedList<Item> {
-    @Override
-    public void refresh() {
-        super.refresh();
-
-        if(context != null){
-            ((MainActivity)context).refreshTotalText();
-            ((MainActivity)context).showSortAndFilterChips();
-        }
-    }
 
     private static ItemList instance = null;
     public static ItemList getInstance(){
@@ -46,6 +37,24 @@ public class ItemList extends SynchronizedList<Item> {
         super(database);
     }
 
+    /**
+     * Refreshes the list and also the UI associated with the item list.
+     */
+    @Override
+    public void refresh() {
+        super.refresh();
+
+        if(context != null){
+            ((MainActivity)context).refreshTotalText();
+            ((MainActivity)context).showSortAndFilterChips();
+        }
+    }
+
+    /**
+     * Hooks this item list into an activity.
+     * @param context From MainActivity
+     * @param itemListView The updated list view object.
+     */
     @Override
     public void hook(Context context, ListView itemListView) {
         super.hook(context, itemListView);
@@ -57,6 +66,9 @@ public class ItemList extends SynchronizedList<Item> {
         }
     }
 
+    /**
+     * Sorts and filters the item list according to the settings.
+     */
     @Override
     public void postProcess() {
         super.postProcess();
@@ -78,6 +90,10 @@ public class ItemList extends SynchronizedList<Item> {
         return originalItemList;
     }
 
+    /**
+     * Utility function to update an item.
+     * @param item The item to update.
+     */
     public void updateItem(Item item) {
         database.removeItem(item, false);
         database.addItem(item);

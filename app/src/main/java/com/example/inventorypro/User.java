@@ -21,7 +21,11 @@ public class User {
                 userID, emailID, displayName, new SortSettings(), new FilterSettings());
         setupUser();
     }
-    public static void setupUser(){
+
+    /**
+     * Instantiate all singletons/data/connections required for the new user being created.
+     */
+    private static void setupUser(){
         DatabaseManager database = new DatabaseManager();
 
         ItemList itemList = new ItemList(database);
