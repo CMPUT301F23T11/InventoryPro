@@ -233,4 +233,15 @@ public class ItemList extends SynchronizedList<Item> {
         }
         return items;
     }
+
+    /**
+     * Deletes all selected items from the database
+     * @return None
+     */
+    public void deleteSelectedItems() {
+        ArrayList<Item> selectedItems = getSelectedItems();
+        for (Item item : selectedItems) {
+            itemList.remove(item);
+        }
+    }
 }

@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.example.inventorypro.Fragments.CreateTagsFragment;
 import com.example.inventorypro.DatabaseManager;
 import com.example.inventorypro.FilterSettings;
+import com.example.inventorypro.Fragments.DeleteItemsConfirmationDialog;
 import com.example.inventorypro.Fragments.SelectTagsFragment;
 import com.example.inventorypro.Fragments.UserProfileFragment;
 import com.example.inventorypro.Helpers;
@@ -125,7 +126,14 @@ public class MainActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteSelectedItems();
+                Boolean anyItemSelected = ItemList.getInstance().getSelectedItems().size() > 0;
+                if(!anyItemSelected){
+                    Helpers.toast(getBaseContext(),"Select item(s) to delete first.");
+                    return;
+                }
+
+                DialogFragment deleteItemsConfirmationDialog = new DeleteItemsConfirmationDialog();
+                deleteItemsConfirmationDialog.show(getSupportFragmentManager(), "deleteItemsConfirmationDialog");
             }
         });
 
@@ -234,29 +242,6 @@ public class MainActivity extends AppCompatActivity {
     public void refreshTotalText(){
         TextView total = findViewById(R.id.totalText);
         total.setText(String.format("$%.2f", ItemList.getInstance().getTotalValue()));
-    }
-
-    /**
-     * Deletes all the selected items from the listview as well as the database and updates the total value accordingly.
-     */
-    private void deleteSelectedItems() {
-        // TODO: there might be a better way to do this down the line.
-        // Actually there is, just do this operation on the ItemList.
-        Boolean removedAtLeastOne = Boolean.FALSE;
-
-        ItemList itemList = ItemList.getInstance();
-
-        ArrayList<Item> copy = new ArrayList<>(itemList.getItemList());
-        for (Item item : copy) {
-            if (item.isSelected()) {
-                itemList.remove(item);
-                removedAtLeastOne = Boolean.TRUE;
-            }
-        }
-
-        if(!removedAtLeastOne){
-            Helpers.toast(getBaseContext(),"Select item(s) to delete first.");
-        }
     }
 
     /**

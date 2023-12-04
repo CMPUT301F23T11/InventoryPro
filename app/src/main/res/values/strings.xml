@@ -15,4 +15,5 @@
     <string name="serial_number_intent">serialnumber</string>
     <string name="edit_item_intent">edit</string>
     <string name="edit_item_position_intent">editPosition</string>
+    <string name="edit_item_header">Edit Item</string>
 </resources>
