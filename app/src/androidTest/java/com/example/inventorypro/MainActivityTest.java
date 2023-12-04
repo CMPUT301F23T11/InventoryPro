@@ -5,6 +5,7 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -47,6 +48,7 @@ public class MainActivityTest {
 
         Intents.init();
         onView(withId(R.id.profileButton)).perform(click());
+        onView(withText("LOGOUT")).perform(click());
         intended(hasComponent(SignInActivity.class.getName()));
         Intents.release();
     }

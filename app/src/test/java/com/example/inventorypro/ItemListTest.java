@@ -74,7 +74,7 @@ public class ItemListTest {
         ItemList mockList = mockItemList();
 
         // create new user preferences object
-        User.createInstance(null, null, null);
+        User.setEmptyInstance();
         User userPreferences = User.getInstance();
 
         SortSettings sortSettings = userPreferences.getSortSettings();
@@ -94,7 +94,7 @@ public class ItemListTest {
         ItemList mockList = mockItemList();
 
         // create new user preferences object
-        User.createInstance(null, null, null);
+        User.setEmptyInstance();
         User userPreferences = User.getInstance();
 
         SortSettings sortSettings = userPreferences.getSortSettings();
@@ -114,7 +114,7 @@ public class ItemListTest {
         ItemList mockList = mockItemList();
 
         // create new user preferences object
-        User.createInstance(null, null, null);
+        User.setEmptyInstance();
         User userPreferences = User.getInstance();
 
         SortSettings sortSettings = userPreferences.getSortSettings();
@@ -134,7 +134,7 @@ public class ItemListTest {
         ItemList mockList = mockItemList();
 
         // create new user preferences object
-        User.createInstance(null, null, null);
+        User.setEmptyInstance();
         User userPreferences = User.getInstance();
 
         SortSettings sortSettings = userPreferences.getSortSettings();
