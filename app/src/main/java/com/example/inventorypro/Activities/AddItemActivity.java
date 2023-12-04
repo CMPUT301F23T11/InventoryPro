@@ -229,6 +229,7 @@ public class AddItemActivity extends AppCompatActivity {
 
         if (potentialItem != null) {
             editMode = true;
+            header.setText(getString(R.string.edit_item_header));
             uid = potentialItem.getUid();
             // Set EditText values to the values of the selected Item
             name.getEditText().setText(potentialItem.getName());
