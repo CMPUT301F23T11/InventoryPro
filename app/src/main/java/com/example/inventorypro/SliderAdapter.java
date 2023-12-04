@@ -31,12 +31,12 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
         this.sliderItems = sliderItems;
         this.viewPager2 = viewPager2;
         this.showDeleteButton = showDeleteButton;
-
     }
 
     /**
-     * Get the URIs that are currently being displayed.
-     * @return
+     * Convert URIs of currently displayed images to a String array.
+     *
+     * @return String array containing URIs of displayed images.
      */
     public String[] convertUrisToStringArray() {
         String[] stringArray = new String[sliderItems.size()];
@@ -50,6 +50,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
 
         return stringArray;
     }
+
     @NonNull
     @Override
     public SliderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -64,13 +65,12 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
     public void onBindViewHolder(@NonNull SliderViewHolder holder, int position) {
         holder.setImage(sliderItems.get(position));
 
+        // Show or hide the delete button based on the 'showDeleteButton' flag
         if (showDeleteButton) {
             holder.deleteImageButton.setVisibility(View.VISIBLE);
         } else {
             holder.deleteImageButton.setVisibility(View.GONE);
         }
-
-
     }
 
     @Override
@@ -88,6 +88,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
             imageView = itemView.findViewById(R.id.imageSlide);
             deleteImageButton = itemView.findViewById(R.id.deleteImageButton);
 
+            // Click listener for the delete button
             deleteImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -99,14 +100,23 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
             });
         }
 
+        /**
+         * Set the image in the ImageView using Glide.
+         *
+         * @param sliderItem The SliderItem containing the image URI.
+         */
         void setImage(SliderItem sliderItem) {
-            // Use Glide to load the image into the ImageView in your slider_item layout
             Glide.with(itemView.getContext())
                     .load(sliderItem.getImage()) // Assuming getImage() returns a Uri
                     .placeholder(R.drawable.baseline_downloading) // Optional placeholder
                     .into(imageView);
         }
 
+        /**
+         * Display a confirmation dialog for deleting an image.
+         *
+         * @param position The position of the image to be deleted.
+         */
         private void showDeleteConfirmationDialog(final int position) {
             AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
             builder.setTitle("Confirm Deletion");

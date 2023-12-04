@@ -56,7 +56,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * AddItem Activity is responsible for gathering user input and re-creating the MainActivity with the parsed Item.
+ * Activity responsible for adding a new item or editing an existing one.
+ * Gathers user input and creates or modifies an Item object accordingly.
  */
 public class AddItemActivity extends AppCompatActivity {
     private TextView header;
@@ -285,7 +286,7 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
     /**
-     * Displays dialogue review for how you want to select your image.
+     * Displays a dialogue to select how the user wants to add an image (from gallery or camera).
      */
     private void showAddImageDialogue() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -328,7 +329,7 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
     /**
-     * When choosing to select an image by the camera.
+     * Handles the action when the user chooses to select an image from the camera.
      */
     private void onCameraButtonClick(){
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -341,7 +342,7 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
     /**
-     * When choosing to select an image by the gallery.
+     * Handles the action when the user chooses to select an image from the gallery.
      */
     private void onGalleryButtonClick() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -352,8 +353,9 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
     /**
-     * Receiving data from the gallery.
-     * @param data
+     * Handles received images from the gallery intent.
+     *
+     * @param data Intent data containing selected image(s).
      */
     private void handleReceivedGalleryImages(Intent data) {
         if (data.getClipData() != null) {
@@ -422,8 +424,9 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
     /**
-     * Receiving data from the camera.
-     * @param bitmap
+     * Handles received images from the camera intent.
+     *
+     * @param bitmap Bitmap image captured from the camera.
      */
     private void handleReceivedCameraImages(Bitmap bitmap){
         // Save the bitmap to a file
@@ -454,6 +457,12 @@ public class AddItemActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Saves a Bitmap image to a file and returns its URI.
+     *
+     * @param bitmap Bitmap image to be saved.
+     * @return URI of the saved image file.
+     */
     private Uri saveBitmapToFile(Bitmap bitmap) {
         // Get the content resolver
         ContentResolver resolver = getContentResolver();
