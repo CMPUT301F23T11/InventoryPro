@@ -27,7 +27,7 @@ public class ItemListTest {
                 "description 2",
                 null,
                 null,
-                null);
+                null,null);
         Item item2 = new Item("Item2",
                 8.5,
                 LocalDate.of(2023, 10, 13),
@@ -37,7 +37,7 @@ public class ItemListTest {
                 "description 3",
                 null,
                 null,
-                null);
+                null,null);
         Item item3 = new Item("Item3",
                 7.97,
                 LocalDate.of(2022, 10, 14),
@@ -47,7 +47,7 @@ public class ItemListTest {
                 "description 1",
                 null,
                 null,
-                null);
+                null,null);
         itemList.add(item1);
         itemList.add(item2);
         itemList.add(item3);

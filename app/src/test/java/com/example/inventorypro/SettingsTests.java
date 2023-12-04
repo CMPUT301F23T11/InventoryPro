@@ -28,7 +28,7 @@ public class SettingsTests {
                 "description 2",
                 null,
                 null,
-                null);
+                null,null);
 
         // Ensure an empty filter accepts the generic item
         FilterSettings fs = new FilterSettings();
