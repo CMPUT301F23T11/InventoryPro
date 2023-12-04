@@ -29,7 +29,7 @@ import java.util.ArrayList;
  */
 public class CreateTagsArrayAdapter extends ArrayAdapter<String> {
     private Context context;
-    TagList tagList;
+    private TagList tagList;
 
     public CreateTagsArrayAdapter(Context context, TagList tagList, ArrayList<String> tags) {
         super(context, 0, tags);

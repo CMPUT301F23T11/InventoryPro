@@ -150,7 +150,7 @@ public class ViewItemFragment extends DialogFragment {
             comments.getEditText().setText(selectedItem.getComment());
 
             if (selectedItem.getImageUris().size() > 0) {
-                DatabaseManager.getImageUris(requireContext(), selectedItem.getImageUris(), new OnSuccessListener<List<Uri>>() {
+                DatabaseManager.getImageUris(selectedItem.getImageUris(), new OnSuccessListener<List<Uri>>() {
                     @Override
                     public void onSuccess(List<Uri> uris) {
                         int count = selectedItem.getImageUris().size();

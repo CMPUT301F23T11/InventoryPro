@@ -25,6 +25,9 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The adapter to display the tag selection screen.
+ */
 public class SelectTagsArrayAdapter extends ArrayAdapter<String> {
     private Context context;
     TagList tagList;
