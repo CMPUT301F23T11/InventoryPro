@@ -242,6 +242,8 @@ public class AddItemActivity extends AppCompatActivity {
             description.getEditText().setText(potentialItem.getDescription());
             comments.getEditText().setText(potentialItem.getComment());
             tags.addAll(potentialItem.getTags());
+            header.setText("Edit Item");
+
             if (potentialItem.getImageUris().size() > 0) {
                 DatabaseManager.getImageUris(potentialItem.getImageUris(), new OnSuccessListener<List<Uri>>() {
                     @Override
